@@ -40,7 +40,6 @@ namespace Commands
 
         public bool HasRedo(Block.Type type, out Command command)
         {
-            Debug.Log($"Redo stack size: {Undone(type).Count}");
             var commands = Undone(type);
             commands.TryPeek(out command);
             return commands.Any();

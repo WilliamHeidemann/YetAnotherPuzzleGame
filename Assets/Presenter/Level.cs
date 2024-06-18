@@ -17,6 +17,10 @@ namespace Presenter
         [SerializeField] private Block cardinalPrefab;
         [SerializeField] private Block diagonalPrefab;
         [SerializeField] private GhostBlock ghostPrefab;
+        [SerializeField] private GameObject groundPrefab;
+        [SerializeField] private Material blue;
+        [SerializeField] private Material red;
+        
         private Grid grid;
         private History history;
         public MoveData moveData { get; private set; }
@@ -30,10 +34,28 @@ namespace Presenter
             grid = new Grid(blockLayout.width);
             history = new History();
             moveData = new MoveData(blockLayout.maxMoves);
-            foreach (var block in blockLayout.list)
+
+            var width = blockLayout.width;
+            For.NestedRange(width, width, InstantiateGroundBlock);
+            
+            
+            foreach (var block in blockLayout.startingConfiguration)
             {
                 grid.AddBlock(block);
                 InstantiateBlock(block);
+            }
+        }
+
+        private void InstantiateGroundBlock(int i, int j)
+        {
+            var position = new Vector3(j, -1, i);
+            var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
+            var location = new Location(j, i);
+            if (blockLayout.targetConfiguration.Any(block => block.location == location))
+            {
+                var block = blockLayout.targetConfiguration.First(block => block.location == location);
+                groundBlock.GetComponent<MeshRenderer>().material =
+                    block.type == Model.Block.Type.Cardinal ? blue : red;
             }
         }
         
@@ -63,8 +85,9 @@ namespace Presenter
             foreach (var neighbor in neighbors)
             {
                 if (!grid.IsAvailable(neighbor)) continue;
-                var ghost = Instantiate(ghostPrefab, neighbor.asVector3, Quaternion.identity);
+                var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
                 ghost.model = new Model.Block(neighbor, hover.type);
+                ghost.origin = hover;
                 ghostBlocks.Add(ghost);
             }
         }
@@ -73,6 +96,9 @@ namespace Presenter
         {
             foreach (var ghostBlock in ghostBlocks)
             {
+                LeanTween.move(ghostBlock.gameObject, ghostBlock.origin.location.asVector3, 1f)
+                    .setEase(LeanTweenType.easeOutExpo);
+                    // .setOnComplete(() => Destroy(ghostBlock.gameObject));
                 Destroy(ghostBlock.gameObject);
             }
             ghostBlocks.Clear();
