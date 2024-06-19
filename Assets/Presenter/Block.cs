@@ -15,5 +15,7 @@ namespace Presenter
             Level.Instance.ShowGhostBlocks(model);
             CommandManager.Instance.Hover(this);
         }
+
+        public static void NullifyHovered() => hovered = null;
     }
 }

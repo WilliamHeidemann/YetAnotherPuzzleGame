@@ -10,6 +10,7 @@ namespace Presenter
         public Model.Block origin;
         private void OnMouseDown()
         {
+            Block.NullifyHovered();
             CommandManager.Instance.Select(model);
         }
 

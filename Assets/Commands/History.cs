@@ -9,6 +9,10 @@ namespace Commands
     public class History
     {
         public int count => doneCardinalCommands.Count + doneDiagonalCommands.Count;
+        public int doneCardinalCount => doneCardinalCommands.Count;
+        public int doneDiagonalCount => doneDiagonalCommands.Count;
+        public int undoneCardinalCount => undoneCardinalCommands.Count;
+        public int undoneDiagonalCount => undoneDiagonalCommands.Count;
 
         private readonly Stack<Command> doneCardinalCommands = new();
         private readonly Stack<Command> undoneCardinalCommands = new();

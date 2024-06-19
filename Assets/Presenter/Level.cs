@@ -154,5 +154,13 @@ namespace Presenter
             public void IncrementCount() => used.Value++;
             public void DecrementCount() => used.Value--;
         }
+
+        public void CheckCompletion()
+        {
+            var board = grid.GetBlocks();
+            var goal = blockLayout.targetConfiguration;
+            var isLevelComplete = board.All(block => goal.Contains(block));
+            // Give an option to go to next level
+        }
     }
 }
