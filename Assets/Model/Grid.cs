@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Commands;
+using UnityEngine;
 
 namespace Model
 {
@@ -50,9 +51,14 @@ namespace Model
 
         public bool IsAvailable(Location location) =>
             location.x >= 0 && location.y >= 0 &&
-            location.x < width && location.y < width &&
+            location.x < width && location.y < height &&
             blocks.All(b => b.location != location);
 
         public IEnumerable<Block> GetBlocks() => blocks;
+
+        public void PrintOccupiedBlocks()
+        {
+            blocks.ForEach(b => Debug.Log(b.location));
+        }
     }
 }

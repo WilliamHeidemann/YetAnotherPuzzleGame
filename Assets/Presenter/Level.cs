@@ -46,11 +46,6 @@ namespace Presenter
             CreateLevel(levels[0]);
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space)) ClearLevel();
-        }
-
         private void ClearLevel()
         {
             LevelAnimator.BlocksOut(AllBlocks());
@@ -120,8 +115,7 @@ namespace Presenter
             {
                 if (!grid.IsAvailable(neighbor)) continue;
                 var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
-                ghost.model = new Model.Block(neighbor, hover.type);
-                ghost.origin = hover;
+                ghost.model = new Block(neighbor, hover.type);
                 ghost.GetComponent<MeshRenderer>().material = hover.type == Model.Block.Type.Cardinal ? blue : red;
                 ghostBlocks.Add(ghost);
             }
@@ -165,8 +159,8 @@ namespace Presenter
             MovableBlock.NullifyHovered();
         }
 
-        public void UndoCardinalCommand() => UndoCommand(Model.Block.Type.Cardinal);
-        public void UndoDiagonalCommand() => UndoCommand(Model.Block.Type.Diagonal);
+        public void UndoCardinalCommand() => UndoCommand(Block.Type.Cardinal);
+        public void UndoDiagonalCommand() => UndoCommand(Block.Type.Diagonal);
 
         private void UndoCommand(Model.Block.Type type)
         {
@@ -200,10 +194,7 @@ namespace Presenter
             var board = grid.GetBlocks();
             var goal = currentLevel.targetConfiguration;
             isLevelComplete = board.All(block => goal.Contains(block));
-            if (isLevelComplete)
-            {
-                NextLevel();
-            }
+            if (isLevelComplete) NextLevel();
         }
 
         private async void NextLevel()

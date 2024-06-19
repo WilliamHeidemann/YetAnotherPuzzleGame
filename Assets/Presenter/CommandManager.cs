@@ -41,7 +41,10 @@ namespace Presenter
         private void Tween(GameObject objectToMove, Vector3 targetLocation)
         {
             if (!animations.ContainsKey(objectToMove)) animations.Add(objectToMove, new Queue<Vector3>());
-            if (animations[objectToMove].Count == 0) CreateTween(objectToMove, targetLocation);
+            if (animations[objectToMove].Count == 0)
+            {
+                CreateTween(objectToMove, targetLocation);
+            }
             animations[objectToMove].Enqueue(targetLocation);
             
             void CreateTween(GameObject o, Vector3 position)

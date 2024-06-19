@@ -42,5 +42,10 @@ namespace Model
             new Location(location.x - 1, location.y + 1),
             new Location(location.x + 1, location.y - 1),
         };
+
+        public override string ToString()
+        {
+            return location.ToString();
+        }
     }
 }

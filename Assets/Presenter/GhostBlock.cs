@@ -7,7 +7,6 @@ namespace Presenter
     public class GhostBlock : MonoBehaviour
     {
         public Block model;
-        public Block origin;
         private void OnMouseDown()
         {
             CommandManager.Instance.Select(model);
