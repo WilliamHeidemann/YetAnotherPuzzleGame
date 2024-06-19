@@ -20,26 +20,30 @@ namespace Presenter
         [SerializeField] private GameObject groundPrefab;
         [SerializeField] private Material blue;
         [SerializeField] private Material red;
-        
+
         private Grid grid;
         private History history;
         public MoveData moveData { get; private set; }
         private readonly List<GhostBlock> ghostBlocks = new();
-        
+
         protected override void Awake()
         {
             base.Awake();
-            
-            if (blockLayout == null) throw new Exception("Block Layout Scriptable Object has not been set.");
-            grid = new Grid(blockLayout.width);
-            history = new History();
-            moveData = new MoveData(blockLayout.maxMoves);
+            CreateLevel(blockLayout);
+        }
 
-            var width = blockLayout.width;
+        private void CreateLevel(BlockLayout level)
+        {
+            if (level == null) throw new Exception("Block Layout Scriptable Object has not been set.");
+            grid = new Grid(level.width);
+            history = new History();
+            moveData = new MoveData(level.maxMoves);
+
+            var width = level.width;
             For.NestedRange(width, width, InstantiateGroundBlock);
-            
-            
-            foreach (var block in blockLayout.startingConfiguration)
+
+
+            foreach (var block in level.startingConfiguration)
             {
                 grid.AddBlock(block);
                 InstantiateBlock(block);
@@ -58,7 +62,7 @@ namespace Presenter
                     block.type == Model.Block.Type.Cardinal ? blue : red;
             }
         }
-        
+
         private void InstantiateBlock(Model.Block block)
         {
             var prefab = block.type switch
@@ -78,16 +82,17 @@ namespace Presenter
         public void ShowGhostBlocks(Model.Block hover)
         {
             HideGhostBlocks();
-            
+
             var middle = hover.location;
             var neighbors = hover.neighbors;
-            
+
             foreach (var neighbor in neighbors)
             {
                 if (!grid.IsAvailable(neighbor)) continue;
                 var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
                 ghost.model = new Model.Block(neighbor, hover.type);
                 ghost.origin = hover;
+                ghost.GetComponent<MeshRenderer>().material = hover.type == Model.Block.Type.Cardinal ? blue : red;
                 ghostBlocks.Add(ghost);
             }
         }
@@ -96,26 +101,28 @@ namespace Presenter
         {
             foreach (var ghostBlock in ghostBlocks)
             {
-                LeanTween.move(ghostBlock.gameObject, ghostBlock.origin.location.asVector3, 1f)
-                    .setEase(LeanTweenType.easeOutExpo);
-                    // .setOnComplete(() => Destroy(ghostBlock.gameObject));
+                // LeanTween.move(ghostBlock.gameObject, ghostBlock.origin.location.asVector3, 1f)
+                //     .setEase(LeanTweenType.easeOutExpo);
+                //     .setOnComplete(() => Destroy(ghostBlock.gameObject));
                 Destroy(ghostBlock.gameObject);
             }
+
             ghostBlocks.Clear();
         }
 
         public void TryMove(Command command)
         {
             if (!grid.IsMoveValid(command)) return;
-            grid.Move(command);
             history.Add(command);
+            grid.Move(command);
             CommandManager.Instance.Do(command);
             moveData.IncrementCount();
+            Block.NullifyHovered();
         }
 
-        
         public void RedoCardinalCommand() => RedoCommand(Model.Block.Type.Cardinal);
         public void RedoDiagonalCommand() => RedoCommand(Model.Block.Type.Diagonal);
+
         private void RedoCommand(Model.Block.Type type)
         {
             if (!history.HasRedo(type, out var command)) return;
@@ -125,10 +132,12 @@ namespace Presenter
             grid.Move(command);
             CommandManager.Instance.Do(command);
             moveData.IncrementCount();
+            Block.NullifyHovered();
         }
 
         public void UndoCardinalCommand() => UndoCommand(Model.Block.Type.Cardinal);
         public void UndoDiagonalCommand() => UndoCommand(Model.Block.Type.Diagonal);
+
         private void UndoCommand(Model.Block.Type type)
         {
             if (!history.HasUndo(type, out var command)) return;
@@ -138,6 +147,7 @@ namespace Presenter
             grid.Move(command, true);
             CommandManager.Instance.Undo(command);
             moveData.DecrementCount();
+            Block.NullifyHovered();
         }
 
         public class MoveData
