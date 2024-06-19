@@ -63,4 +63,5 @@ MonoBehaviour:
       y: 2
     type: 1
   width: 3
+  height: 3
   maxMoves: 4

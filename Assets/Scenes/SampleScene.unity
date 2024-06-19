@@ -477,7 +477,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c55257168054d108369f3651710fea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockLayout: {fileID: 11400000, guid: d7207abe2f5d10248a0db3bd28b3d46e, type: 2}
+  levels:
+  - {fileID: 11400000, guid: d7207abe2f5d10248a0db3bd28b3d46e, type: 2}
+  - {fileID: 11400000, guid: aa4e49e7ce678b84eb986acfda660fd2, type: 2}
+  - {fileID: 11400000, guid: 738c932b8455ff640b07e092e4ae6088, type: 2}
   cardinalPrefab: {fileID: -2166095562911369665, guid: 7dae9d7db01765948ad9c0b2947e824c, type: 3}
   diagonalPrefab: {fileID: 3132879200977078548, guid: d84defc0545663d4bbeca0ff988a28b4, type: 3}
   ghostPrefab: {fileID: 1919144606535907794, guid: 360936aacd2d70046ae81e2dcad825f5, type: 3}

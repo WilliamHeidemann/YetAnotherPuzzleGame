@@ -2,10 +2,10 @@
 
 namespace Presenter
 {
-    public class Block : MonoBehaviour
+    public class MovableBlock : MonoBehaviour
     {
         public Model.Block model;
-        private static Block hovered;
+        private static MovableBlock hovered;
 
         private void OnMouseEnter()
         {

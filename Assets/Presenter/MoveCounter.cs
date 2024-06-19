@@ -1,16 +1,17 @@
 using TMPro;
 using UnityEngine;
+using UnityUtils;
+using UtilityToolkit.Runtime;
 
 namespace Presenter
 {
-    public class MoveCounter : MonoBehaviour
+    public class MoveCounter : Singleton<MoveCounter>
     {
         [SerializeField] private TextMeshProUGUI text;
         private int maxMoves;
-
-        private void Start()
+        
+        public void Subscribe(Level.MoveData moveData)
         {
-            var moveData = Level.Instance.moveData;
             maxMoves = moveData.max;
             moveData.used.OnValueChanged += UpdateText;
             UpdateText(0);

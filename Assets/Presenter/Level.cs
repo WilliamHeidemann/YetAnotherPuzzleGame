@@ -13,9 +13,9 @@ namespace Presenter
 {
     public class Level : Singleton<Level>
     {
-        [SerializeField] private BlockLayout blockLayout;
-        [SerializeField] private Block cardinalPrefab;
-        [SerializeField] private Block diagonalPrefab;
+        [SerializeField] private List<BlockLayout> levels;
+        [SerializeField] private MovableBlock cardinalPrefab;
+        [SerializeField] private MovableBlock diagonalPrefab;
         [SerializeField] private GhostBlock ghostPrefab;
         [SerializeField] private GameObject groundPrefab;
         [SerializeField] private Material blue;
@@ -23,61 +23,91 @@ namespace Presenter
 
         private Grid grid;
         private History history;
-        public MoveData moveData { get; private set; }
+        private MoveData moveData;
+        private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GhostBlock> ghostBlocks = new();
+        private readonly List<GameObject> groundBlocks = new();
+        private bool isLevelComplete;
+        private BlockLayout currentLevel;
+        private int currentLevelIndex;
+
+        private IEnumerable<GameObject> AllBlocks()
+        {
+            var movables = movableBlocks.Select(b => b.gameObject);
+            var ghosts = ghostBlocks.Select(b => b.gameObject);
+            var ground = groundBlocks.Select(b => b.gameObject);
+            return movables.Concat(ghosts).Concat(ground);
+        }
 
         protected override void Awake()
         {
             base.Awake();
-            CreateLevel(blockLayout);
+            ClearLevel();
+            CreateLevel(levels[0]);
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) ClearLevel();
+        }
+
+        private void ClearLevel()
+        {
+            LevelAnimator.BlocksOut(AllBlocks());
+            isLevelComplete = false;
+        }
+        
         private void CreateLevel(BlockLayout level)
         {
             if (level == null) throw new Exception("Block Layout Scriptable Object has not been set.");
-            grid = new Grid(level.width);
+            currentLevel = level;
+            currentLevelIndex++;
+            grid = new Grid(level.width, level.height);
             history = new History();
             moveData = new MoveData(level.maxMoves);
-
-            var width = level.width;
-            For.NestedRange(width, width, InstantiateGroundBlock);
-
+            MoveCounter.Instance.Subscribe(moveData);
+            
+            For.NestedRange(level.height, level.width, InstantiateGroundBlock);
 
             foreach (var block in level.startingConfiguration)
             {
                 grid.AddBlock(block);
                 InstantiateBlock(block);
             }
+            
+            LevelAnimator.BlocksIn(AllBlocks());
         }
 
         private void InstantiateGroundBlock(int i, int j)
         {
             var position = new Vector3(j, -1, i);
             var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
+            groundBlocks.Add(groundBlock);
             var location = new Location(j, i);
-            if (blockLayout.targetConfiguration.Any(block => block.location == location))
+            if (currentLevel.targetConfiguration.Any(block => block.location == location))
             {
-                var block = blockLayout.targetConfiguration.First(block => block.location == location);
+                var block = currentLevel.targetConfiguration.First(block => block.location == location);
                 groundBlock.GetComponent<MeshRenderer>().material =
                     block.type == Model.Block.Type.Cardinal ? blue : red;
             }
         }
 
-        private void InstantiateBlock(Model.Block block)
+        private void InstantiateBlock(Block block)
         {
             var prefab = block.type switch
             {
-                Model.Block.Type.Cardinal => cardinalPrefab,
-                Model.Block.Type.Diagonal => diagonalPrefab,
+                Block.Type.Cardinal => cardinalPrefab,
+                Block.Type.Diagonal => diagonalPrefab,
                 _ => throw new ArgumentOutOfRangeException()
             };
 
             var position = block.location.asVector3;
-            var sceneBlock = Instantiate(prefab, position, Quaternion.identity);
-            sceneBlock.model = block;
+            var movableBlock = Instantiate(prefab, position, Quaternion.identity);
+            movableBlock.model = block;
+            movableBlocks.Add(movableBlock);
         }
 
-        public bool HasMoves() => moveData.used.Value < moveData.max;
+        public bool HasMoves() => moveData.used.Value < moveData.max && isLevelComplete == false;
 
         public void ShowGhostBlocks(Model.Block hover)
         {
@@ -117,7 +147,7 @@ namespace Presenter
             grid.Move(command);
             CommandManager.Instance.Do(command);
             moveData.IncrementCount();
-            Block.NullifyHovered();
+            MovableBlock.NullifyHovered();
         }
 
         public void RedoCardinalCommand() => RedoCommand(Model.Block.Type.Cardinal);
@@ -132,7 +162,7 @@ namespace Presenter
             grid.Move(command);
             CommandManager.Instance.Do(command);
             moveData.IncrementCount();
-            Block.NullifyHovered();
+            MovableBlock.NullifyHovered();
         }
 
         public void UndoCardinalCommand() => UndoCommand(Model.Block.Type.Cardinal);
@@ -147,7 +177,7 @@ namespace Presenter
             grid.Move(command, true);
             CommandManager.Instance.Undo(command);
             moveData.DecrementCount();
-            Block.NullifyHovered();
+            MovableBlock.NullifyHovered();
         }
 
         public class MoveData
@@ -168,9 +198,20 @@ namespace Presenter
         public void CheckCompletion()
         {
             var board = grid.GetBlocks();
-            var goal = blockLayout.targetConfiguration;
-            var isLevelComplete = board.All(block => goal.Contains(block));
-            // Give an option to go to next level
+            var goal = currentLevel.targetConfiguration;
+            isLevelComplete = board.All(block => goal.Contains(block));
+            if (isLevelComplete)
+            {
+                NextLevel();
+            }
+        }
+
+        private async void NextLevel()
+        {
+            await Awaitable.WaitForSecondsAsync(1);
+            ClearLevel();
+            await Awaitable.WaitForSecondsAsync(2);
+            CreateLevel(levels[currentLevelIndex]);
         }
     }
 }

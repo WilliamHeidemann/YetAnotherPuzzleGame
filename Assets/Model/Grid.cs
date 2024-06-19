@@ -9,11 +9,13 @@ namespace Model
     {
         private readonly ICollection<Block> blocks;
         private readonly int width;
+        private readonly int height;
 
-        public Grid(int width)
+        public Grid(int width, int height)
         {
             blocks = new List<Block>();
             this.width = width;
+            this.height = height;
         }
 
         public void AddBlock(Block block)
