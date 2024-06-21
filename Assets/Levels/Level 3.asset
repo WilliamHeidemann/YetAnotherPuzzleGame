@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingConfiguration:
   - location:
-      x: 0
+      x: 1
       y: 0
     type: 1
   - location:
@@ -22,9 +22,9 @@ MonoBehaviour:
       y: 1
     type: 1
   - location:
-      x: 1
-      y: 0
-    type: 0
+      x: 2
+      y: 1
+    type: 1
   - location:
       x: 1
       y: 1
@@ -32,36 +32,28 @@ MonoBehaviour:
   - location:
       x: 1
       y: 2
-    type: 0
-  - location:
-      x: 2
-      y: 1
     type: 0
   targetConfiguration:
   - location:
+      x: 1
+      y: 0
+    type: 1
+  - location:
+      x: 0
+      y: 1
+    type: 1
+  - location:
+      x: 2
+      y: 1
+    type: 1
+  - location:
       x: 0
       y: 0
     type: 0
   - location:
       x: 1
-      y: 0
-    type: 1
-  - location:
-      x: 1
-      y: 1
-    type: 0
-  - location:
-      x: 1
       y: 2
     type: 0
-  - location:
-      x: 2
-      y: 1
-    type: 0
-  - location:
-      x: 2
-      y: 2
-    type: 1
   width: 3
   height: 3
   maxMoves: 4

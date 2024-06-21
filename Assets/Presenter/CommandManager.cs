@@ -30,6 +30,7 @@ namespace Presenter
 
         private void Move(Model.Block from, Model.Block to)
         {
+            print($"Block count: {FindObjectsByType<MovableBlock>(FindObjectsSortMode.None).Length}");
             var blockToMove = FindObjectsByType<MovableBlock>(FindObjectsSortMode.None)
                 .First(block => block.model.location == from.location);
             blockToMove.model = to;

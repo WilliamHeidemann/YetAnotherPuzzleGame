@@ -49,6 +49,10 @@ namespace Presenter
         private void ClearLevel()
         {
             LevelAnimator.BlocksOut(AllBlocks());
+            AllBlocks().ForEach(b => Destroy(b.gameObject, 2f));
+            movableBlocks.Clear();
+            ghostBlocks.Clear();
+            groundBlocks.Clear();
             isLevelComplete = false;
         }
         

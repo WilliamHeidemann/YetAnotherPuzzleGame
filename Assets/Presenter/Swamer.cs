@@ -5,12 +5,14 @@ using Random = UnityEngine.Random;
 public class Swamer : MonoBehaviour
 {
     private Quaternion targetRotation;
-    private Vector3 targetPoint;
+    private Vector3 targetPoint = new (2f, 2f, 2f);
     [SerializeField] private float rotationSpeed;
     [SerializeField] private float flyingSpeed;
+    private Camera mainCamera;
 
     private void Start()
     {
+        mainCamera = Camera.main;
         rotationSpeed = Random.Range(100f, 300f);
         flyingSpeed = Random.Range(0.01f, 0.03f);
     }
@@ -30,7 +32,7 @@ public class Swamer : MonoBehaviour
 
     private void UpdateTarget()
     {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         var didHit = Physics.Raycast(ray, out var hit);
         if (!didHit) return;
         targetPoint = hit.point + Vector3.up * 2;
