@@ -32,7 +32,23 @@ public class Swamer : MonoBehaviour
 
     private void UpdateTarget()
     {
-        var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        var position = Vector3.zero;
+        if (Input.mousePresent)
+        {
+            position = Input.mousePosition;
+        } 
+        else if (Input.touchCount > 0)
+        {
+            position = Input.GetTouch(0).position;
+        }
+
+        if (Vector3.zero == position ||
+            float.IsNegativeInfinity(position.x) || 
+            float.IsNegativeInfinity(position.y) || 
+            float.IsPositiveInfinity(position.x) || 
+            float.IsPositiveInfinity(position.y)) return;
+        
+        var ray = mainCamera.ScreenPointToRay(position);
         var didHit = Physics.Raycast(ray, out var hit);
         if (!didHit) return;
         targetPoint = hit.point + Vector3.up * 2;
