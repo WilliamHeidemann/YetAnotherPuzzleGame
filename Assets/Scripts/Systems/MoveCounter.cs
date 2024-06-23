@@ -5,18 +5,18 @@ using UtilityToolkit.Runtime;
 
 namespace Systems
 {
-    public class MoveCounter : Singleton<MoveCounter>
+    public class MoveCounter
     {
-        [SerializeField] private TextMeshProUGUI text;
-
-        private Observable<int> moveCount;
-        private int max;
+        private readonly TextMeshProUGUI text;
+        private readonly Observable<int> moveCount;
+        private readonly int max;
         public int count => moveCount.Value;
         public void IncrementCount() => moveCount.Value++;
         public void DecrementCount() => moveCount.Value--;
 
-        public void Initialize(int maxCount)
+        public MoveCounter(int maxCount, TextMeshProUGUI countingText)
         {
+            text = countingText;
             max = maxCount;
             moveCount = new Observable<int>();
             moveCount.OnValueChanged += UpdateText;

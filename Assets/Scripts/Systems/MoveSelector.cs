@@ -35,7 +35,7 @@ namespace Systems
             blockToMove.model = to;
             Level.Instance.CheckCompletion();
             var targetLocation = to.location.asVector3;
-            Tween(blockToMove.gameObject, targetLocation);
+            MoveAnimator.Tween(blockToMove.gameObject, targetLocation);
         }
     }
 }

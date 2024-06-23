@@ -7,7 +7,7 @@ namespace Systems
     {
         private readonly Dictionary<GameObject, Queue<Vector3>> animations = new();
 
-        private void Tween(GameObject objectToMove, Vector3 targetLocation)
+        public void Tween(GameObject objectToMove, Vector3 targetLocation)
         {
             if (!animations.ContainsKey(objectToMove)) animations.Add(objectToMove, new Queue<Vector3>());
             if (animations[objectToMove].Count == 0)
