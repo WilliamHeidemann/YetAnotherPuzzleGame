@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Model;
 using UnityEngine;
+using UnityUtils;
 
-namespace Model
+namespace GameState
 {
     public class Grid
     {

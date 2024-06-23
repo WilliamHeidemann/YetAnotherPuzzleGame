@@ -1,4 +1,4 @@
-﻿using Presenter;
+﻿using Model;
 using Systems;
 using UnityEngine;
 
@@ -6,16 +6,16 @@ namespace Components
 {
     public class MovableBlock : MonoBehaviour
     {
-        public Model.Block model;
+        public Block model;
         private static MovableBlock hovered;
 
         private void OnMouseEnter()
         {
             if (hovered == this) return;
             hovered = this;
-            if (!Level.Instance.HasMoves()) return;
-            Level.Instance.ShowGhostBlocks(model);
-            MoveSelector.Instance.Hover(this);
+            if (!Controller.Instance.HasMoves()) return;
+            Controller.Instance.ShowGhostBlocks(model);
+            MoveSelector.Instance.Hover(model);
         }
 
         public static void NullifyHovered() => hovered = null;

@@ -3,7 +3,7 @@
 namespace Model
 {
     [Serializable]
-    public struct Block
+    public struct Block : IEquatable<Block>
     {
         public Location location;
         public Type type;
@@ -13,7 +13,7 @@ namespace Model
             this.location = location;
             this.type = type;
         }
-        
+
         public Location[] neighbors => type switch
         {
             Type.Cardinal => cardinals,
@@ -37,9 +37,9 @@ namespace Model
             new Location(location.x + 1, location.y - 1),
         };
 
-        public override string ToString()
-        {
-            return location.ToString();
-        }
+        public override string ToString() => location.ToString();
+        public bool Equals(Block other) => location.Equals(other.location) && type == other.type;
+        public override bool Equals(object obj) => obj is Block other && Equals(other);
+        public override int GetHashCode() => HashCode.Combine(location, (int)type);
     }
 }

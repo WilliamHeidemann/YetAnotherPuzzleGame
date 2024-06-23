@@ -3,19 +3,19 @@ using UnityEngine;
 
 namespace Systems
 {
-    public class MoveAnimator
+    public static class MoveAnimator
     {
-        private readonly Dictionary<GameObject, Queue<Vector3>> animations = new();
+        private static readonly Dictionary<GameObject, Queue<Vector3>> Animations = new();
 
-        public void Tween(GameObject objectToMove, Vector3 targetLocation)
+        public static void Move(GameObject objectToMove, Vector3 targetLocation)
         {
-            if (!animations.ContainsKey(objectToMove)) animations.Add(objectToMove, new Queue<Vector3>());
-            if (animations[objectToMove].Count == 0)
+            if (!Animations.ContainsKey(objectToMove)) Animations.Add(objectToMove, new Queue<Vector3>());
+            if (Animations[objectToMove].Count == 0)
             {
                 CreateTween(objectToMove, targetLocation);
             }
 
-            animations[objectToMove].Enqueue(targetLocation);
+            Animations[objectToMove].Enqueue(targetLocation);
 
             void CreateTween(GameObject o, Vector3 position)
             {
@@ -25,10 +25,12 @@ namespace Systems
 
             void StartNext(GameObject obj)
             {
-                animations[obj].Dequeue();
-                if (!animations[obj].TryPeek(out var next)) return;
+                Animations[obj].Dequeue();
+                if (!Animations[obj].TryPeek(out var next)) return;
                 CreateTween(objectToMove, next);
             }
         }
+
+        public static void Clear() => Animations.Clear();
     }
 }

@@ -5,16 +5,15 @@ using Components;
 using Model;
 using ScriptableObjects;
 using UnityEngine;
+using UnityUtils;
 using UtilityToolkit.Runtime;
 using Grid = UnityEngine.Grid;
 using Type = Model.Type;
 
 namespace Systems
 {
-    public class LevelSpawner : MonoBehaviour
+    public class Spawner : MonoBehaviour
     {
-        [SerializeField] private List<BlockLayout> levels;
-        
         [SerializeField] private MovableBlock cardinalPrefab;
         [SerializeField] private MovableBlock diagonalPrefab;
         [SerializeField] private GhostBlock ghostPrefab;
@@ -22,21 +21,9 @@ namespace Systems
         [SerializeField] private Material blue;
         [SerializeField] private Material red;
 
-        
         private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GhostBlock> ghostBlocks = new();
         private readonly List<GameObject> groundBlocks = new();
-        
-        private BlockLayout currentLevel;
-        private int currentLevelIndex;
-
-        
-        protected void Awake()
-        {
-            // base.Awake();
-            ClearLevel();
-            CreateLevel(levels[0]);
-        }
 
         private IEnumerable<GameObject> AllBlocks()
         {
@@ -46,6 +33,14 @@ namespace Systems
             return movables.Concat(ghosts).Concat(ground);
         }
 
+        public void SpawnLevel(Level level)
+        {
+            ClearLevel();
+            InstantiateGroundBlocks(level);
+            level.startingConfiguration.ForEach(InstantiateBlock);
+            LevelAnimator.BlocksIn(AllBlocks());
+        }
+
         private void ClearLevel()
         {
             LevelAnimator.BlocksOut(AllBlocks());
@@ -53,37 +48,30 @@ namespace Systems
             movableBlocks.Clear();
             ghostBlocks.Clear();
             groundBlocks.Clear();
-            isLevelComplete = false;
         }
 
-        private void CreateLevel(BlockLayout level)
+
+        private void InstantiateGroundBlocks(Level level)
         {
-            if (level == null) throw new Exception("Block Layout Scriptable Object has not been set.");
-            currentLevel = level;
-            currentLevelIndex++;
-
-            For.NestedRange(level.height, level.width, InstantiateGroundBlock);
-
-            foreach (var block in level.startingConfiguration)
+            for (int i = 0; i < level.height; i++)
             {
-                grid.AddBlock(block);
-                InstantiateBlock(block);
-            }
-
-            LevelAnimator.BlocksIn(AllBlocks());
-        }
-
-        private void InstantiateGroundBlock(int i, int j)
-        {
-            var position = new Vector3(j, -1, i);
-            var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
-            groundBlocks.Add(groundBlock);
-            var location = new Location(j, i);
-            if (currentLevel.targetConfiguration.Any(block => block.location == location))
-            {
-                var block = currentLevel.targetConfiguration.First(block => block.location == location);
-                groundBlock.GetComponent<MeshRenderer>().material =
-                    block.type == Type.Cardinal ? blue : red;
+                for (int j = 0; j < level.width; j++)
+                {
+                    var position = new Vector3(j, -1, i);
+                    var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
+                    groundBlocks.Add(groundBlock);
+                    var location = new Location(j, i);
+                    var targetOption = level.targetConfiguration.FirstOption(block => block.location == location);
+                    if (targetOption.IsSome(out var target))
+                    {
+                        groundBlock.GetComponent<MeshRenderer>().material = target.type switch
+                        {
+                            Type.Cardinal => blue,
+                            Type.Diagonal => red,
+                            _ => throw new ArgumentOutOfRangeException()
+                        };
+                    }
+                }
             }
         }
 
@@ -101,8 +89,8 @@ namespace Systems
             movableBlock.model = block;
             movableBlocks.Add(movableBlock);
         }
-        
-        public void ShowGhostBlocks(Block hover)
+
+        public void ShowGhostBlocks(Block hover, Func<Location, bool> isMoveValidPredicate)
         {
             HideGhostBlocks();
 
@@ -111,10 +99,15 @@ namespace Systems
 
             foreach (var neighbor in neighbors)
             {
-                if (!grid.IsAvailable(neighbor)) continue;
+                if (isMoveValidPredicate(neighbor)) continue;
                 var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
-                ghost.model = new Block(neighbor, hover.type);
-                ghost.GetComponent<MeshRenderer>().material = hover.type == Type.Cardinal ? blue : red;
+                ghost.location = neighbor;
+                ghost.GetComponent<MeshRenderer>().material = hover.type switch
+                {
+                    Type.Cardinal => blue,
+                    Type.Diagonal => red,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
                 ghostBlocks.Add(ghost);
             }
         }
@@ -124,14 +117,5 @@ namespace Systems
             foreach (var ghostBlock in ghostBlocks) Destroy(ghostBlock.gameObject);
             ghostBlocks.Clear();
         }
-
-        private async void NextLevel()
-        {
-            await Awaitable.WaitForSecondsAsync(1);
-            ClearLevel();
-            await Awaitable.WaitForSecondsAsync(2);
-            CreateLevel(levels[currentLevelIndex]);
-        }
-
     }
 }

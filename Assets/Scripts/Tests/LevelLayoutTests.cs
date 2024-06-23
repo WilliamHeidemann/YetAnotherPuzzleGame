@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GameState;
 using Model;
 using UnityEditor;
 using NUnit.Framework;
@@ -18,7 +19,7 @@ namespace Tests
             var blockLayouts = 
                 AssetDatabase.FindAssets("t:BlockLayout", new[] { "Assets/Levels/" })
                 .Select(AssetDatabase.GUIDToAssetPath)
-                .Select(AssetDatabase.LoadAssetAtPath<BlockLayout>);
+                .Select(AssetDatabase.LoadAssetAtPath<Level>);
 
             foreach (var blockLayout in blockLayouts)
             {
@@ -46,32 +47,32 @@ namespace Tests
             
             history.Add(command);
             Assert.AreEqual(history.count, 1);
-            Assert.AreEqual(history.doneCardinalCount, 1);
+            Assert.AreEqual(history.previousCardinalCount, 1);
             Assert.AreEqual(history.undoneCardinalCount, 0);
             
             history.Undo(Block.Type.Cardinal);
             Assert.AreEqual(history.count, 0);
-            Assert.AreEqual(history.doneCardinalCount, 0);
+            Assert.AreEqual(history.previousCardinalCount, 0);
             Assert.AreEqual(history.undoneCardinalCount, 1);
 
             history.Redo(Block.Type.Cardinal);
             Assert.AreEqual(history.count, 1);
-            Assert.AreEqual(history.doneCardinalCount, 1);
+            Assert.AreEqual(history.previousCardinalCount, 1);
             Assert.AreEqual(history.undoneCardinalCount, 0);
             
             history.Add(command);
             Assert.AreEqual(history.count, 2);
-            Assert.AreEqual(history.doneCardinalCount, 2);
+            Assert.AreEqual(history.previousCardinalCount, 2);
             Assert.AreEqual(history.undoneCardinalCount, 0);
 
             history.Undo(Block.Type.Cardinal);
             Assert.AreEqual(history.count, 1);
-            Assert.AreEqual(history.doneCardinalCount, 1);
+            Assert.AreEqual(history.previousCardinalCount, 1);
             Assert.AreEqual(history.undoneCardinalCount, 1);
             
             history.Undo(Block.Type.Cardinal);
             Assert.AreEqual(history.count, 0);
-            Assert.AreEqual(history.doneCardinalCount, 0);
+            Assert.AreEqual(history.previousCardinalCount, 0);
             Assert.AreEqual(history.undoneCardinalCount, 2);
         }
     }

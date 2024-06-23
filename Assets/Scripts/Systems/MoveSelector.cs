@@ -2,7 +2,6 @@
 using System.Linq;
 using Components;
 using Model;
-using Presenter;
 using UnityEngine;
 using UnityUtils;
 
@@ -10,32 +9,27 @@ namespace Systems
 {
     public class MoveSelector : Singleton<MoveSelector>
     {
-        private Block toMove;
+        private Block selected;
 
-        public void Hover(MovableBlock block)
+        public void Hover(Block block)
         {
-            toMove = block.model;
+            selected = block;
         }
 
-        public void Select(Block toLand)
+        public void Select(Location destination)
         {
-            Level.Instance.HideGhostBlocks();
-            var command = new Move(toMove, toLand, toMove.type);
-            Level.Instance.TryMove(command);
+            var command = new Move(selected.location, destination, selected.type);
+            Controller.Instance.TryMove(command);
         }
 
-        public void Do(Move move) => Move(move.previous, move.next);
-
-        public void Undo(Move move) => Move(move.next, move.previous);
-
-        private void Move(Block from, Block to)
+        public void Move(Move move)
         {
             var blockToMove = FindObjectsByType<MovableBlock>(FindObjectsSortMode.None)
-                .First(block => block.model.location == from.location);
-            blockToMove.model = to;
-            Level.Instance.CheckCompletion();
-            var targetLocation = to.location.asVector3;
-            MoveAnimator.Tween(blockToMove.gameObject, targetLocation);
+                .First(block => block.model.location == move.previous);
+            blockToMove.model = new Block(move.next, move.type);
+            Controller.Instance.CheckCompletion();
+            var targetLocation = move.next.asVector3;
+            MoveAnimator.Move(blockToMove.gameObject, targetLocation);
         }
     }
 }
