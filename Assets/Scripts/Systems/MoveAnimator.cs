@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Model;
 using UnityEngine;
 
 namespace Systems
@@ -7,7 +8,7 @@ namespace Systems
     {
         private static readonly Dictionary<GameObject, Queue<Vector3>> Animations = new();
 
-        public static void Move(GameObject objectToMove, Vector3 targetLocation)
+        public static void Move(GameObject objectToMove, Vector3 targetLocation, Type moveType)
         {
             if (!Animations.ContainsKey(objectToMove)) Animations.Add(objectToMove, new Queue<Vector3>());
             if (Animations[objectToMove].Count == 0)

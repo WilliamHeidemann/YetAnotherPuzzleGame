@@ -41,9 +41,15 @@ namespace Systems
             LevelAnimator.BlocksIn(AllBlocks());
         }
 
+        public Option<MovableBlock> GetMovableBlock(Location location) => 
+            movableBlocks.FirstOption(b => b.model.location == location);
+
         private void ClearLevel()
         {
+            var allBlocks = AllBlocks();
+            if (!allBlocks.Any()) return;
             LevelAnimator.BlocksOut(AllBlocks());
+            MoveAnimator.Clear();
             AllBlocks().ForEach(b => Destroy(b.gameObject, 2f));
             movableBlocks.Clear();
             ghostBlocks.Clear();
@@ -99,7 +105,7 @@ namespace Systems
 
             foreach (var neighbor in neighbors)
             {
-                if (isMoveValidPredicate(neighbor)) continue;
+                if (!isMoveValidPredicate(neighbor)) continue;
                 var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
                 ghost.location = neighbor;
                 ghost.GetComponent<MeshRenderer>().material = hover.type switch

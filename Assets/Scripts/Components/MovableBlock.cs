@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using System;
+using Model;
 using Systems;
 using UnityEngine;
 
@@ -13,11 +14,10 @@ namespace Components
         {
             if (hovered == this) return;
             hovered = this;
-            if (!Controller.Instance.HasMoves()) return;
-            Controller.Instance.ShowGhostBlocks(model);
-            MoveSelector.Instance.Hover(model);
+            OnHover?.Invoke(model);
         }
 
+        public static event Action<Block> OnHover;
         public static void NullifyHovered() => hovered = null;
     }
 }

@@ -12,5 +12,10 @@
             this.next = next;
             this.type = type;
         }
+
+        public override string ToString()
+        {
+            return $"Move: {previous} -> {next} ({type})";
+        }
     }
 }

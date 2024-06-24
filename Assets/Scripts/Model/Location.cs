@@ -19,7 +19,7 @@ namespace Model
         public static bool operator ==(Location a, Location b) => a.x == b.x && a.y == b.y;
         public static bool operator !=(Location a, Location b) => !(a == b);
 
-        public override string ToString() => $"x: {x}, y: {y}";
+        public override string ToString() => $"(x: {x}, y: {y})";
         
         public Vector3 asVector3 => new(x, 0, y);
         public bool Equals(Location other) => x == other.x && y == other.y;

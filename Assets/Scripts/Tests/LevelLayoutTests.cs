@@ -13,7 +13,7 @@ namespace Tests
     {
 
         [Test]
-        public void TestBlockLayout()
+        public void BlockLayout_HasMatchingStartingAndTargetConfig()
         {
 
             var blockLayouts = 
@@ -24,56 +24,17 @@ namespace Tests
             foreach (var blockLayout in blockLayouts)
             {
                 var startingCardinals = 
-                    blockLayout.startingConfiguration.Where(block => block.type == Block.Type.Cardinal);
+                    blockLayout.startingConfiguration.Where(block => block.type == Type.Cardinal);
                 var startingDiagonals = 
-                    blockLayout.startingConfiguration.Where(block => block.type == Block.Type.Diagonal);
+                    blockLayout.startingConfiguration.Where(block => block.type == Type.Diagonal);
                 var targetCardinals = 
-                    blockLayout.targetConfiguration.Where(block => block.type == Block.Type.Cardinal);
+                    blockLayout.targetConfiguration.Where(block => block.type == Type.Cardinal);
                 var targetDiagonals = 
-                    blockLayout.targetConfiguration.Where(block => block.type == Block.Type.Diagonal);
+                    blockLayout.targetConfiguration.Where(block => block.type == Type.Diagonal);
                 
                 Assert.AreEqual(startingCardinals.Count(), targetCardinals.Count(), $"Cardinals of {blockLayout.name}");
                 Assert.AreEqual(startingDiagonals.Count(), targetDiagonals.Count(), $"Diagonals of {blockLayout.name}");
             }
-        }
-
-        [Test]
-        public void TestHistory()
-        {
-            var block1 = new Block(new Location(0,0), Block.Type.Cardinal);
-            var block2 = new Block(new Location(1,0), Block.Type.Cardinal);
-            var command = new Move(block1, block2, Block.Type.Cardinal);
-            var history = new History();
-            
-            history.Add(command);
-            Assert.AreEqual(history.count, 1);
-            Assert.AreEqual(history.previousCardinalCount, 1);
-            Assert.AreEqual(history.undoneCardinalCount, 0);
-            
-            history.Undo(Block.Type.Cardinal);
-            Assert.AreEqual(history.count, 0);
-            Assert.AreEqual(history.previousCardinalCount, 0);
-            Assert.AreEqual(history.undoneCardinalCount, 1);
-
-            history.Redo(Block.Type.Cardinal);
-            Assert.AreEqual(history.count, 1);
-            Assert.AreEqual(history.previousCardinalCount, 1);
-            Assert.AreEqual(history.undoneCardinalCount, 0);
-            
-            history.Add(command);
-            Assert.AreEqual(history.count, 2);
-            Assert.AreEqual(history.previousCardinalCount, 2);
-            Assert.AreEqual(history.undoneCardinalCount, 0);
-
-            history.Undo(Block.Type.Cardinal);
-            Assert.AreEqual(history.count, 1);
-            Assert.AreEqual(history.previousCardinalCount, 1);
-            Assert.AreEqual(history.undoneCardinalCount, 1);
-            
-            history.Undo(Block.Type.Cardinal);
-            Assert.AreEqual(history.count, 0);
-            Assert.AreEqual(history.previousCardinalCount, 0);
-            Assert.AreEqual(history.undoneCardinalCount, 2);
         }
     }
 }

@@ -13,16 +13,17 @@ namespace GameState
         private readonly int width;
         private readonly int height;
 
-        public Grid(int width, int height)
+        public Grid(int width, int height, IEnumerable<Block> startingBlocks)
         {
             blocks = new List<Block>();
             this.width = width;
             this.height = height;
+            startingBlocks.ForEach(AddBlock);
         }
 
         public void AddBlock(Block block)
         {
-            if (Contains(block)) return;
+            if (ContainsBlock(block)) return;
             blocks.Add(block);
         }
 
@@ -36,23 +37,32 @@ namespace GameState
         public void Move(Move move)
         {
             var isValid = IsMoveValid(move);
-            if (!isValid) throw new Exception("Command is invalid");
-            blocks.Remove(GetBlock(move.previous));
-            blocks.Add(GetBlock(move.next));
+            if (!isValid) 
+                throw new Exception("Command is invalid");
+            var block = GetBlock(move.previous);
+            blocks.Remove(block);
+            block.location = move.next;
+            blocks.Add(block);
         }
 
         private Block GetBlock(Location location)
         {
-            if (IsAvailable(location)) throw new Exception($"No block at {location}");
+            if (IsAvailable(location)) 
+                throw new Exception($"No block at {location}");
             return blocks.First(b => b.location == location);
         }
         
-        private bool Contains(Block block) => blocks.Any(b => b.location == block.location);
+        public bool ContainsBlock(Block block) => blocks.Any(b => b.location == block.location);
 
         public bool IsAvailable(Location location) =>
+            IsWithinBounds(location) && !HasBlockAt(location);
+
+        private bool IsWithinBounds(Location location) =>
             location.x >= 0 && location.y >= 0 &&
-            location.x < width && location.y < height &&
-            blocks.All(b => b.location != location);
+            location.x < width && location.y < height;
+
+        private bool HasBlockAt(Location location) =>
+            blocks.Any(b => b.location == location);
 
         public IEnumerable<Block> GetBlocks() => blocks;
 
