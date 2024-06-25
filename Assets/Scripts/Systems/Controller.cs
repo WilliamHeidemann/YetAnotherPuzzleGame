@@ -21,7 +21,19 @@ namespace Systems
         private History history;
         private LevelManager levelManager;
         private MoveCounter moveCounter;
-        public bool HasMoves() => moveCounter.hasMovesLeft && levelManager.isLevelComplete == false;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            MovableBlock.OnHover += BlockHover;
+        }
+
+        private void Update()
+        {
+            Animator.HandleAnimations();
+        }
+
+        private bool HasMoves() => moveCounter.hasMovesLeft && levelManager.isLevelComplete == false;
 
         public void Initialize(Level level, LevelManager manager)
         {
@@ -30,7 +42,6 @@ namespace Systems
             history = new History();
             levelManager = manager;
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
-            MovableBlock.OnHover += BlockHover;
         }
 
         private void BlockHover(Block block)
@@ -82,7 +93,7 @@ namespace Systems
             blockToMove.model.location = move.next;
 
             var targetLocation = move.next.asVector3;
-            MoveAnimator.Move(blockToMove.gameObject, targetLocation, move.type);
+            Animator.Move(blockToMove.gameObject, targetLocation, move.type);
 
             spawner.HideGhostBlocks();
             grid.Move(move);

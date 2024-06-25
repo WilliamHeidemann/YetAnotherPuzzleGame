@@ -38,7 +38,7 @@ namespace Systems
             ClearLevel();
             InstantiateGroundBlocks(level);
             level.startingConfiguration.ForEach(InstantiateBlock);
-            LevelAnimator.BlocksIn(AllBlocks());
+            Animator.BlocksIn(AllBlocks());
         }
 
         public Option<MovableBlock> GetMovableBlock(Location location) => 
@@ -48,8 +48,7 @@ namespace Systems
         {
             var allBlocks = AllBlocks();
             if (!allBlocks.Any()) return;
-            LevelAnimator.BlocksOut(AllBlocks());
-            MoveAnimator.Clear();
+            Animator.BlocksOut(AllBlocks());
             AllBlocks().ForEach(b => Destroy(b.gameObject, 2f));
             movableBlocks.Clear();
             ghostBlocks.Clear();
