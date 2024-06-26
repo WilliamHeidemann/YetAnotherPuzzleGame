@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Model;
 using UnityEngine;
 
@@ -11,24 +12,6 @@ namespace Systems
         private const float FadeTime = 2f;
         private const float MoveTime = 1f;
 
-        // Metode kald fortæller kun hvilken animations næste gang der bliver tid. Altså sætter den ikke igang.
-        // Classen selv bestemmer hvornår disse bliver afspillet.
-
-        // One list for objects to move
-        // One list for objects to fade out
-        // One list for objects to fade in
-
-        private static readonly List<GameObject> BlocksBeingMoved = new();
-        private static readonly List<GameObject> BlocksToFadeOut = new();
-        private static readonly List<GameObject> BlocksToFadeIn = new();
-
-        public static void  HandleAnimations()
-        {
-            if (BlocksBeingMoved.Count > 0) return;
-            if (BlocksToFadeOut.Count > 0) FadeBlocksOut();
-            if (BlocksToFadeIn.Count > 0) FadeBlocksIn();
-        }
-
         public static void Move(GameObject objectToMove, Vector3 targetLocation, Type moveType)
         {
             if (!Animations.ContainsKey(objectToMove)) Animations.Add(objectToMove, new Queue<Vector3>());
@@ -38,7 +21,6 @@ namespace Systems
             }
 
             Animations[objectToMove].Enqueue(targetLocation);
-            BlocksBeingMoved.Add(objectToMove);
 
             void CreateTween(GameObject o, Vector3 position)
             {
@@ -48,7 +30,6 @@ namespace Systems
 
             void StartNext(GameObject obj)
             {
-                BlocksBeingMoved.Remove(obj);
                 Animations[obj].Dequeue();
                 if (!Animations[obj].TryPeek(out var next)) return;
                 CreateTween(objectToMove, next);
@@ -56,32 +37,28 @@ namespace Systems
         }
 
 
-        public static void BlocksOut(IEnumerable<GameObject> blocks)
+        public static async Task BlocksOut(IEnumerable<GameObject> blocks)
         {
-            BlocksToFadeOut.AddRange(blocks);
-
-        }
-
-        private static void FadeBlocksOut()
-        {
-            foreach (var block in BlocksToFadeOut)
+            while (Animations.Values.Any(queue => queue.Count > 0))
+            {
+                await Awaitable.NextFrameAsync();
+            }
+            Animations.Clear();
+            
+            foreach (var block in blocks)
             {
                 var distance = (Random.value + 1) * 10;
                 var point = Random.insideUnitSphere * distance;
                 LeanTween.move(block, point, FadeTime).setEase(LeanTweenType.easeOutQuad);
-                LeanTween.scale(block, Vector3.zero, FadeTime).setEase(LeanTweenType.easeInQuad)
-                    .setOnComplete(() => BlocksToFadeOut.Remove(block));
+                LeanTween.scale(block, Vector3.zero, FadeTime).setEase(LeanTweenType.easeInQuad);
             }
+
+            await Awaitable.WaitForSecondsAsync(FadeTime);
         }
 
-        public static void BlocksIn(IEnumerable<GameObject> blocks)
+        public static async Task BlocksIn(IEnumerable<GameObject> blocks)
         {
-            BlocksToFadeIn.AddRange(blocks);
-        }
-
-        private static void FadeBlocksIn()
-        {
-            foreach (var block in BlocksToFadeIn)
+            foreach (var block in blocks)
             {
                 var originalPosition = block.transform.position;
                 var distance = (Random.value + 1) * 10;
@@ -95,7 +72,7 @@ namespace Systems
                 LeanTween.scale(block, originalScale, FadeTime).setEase(LeanTweenType.easeInQuad);
             }
 
-            BlocksToFadeIn.Clear();
+            await Awaitable.WaitForSecondsAsync(FadeTime);
         }
     }
 }

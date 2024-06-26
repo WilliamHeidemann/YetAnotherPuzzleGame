@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Components;
 using Model;
 using ScriptableObjects;
@@ -33,22 +34,22 @@ namespace Systems
             return movables.Concat(ghosts).Concat(ground);
         }
 
-        public void SpawnLevel(Level level)
+        public async Task SpawnLevel(Level level)
         {
-            ClearLevel();
+            await ClearLevel();
             InstantiateGroundBlocks(level);
             level.startingConfiguration.ForEach(InstantiateBlock);
-            Animator.BlocksIn(AllBlocks());
+            await Animator.BlocksIn(AllBlocks());
         }
 
         public Option<MovableBlock> GetMovableBlock(Location location) => 
             movableBlocks.FirstOption(b => b.model.location == location);
 
-        private void ClearLevel()
+        private async Task ClearLevel()
         {
             var allBlocks = AllBlocks();
             if (!allBlocks.Any()) return;
-            Animator.BlocksOut(AllBlocks());
+            await Animator.BlocksOut(AllBlocks());
             AllBlocks().ForEach(b => Destroy(b.gameObject, 2f));
             movableBlocks.Clear();
             ghostBlocks.Clear();

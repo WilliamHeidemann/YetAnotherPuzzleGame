@@ -28,16 +28,11 @@ namespace Systems
             MovableBlock.OnHover += BlockHover;
         }
 
-        private void Update()
-        {
-            Animator.HandleAnimations();
-        }
-
         private bool HasMoves() => moveCounter.hasMovesLeft && levelManager.isLevelComplete == false;
 
-        public void Initialize(Level level, LevelManager manager)
+        public async void Initialize(Level level, LevelManager manager)
         {
-            spawner.SpawnLevel(level);
+            await spawner.SpawnLevel(level);
             grid = new Grid(level.width, level.height, level.startingConfiguration);
             history = new History();
             levelManager = manager;
@@ -86,13 +81,7 @@ namespace Systems
             Move(undoMove, isUndo: true);
         }
 
-        public void Rewind()
-        {
-            var level = levelManager.current;
-            grid = new Grid(level.width, level.height, level.startingConfiguration);
-            history = new History();
-            spawner.SpawnLevel(level);
-        }
+        public void Rewind() => Initialize(levelManager.current, levelManager);
 
         private void Move(Move move, bool isUndo = false)
         {

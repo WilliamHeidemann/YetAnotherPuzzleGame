@@ -21,7 +21,7 @@ namespace Systems
 
         public void CheckCompletion(IEnumerable<Block> board)
         {
-            isLevelComplete = board.SequenceEqual(current.targetConfiguration);
+            isLevelComplete = current.targetConfiguration.TrueForAll(board.Contains);
             if (isLevelComplete)
             {
                 currentLevelIndex++;
@@ -32,6 +32,7 @@ namespace Systems
         public void EnterLevel(Level level)
         {
             current = level;
+            isLevelComplete = false;
             Controller.Instance.Initialize(level, this);
         }
     }

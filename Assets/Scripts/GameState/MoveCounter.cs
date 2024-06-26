@@ -29,6 +29,7 @@ namespace GameState
             max = maxCount;
             moveCount = new Observable<int>();
             moveCount.OnValueChanged += UpdateText;
+            UpdateText(0);
         }
 
         private void UpdateText(int used)
