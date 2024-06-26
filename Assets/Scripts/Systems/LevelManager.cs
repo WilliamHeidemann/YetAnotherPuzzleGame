@@ -16,6 +16,7 @@ namespace Systems
 
         private void Start()
         {
+            isLevelComplete = false;
             EnterLevel(levels[currentLevelIndex]);
         }
 

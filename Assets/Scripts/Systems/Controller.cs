@@ -43,8 +43,20 @@ namespace Systems
         {
             if (!HasMoves())
                 return;
-            spawner.ShowGhostBlocks(block, grid.IsAvailable);
-            moveSelector.Select(block);
+
+            if (block.neighbors.Any(grid.IsAvailable))
+            {
+                spawner.ShowGhostBlocks(block, grid.IsAvailable);
+                moveSelector.Select(block);
+            }
+            else
+            {
+                var blockOption = spawner.GetMovableBlock(block.location);
+                if (blockOption.IsSome(out var movableBlock))
+                {
+                    Animator.Shake(movableBlock.gameObject);
+                }
+            }
         }
 
         public void TryMove(Move move)

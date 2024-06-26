@@ -42,7 +42,7 @@ namespace Systems
             await Animator.BlocksIn(AllBlocks());
         }
 
-        public Option<MovableBlock> GetMovableBlock(Location location) => 
+        public Option<MovableBlock> GetMovableBlock(Location location) =>
             movableBlocks.FirstOption(b => b.model.location == location);
 
         private async Task ClearLevel()
@@ -55,7 +55,6 @@ namespace Systems
             ghostBlocks.Clear();
             groundBlocks.Clear();
         }
-
 
         private void InstantiateGroundBlocks(Level level)
         {
