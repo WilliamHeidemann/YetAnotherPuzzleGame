@@ -10,7 +10,7 @@ namespace Systems
     public class LevelManager : MonoBehaviour
     {
         [SerializeField] private Level[] levels;
-        private Level current;
+        public Level current { get; private set; }
         private int currentLevelIndex;
         public bool isLevelComplete { get; private set; }
 

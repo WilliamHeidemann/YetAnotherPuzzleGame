@@ -69,7 +69,7 @@ namespace Systems
         public void UndoCardinal() => TryUndo(Type.Cardinal);
         public void UndoDiagonal() => TryUndo(Type.Diagonal);
 
-        private void TryUndo(Type type)
+        private void TryUndo(Type type, bool isRewinding = false)
         {
             if (levelManager.isLevelComplete)
                 return;
@@ -78,11 +78,20 @@ namespace Systems
                 return;
             
             var undoMove = new Move(previousMove.next, previousMove.previous, type);
-            if (!grid.IsMoveValid(undoMove))
+            if (!grid.IsMoveValid(undoMove) && !isRewinding)
                 return;
 
+            history.Undo(type);
             moveCounter.DecrementCount();
             Move(undoMove, isUndo: true);
+        }
+
+        public void Rewind()
+        {
+            var level = levelManager.current;
+            grid = new Grid(level.width, level.height, level.startingConfiguration);
+            history = new History();
+            spawner.SpawnLevel(level);
         }
 
         private void Move(Move move, bool isUndo = false)
@@ -99,7 +108,7 @@ namespace Systems
             grid.Move(move);
             if (!isUndo)
                 history.Add(move);
-            
+
             MovableBlock.NullifyHovered();
             levelManager.CheckCompletion(grid.GetBlocks());
         }
