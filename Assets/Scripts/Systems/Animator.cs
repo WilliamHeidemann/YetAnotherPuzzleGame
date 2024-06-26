@@ -1,41 +1,55 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Model;
 using UnityEngine;
+using Random = UnityEngine.Random;
+using Type = Model.Type;
 
 namespace Systems
 {
     public static class Animator
     {
-        private static readonly Dictionary<GameObject, Queue<Vector3>> Animations = new();
+        private static readonly Dictionary<GameObject, Queue<AnimationData>> Animations = new();
         private const float FadeTime = 2f;
         private const float MoveTime = 1f;
 
         public static void Move(GameObject objectToMove, Vector3 targetLocation, Type moveType)
         {
-            if (!Animations.ContainsKey(objectToMove)) Animations.Add(objectToMove, new Queue<Vector3>());
-            if (Animations[objectToMove].Count == 0)
-            {
-                CreateTween(objectToMove, targetLocation);
-            }
-
-            Animations[objectToMove].Enqueue(targetLocation);
-
-            void CreateTween(GameObject o, Vector3 position)
-            {
-                var tween = LeanTween.move(o, position, MoveTime).setEase(LeanTweenType.easeOutQuad);
-                tween.setOnComplete(() => StartNext(o));
-            }
-
-            void StartNext(GameObject obj)
-            {
-                Animations[obj].Dequeue();
-                if (!Animations[obj].TryPeek(out var next)) return;
-                CreateTween(objectToMove, next);
-            }
+            QueueAnimation(new MoveAnimation(objectToMove, targetLocation, moveType));
         }
 
+        public static void Shake(GameObject objectToMove)
+        {
+            QueueAnimation(new ShakeAnimation(objectToMove));
+        }
+
+        private static void QueueAnimation(AnimationData animation)
+        {
+            if (!Animations.ContainsKey(animation.gameObject))
+            {
+                Animations.Add(animation.gameObject, new Queue<AnimationData>());
+            }
+
+            if (Animations[animation.gameObject].Count == 0)
+            {
+                CreateTween(animation);
+            }
+
+            Animations[animation.gameObject].Enqueue(animation);
+        }
+        
+        private static void CreateTween(AnimationData animation)
+        {
+            animation.Tween().setOnComplete(() => StartNextAnimation(animation.gameObject));
+        }
+        
+        private static void StartNextAnimation(GameObject obj)
+        {
+            Animations[obj].Dequeue();
+            if (!Animations[obj].TryPeek(out var next)) return;
+            CreateTween(next);
+        }
 
         public static async Task BlocksOut(IEnumerable<GameObject> blocks)
         {
@@ -43,8 +57,9 @@ namespace Systems
             {
                 await Awaitable.NextFrameAsync();
             }
+
             Animations.Clear();
-            
+
             foreach (var block in blocks)
             {
                 var distance = (Random.value + 1) * 10;
@@ -73,6 +88,46 @@ namespace Systems
             }
 
             await Awaitable.WaitForSecondsAsync(FadeTime);
+        }
+
+        private abstract class AnimationData
+        {
+            public readonly GameObject gameObject;
+
+            public AnimationData(GameObject gameObject)
+            {
+                this.gameObject = gameObject;
+            }
+
+            // Side effect: Starts playing an animation.
+            public abstract LTDescr Tween();
+        }
+
+        private class MoveAnimation : AnimationData
+        {
+            public readonly Vector3 destination;
+            public readonly Type blockType;
+
+            public MoveAnimation(GameObject gameObject, Vector3 destination, Type type) : base(gameObject)
+            {
+                this.destination = destination;
+                blockType = type;
+            }
+
+            public override LTDescr Tween() => 
+                LeanTween.move(gameObject, destination, MoveTime).setEase(LeanTweenType.easeOutQuad);
+        }
+
+        private class ShakeAnimation : AnimationData
+        {
+            public ShakeAnimation(GameObject gameObject) : base(gameObject)
+            {
+            }
+
+            public override LTDescr Tween()
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
