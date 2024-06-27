@@ -10,7 +10,7 @@ namespace Components
         public Block model;
         private static MovableBlock hovered;
 
-        private void OnMouseEnter()
+        private void OnMouseDown()
         {
             if (hovered == this) return;
             hovered = this;
