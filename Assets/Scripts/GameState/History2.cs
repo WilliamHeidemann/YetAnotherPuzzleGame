@@ -8,7 +8,7 @@ namespace GameState
 {
     public class History2
     {
-        private readonly Dictionary<Type, Stack<Move>> moveStacks = new();
+        private readonly Dictionary<Type, LinkedList<Move>> moveStacks = new();
         private readonly List<Move> allMoves = new();
 
         public History2()
@@ -16,7 +16,7 @@ namespace GameState
             var types = For.GetValues<Type>();
             foreach (var type in types)
             {
-                moveStacks.Add(type, new Stack<Move>());
+                moveStacks.Add(type, new LinkedList<Move>());
             }
         }
 
@@ -24,12 +24,22 @@ namespace GameState
         {
             allMoves.Add(move);
             if (!move.isUndo)
-                moveStacks[move.type].Push(move);
+                moveStacks[move.type].AddLast(move);
         }
 
         public Option<Move> GetLastMove(Type type)
         {
-            return moveStacks[type].Count > 0 ? Option<Move>.Some(moveStacks[type].Pop()) : Option<Move>.None;
+            if (moveStacks[type].Count <= 0) 
+                return Option<Move>.None;
+            
+            var last = moveStacks[type].Last.Value;
+            moveStacks[type].RemoveLast();
+            return Option<Move>.Some(last);
+        }
+
+        public void Undo(Move move)
+        {
+            moveStacks[move.type].Remove(move);
         }
 
         public Option<Move> GetMove(Location next)
@@ -38,5 +48,6 @@ namespace GameState
         }
         
         public int Count(Type type) => allMoves.Count(m => m.type == type);
+        public int count => moveStacks.Values.Sum(moves => moves.Count);
     }
 }

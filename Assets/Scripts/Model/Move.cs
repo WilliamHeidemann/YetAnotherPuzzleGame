@@ -21,5 +21,6 @@
         }
 
         public Move reversed => new(next, previous, type, !isUndo);
+        public Move asUndo => new Move(previous, next, type, true);
     }
 }

@@ -6,7 +6,9 @@ using Model;
 using ScriptableObjects;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityUtils;
+using UtilityToolkit.Runtime;
 using Grid = GameState.Grid;
 using Type = Model.Type;
 
@@ -15,6 +17,8 @@ namespace Systems
     public class Controller : Singleton<Controller>
     {
         [SerializeField] private TextMeshProUGUI moveCounterText;
+        [SerializeField] private Image undoCardinal;
+        [SerializeField] private Image undoDiagonal;
         [SerializeField] private Spawner spawner;
         [SerializeField] private MoveSelector moveSelector;
         private Grid grid;
@@ -69,10 +73,30 @@ namespace Systems
             if (!moveCounter.hasMovesLeft)
                 throw new Exception($"Move attempted when out of moves. (Should not be possible)");
 
-            moveCounter.IncrementCount();
             Move(move);
         }
 
+        public void Rewind()
+        {
+            var count = 0;
+
+            while (history.count > 0)
+            {
+                foreach (var type in For.GetValues<Type>())
+                {
+                    TryUndo(type);
+                }
+
+                count++;
+
+                if (count == 3)
+                {
+                    Debug.Log("Limit reached");
+                    break;
+                }
+            }
+        }
+        
         public void UndoCardinal() => TryUndo(Type.Cardinal);
         public void UndoDiagonal() => TryUndo(Type.Diagonal);
 
@@ -96,27 +120,9 @@ namespace Systems
                 ChainUndo(moveThatLedHere);
             }
 
-            var blockOption = spawner.GetMovableBlock(move.next);
-            if (blockOption.IsSome(out var blockToMove))
-            {
-                blockToMove.model.location = move.previous;
-                var targetLocation = move.previous.asVector3;
-                Animator.Move(blockToMove.gameObject, targetLocation, move.type);
-            }
-
-            spawner.HideGhostBlocks();
-            history.Add(move.reversed);
-            grid.Move(move.reversed);
-            if (move.isUndo)
-                moveCounter.IncrementCount();
-            else
-                moveCounter.DecrementCount();
-
-            MovableBlock.NullifyHovered();
-            levelManager.CheckCompletion(grid.GetBlocks());
+            history.Undo(move);
+            Move(move.reversed);
         }
-
-        public void Rewind() => Initialize(levelManager.current, levelManager);
 
         private void Move(Move move)
         {
@@ -138,6 +144,8 @@ namespace Systems
 
             MovableBlock.NullifyHovered();
             levelManager.CheckCompletion(grid.GetBlocks());
+            
+            print(history.count);
         }
     }
 }
