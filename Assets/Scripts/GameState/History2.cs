@@ -33,7 +33,6 @@ namespace GameState
                 return Option<Move>.None;
             
             var last = moveStacks[type].Last.Value;
-            moveStacks[type].RemoveLast();
             return Option<Move>.Some(last);
         }
 

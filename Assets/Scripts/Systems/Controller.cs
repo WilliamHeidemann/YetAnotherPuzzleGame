@@ -41,6 +41,7 @@ namespace Systems
             history = new History2();
             levelManager = manager;
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
+            UpdateButtons();
         }
 
         private void BlockHover(Block block)
@@ -144,8 +145,14 @@ namespace Systems
 
             MovableBlock.NullifyHovered();
             levelManager.CheckCompletion(grid.GetBlocks());
-            
-            print(history.count);
+
+            UpdateButtons();
+        }
+
+        private void UpdateButtons()
+        {
+            undoCardinal.color = undoCardinal.color.SetAlpha(history.Count(Type.Cardinal) == 0 ? 0.2f : 1f);
+            undoDiagonal.color = undoDiagonal.color.SetAlpha(history.Count(Type.Diagonal) == 0 ? 0.2f : 1f);
         }
     }
 }

@@ -514,6 +514,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveCounterText: {fileID: 1553079734}
+  undoCardinal: {fileID: 1758580477}
+  undoDiagonal: {fileID: 642781643}
   spawner: {fileID: 1566599759}
   moveSelector: {fileID: 1591793702}
 --- !u!4 &461130198 stripped
