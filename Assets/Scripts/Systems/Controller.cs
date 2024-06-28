@@ -76,42 +76,65 @@ namespace Systems
         public void UndoCardinal() => TryUndo(Type.Cardinal);
         public void UndoDiagonal() => TryUndo(Type.Diagonal);
 
-        private void TryUndo(Type type, bool isRewinding = false)
+        private void TryUndo(Type type)
         {
             if (levelManager.isLevelComplete)
                 return;
-            
-            if (!history.HasUndo(type, out var previousMove))
+
+            if (!history.GetLastMove(type).IsSome(out var previousMove))
                 return;
-            
-            var undoMove = new Move(previousMove.next, previousMove.previous, type);
-            if (!grid.IsMoveValid(undoMove) && !isRewinding)
-                return;
-            
-            // undo branch
-            history.Undo(type);
-            // Seems to require the move to know if it was an undo move,
-            // to know if it should increment or decrement the counter.
-            moveCounter.DecrementCount();
-            Move(undoMove, isUndo: true);
+
+            ChainUndo(previousMove);
+        }
+
+        private void ChainUndo(Move move)
+        {
+            var moveThatLedHereOption = history.GetMove(move.previous);
+            if (moveThatLedHereOption.IsSome(out var moveThatLedHere) &&
+                !grid.IsAvailable(move.previous))
+            {
+                ChainUndo(moveThatLedHere);
+            }
+
+            var blockOption = spawner.GetMovableBlock(move.next);
+            if (blockOption.IsSome(out var blockToMove))
+            {
+                blockToMove.model.location = move.previous;
+                var targetLocation = move.previous.asVector3;
+                Animator.Move(blockToMove.gameObject, targetLocation, move.type);
+            }
+
+            spawner.HideGhostBlocks();
+            history.Add(move.reversed);
+            grid.Move(move.reversed);
+            if (move.isUndo)
+                moveCounter.IncrementCount();
+            else
+                moveCounter.DecrementCount();
+
+            MovableBlock.NullifyHovered();
+            levelManager.CheckCompletion(grid.GetBlocks());
         }
 
         public void Rewind() => Initialize(levelManager.current, levelManager);
 
-        private void Move(Move move, bool isUndo = false)
+        private void Move(Move move)
         {
             var block = spawner.GetMovableBlock(move.previous);
-            if (!block.IsSome(out var blockToMove))
-                throw new Exception($"Block not found at {move.previous}. (Should not be possible)");
-            blockToMove.model.location = move.next;
-
-            var targetLocation = move.next.asVector3;
-            Animator.Move(blockToMove.gameObject, targetLocation, move.type);
+            if (block.IsSome(out var blockToMove))
+            {
+                blockToMove.model.location = move.next;
+                var targetLocation = move.next.asVector3;
+                Animator.Move(blockToMove.gameObject, targetLocation, move.type);
+            }
 
             spawner.HideGhostBlocks();
             grid.Move(move);
-            if (!isUndo)
-                history.Add(move);
+            history.Add(move);
+            if (move.isUndo)
+                moveCounter.DecrementCount();
+            else
+                moveCounter.IncrementCount();
 
             MovableBlock.NullifyHovered();
             levelManager.CheckCompletion(grid.GetBlocks());
