@@ -18,7 +18,7 @@ namespace Systems
         [SerializeField] private Spawner spawner;
         [SerializeField] private MoveSelector moveSelector;
         private Grid grid;
-        private History history;
+        private History2 history;
         private LevelManager levelManager;
         private MoveCounter moveCounter;
 
@@ -34,7 +34,7 @@ namespace Systems
         {
             await spawner.SpawnLevel(level);
             grid = new Grid(level.width, level.height, level.startingConfiguration);
-            history = new History();
+            history = new History2();
             levelManager = manager;
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
         }
@@ -87,8 +87,11 @@ namespace Systems
             var undoMove = new Move(previousMove.next, previousMove.previous, type);
             if (!grid.IsMoveValid(undoMove) && !isRewinding)
                 return;
-
+            
+            // undo branch
             history.Undo(type);
+            // Seems to require the move to know if it was an undo move,
+            // to know if it should increment or decrement the counter.
             moveCounter.DecrementCount();
             Move(undoMove, isUndo: true);
         }
