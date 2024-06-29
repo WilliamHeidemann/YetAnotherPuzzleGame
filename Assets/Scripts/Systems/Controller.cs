@@ -79,25 +79,24 @@ namespace Systems
 
         public void Rewind()
         {
+            For.Each<Type>(Rewind);
+        }
+
+        private void Rewind(Type type)
+        {
             var count = 0;
-
-            while (history.count > 0)
+            while (history.Count(type) > 0)
             {
-                foreach (var type in For.GetValues<Type>())
-                {
-                    TryUndo(type);
-                }
-
+                TryUndo(type);
                 count++;
-
-                if (count == 3)
+                if (count == 10)
                 {
                     Debug.Log("Limit reached");
                     break;
                 }
             }
         }
-        
+
         public void UndoCardinal() => TryUndo(Type.Cardinal);
         public void UndoDiagonal() => TryUndo(Type.Diagonal);
 

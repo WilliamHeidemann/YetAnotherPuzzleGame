@@ -46,7 +46,7 @@ namespace GameState
             return allMoves.LastOption(m => m.next == next);
         }
         
-        public int Count(Type type) => allMoves.Count(m => m.type == type);
+        public int Count(Type type) => moveStacks[type].Count(m => m.type == type);
         public int count => moveStacks.Values.Sum(moves => moves.Count);
     }
 }
