@@ -37,21 +37,21 @@ namespace GameState
         public void Move(Move move)
         {
             var isValid = IsMoveValid(move);
-            if (!isValid) 
-                throw new Exception("Command is invalid");
+            if (!isValid)
+                throw new Exception("Move is invalid");
             var block = GetBlock(move.previous);
             blocks.Remove(block);
             block.location = move.next;
             blocks.Add(block);
         }
 
-        private Block GetBlock(Location location)
+        public Block GetBlock(Location location)
         {
-            if (IsAvailable(location)) 
+            if (IsAvailable(location))
                 throw new Exception($"No block at {location}");
             return blocks.First(b => b.location == location);
         }
-        
+
         public bool ContainsBlock(Block block) => blocks.Any(b => b.location == block.location);
 
         public bool IsAvailable(Location location) =>

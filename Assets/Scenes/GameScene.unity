@@ -514,6 +514,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveCounterText: {fileID: 1553079734}
+  undoCardinal: {fileID: 1758580477}
+  undoDiagonal: {fileID: 642781643}
   spawner: {fileID: 1566599759}
   moveSelector: {fileID: 1591793702}
 --- !u!4 &461130198 stripped
@@ -2546,10 +2548,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levels:
+  - {fileID: 11400000, guid: aa4e49e7ce678b84eb986acfda660fd2, type: 2}
   - {fileID: 11400000, guid: d7207abe2f5d10248a0db3bd28b3d46e, type: 2}
   - {fileID: 11400000, guid: 2661aa8a488309d43afc0fb06a71159f, type: 2}
   - {fileID: 11400000, guid: 9cfd6cc42bbb0f84fad21caa58b7f37e, type: 2}
-  - {fileID: 11400000, guid: aa4e49e7ce678b84eb986acfda660fd2, type: 2}
   - {fileID: 11400000, guid: 738c932b8455ff640b07e092e4ae6088, type: 2}
 --- !u!1 &1758580474
 GameObject:

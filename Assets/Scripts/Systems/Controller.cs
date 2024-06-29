@@ -6,7 +6,9 @@ using Model;
 using ScriptableObjects;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityUtils;
+using UtilityToolkit.Runtime;
 using Grid = GameState.Grid;
 using Type = Model.Type;
 
@@ -15,10 +17,12 @@ namespace Systems
     public class Controller : Singleton<Controller>
     {
         [SerializeField] private TextMeshProUGUI moveCounterText;
+        [SerializeField] private Image undoCardinal;
+        [SerializeField] private Image undoDiagonal;
         [SerializeField] private Spawner spawner;
         [SerializeField] private MoveSelector moveSelector;
         private Grid grid;
-        private History history;
+        private History2 history;
         private LevelManager levelManager;
         private MoveCounter moveCounter;
 
@@ -34,9 +38,10 @@ namespace Systems
         {
             await spawner.SpawnLevel(level);
             grid = new Grid(level.width, level.height, level.startingConfiguration);
-            history = new History();
+            history = new History2();
             levelManager = manager;
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
+            UpdateButtons();
         }
 
         private void BlockHover(Block block)
@@ -69,49 +74,84 @@ namespace Systems
             if (!moveCounter.hasMovesLeft)
                 throw new Exception($"Move attempted when out of moves. (Should not be possible)");
 
-            moveCounter.IncrementCount();
             Move(move);
+        }
+
+        public void Rewind()
+        {
+            For.Each<Type>(Rewind);
+        }
+
+        private void Rewind(Type type)
+        {
+            var count = 0;
+            while (history.Count(type) > 0)
+            {
+                TryUndo(type);
+                count++;
+                if (count == 10)
+                {
+                    Debug.Log("Limit reached");
+                    break;
+                }
+            }
         }
 
         public void UndoCardinal() => TryUndo(Type.Cardinal);
         public void UndoDiagonal() => TryUndo(Type.Diagonal);
 
-        private void TryUndo(Type type, bool isRewinding = false)
+        private void TryUndo(Type type)
         {
             if (levelManager.isLevelComplete)
                 return;
-            
-            if (!history.HasUndo(type, out var previousMove))
-                return;
-            
-            var undoMove = new Move(previousMove.next, previousMove.previous, type);
-            if (!grid.IsMoveValid(undoMove) && !isRewinding)
+
+            if (!history.GetLastMove(type).IsSome(out var previousMove))
                 return;
 
-            history.Undo(type);
-            moveCounter.DecrementCount();
-            Move(undoMove, isUndo: true);
+            ChainUndo(previousMove);
         }
 
-        public void Rewind() => Initialize(levelManager.current, levelManager);
+        private void ChainUndo(Move move)
+        {
+            var moveThatLedHereOption = history.GetMove(move.previous);
+            if (moveThatLedHereOption.IsSome(out var moveThatLedHere) &&
+                !grid.IsAvailable(move.previous))
+            {
+                ChainUndo(moveThatLedHere);
+            }
 
-        private void Move(Move move, bool isUndo = false)
+            history.Undo(move);
+            Move(move.reversed);
+        }
+
+        private void Move(Move move)
         {
             var block = spawner.GetMovableBlock(move.previous);
-            if (!block.IsSome(out var blockToMove))
-                throw new Exception($"Block not found at {move.previous}. (Should not be possible)");
-            blockToMove.model.location = move.next;
-
-            var targetLocation = move.next.asVector3;
-            Animator.Move(blockToMove.gameObject, targetLocation, move.type);
+            if (block.IsSome(out var blockToMove))
+            {
+                blockToMove.model.location = move.next;
+                var targetLocation = move.next.asVector3;
+                Animator.Move(blockToMove.gameObject, targetLocation, move.type);
+            }
 
             spawner.HideGhostBlocks();
             grid.Move(move);
-            if (!isUndo)
-                history.Add(move);
+            history.Add(move);
+            if (move.isUndo)
+                moveCounter.DecrementCount();
+            else
+                moveCounter.IncrementCount();
 
             MovableBlock.NullifyHovered();
             levelManager.CheckCompletion(grid.GetBlocks());
+
+            UpdateButtons();
+        }
+
+        private void UpdateButtons()
+        {
+            undoCardinal.color = undoCardinal.color.SetAlpha(history.Count(Type.Cardinal) == 0 ? 0.2f : 1f);
+            undoDiagonal.color = undoDiagonal.color.SetAlpha(history.Count(Type.Diagonal) == 0 ? 0.2f : 1f);
         }
     }
 }
