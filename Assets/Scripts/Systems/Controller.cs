@@ -58,9 +58,7 @@ namespace Systems
             {
                 var blockOption = spawner.GetMovableBlock(block.location);
                 if (blockOption.IsSome(out var movableBlock))
-                {
                     Animator.Shake(movableBlock.gameObject);
-                }
             }
         }
 

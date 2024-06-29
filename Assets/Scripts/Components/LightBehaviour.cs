@@ -15,7 +15,7 @@ namespace Components
         {
             mainCamera = Camera.main;
             rotationSpeed = Random.Range(100f, 300f);
-            flyingSpeed = Random.Range(0.01f, 0.03f);
+            flyingSpeed = Random.Range(0.02f, 0.03f);
         }
 
         void Update()
@@ -52,7 +52,8 @@ namespace Components
             var ray = mainCamera.ScreenPointToRay(position);
             var didHit = Physics.Raycast(ray, out var hit);
             if (!didHit) return;
-            targetPoint = hit.point + Vector3.up * 2;
+            targetPoint = hit.point;// + Vector3.up * 2;
+            targetPoint.y = .8f;
         }
 
         private void OnDrawGizmos()

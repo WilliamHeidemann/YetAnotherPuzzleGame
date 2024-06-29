@@ -11,29 +11,51 @@ namespace Tests
 {
     public class LevelLayoutTests
     {
+        private IEnumerable<Level> levels;
 
+        [SetUp]
+        public void Setup()
+        {
+            levels = Resources.LoadAll<Level>("Levels");
+        }
+        
         [Test]
         public void BlockLayout_HasMatchingStartingAndTargetConfig()
         {
-
-            var blockLayouts = 
-                AssetDatabase.FindAssets("t:BlockLayout", new[] { "Assets/Levels/" })
-                .Select(AssetDatabase.GUIDToAssetPath)
-                .Select(AssetDatabase.LoadAssetAtPath<Level>);
-
-            foreach (var blockLayout in blockLayouts)
+            foreach (var level in levels)
             {
                 var startingCardinals = 
-                    blockLayout.startingConfiguration.Where(block => block.type == Type.Cardinal);
+                    level.startingConfiguration.Where(block => block.type == Type.Cardinal);
                 var startingDiagonals = 
-                    blockLayout.startingConfiguration.Where(block => block.type == Type.Diagonal);
+                    level.startingConfiguration.Where(block => block.type == Type.Diagonal);
                 var targetCardinals = 
-                    blockLayout.targetConfiguration.Where(block => block.type == Type.Cardinal);
+                    level.targetConfiguration.Where(block => block.type == Type.Cardinal);
                 var targetDiagonals = 
-                    blockLayout.targetConfiguration.Where(block => block.type == Type.Diagonal);
+                    level.targetConfiguration.Where(block => block.type == Type.Diagonal);
                 
-                Assert.AreEqual(startingCardinals.Count(), targetCardinals.Count(), $"Cardinals of {blockLayout.name}");
-                Assert.AreEqual(startingDiagonals.Count(), targetDiagonals.Count(), $"Diagonals of {blockLayout.name}");
+                Debug.Log($"{level.name} has {startingCardinals.Count()} starting bobs and {targetCardinals.Count()} target bobs. ");
+                
+                Assert.AreEqual(startingCardinals.Count(), targetCardinals.Count(), $"Cardinals of {level.name}");
+                Assert.AreEqual(startingDiagonals.Count(), targetDiagonals.Count(), $"Diagonals of {level.name}");
+            }
+        }
+
+        [Test]
+        public void BlockLayout_AllBlocksHaveDifferentPositions()
+        {
+            foreach (var level in levels)
+            {
+                var allStartingBlocksHaveDifferentPosition = 
+                    level.startingConfiguration.Count ==
+                    level.startingConfiguration.Distinct().Count();
+                
+                var allTargetBlocksHaveDifferentPosition = 
+                    level.targetConfiguration.Count ==
+                    level.targetConfiguration.Select(b => b.location).Distinct().Count();
+                
+                
+                Assert.True(allStartingBlocksHaveDifferentPosition);
+                Assert.True(allTargetBlocksHaveDifferentPosition);
             }
         }
     }
