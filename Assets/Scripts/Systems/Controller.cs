@@ -42,6 +42,7 @@ namespace Systems
             levelManager = manager;
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
             UpdateButtons();
+            spawner.HighLightMovableBlocks(l => grid.IsAvailable(l) && HasMoves());
         }
 
         private void BlockHover(Block block)
@@ -148,6 +149,7 @@ namespace Systems
             MovableBlock.NullifyHovered();
             levelManager.CheckCompletion(grid.GetBlocks());
 
+            spawner.HighLightMovableBlocks(l => grid.IsAvailable(l) && HasMoves());
             UpdateButtons();
         }
 
