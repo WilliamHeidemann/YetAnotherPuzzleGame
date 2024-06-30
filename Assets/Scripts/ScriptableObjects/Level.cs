@@ -9,8 +9,7 @@ namespace ScriptableObjects
     {
         public List<Block> startingConfiguration;
         public List<Block> targetConfiguration;
-        public int width;
-        public int height;
+        public List<Location> groundBlocks;
         public int maxMoves;
     }
 }

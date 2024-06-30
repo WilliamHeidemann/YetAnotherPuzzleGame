@@ -18,10 +18,24 @@ namespace Tests
         {
             initialBlocks = new List<Block>
             {
-                new (new Location(0, 0), Type.Cardinal),
-                new (new Location(1, 1), Type.Cardinal)
+                new(new Location(0, 0), Type.Cardinal),
+                new(new Location(1, 1), Type.Cardinal)
             };
-            grid = new Grid(3, 3, initialBlocks);
+
+            var groundBlocks = new List<Location>
+            {
+                new(0, 0),
+                new(1, 0),
+                new(2, 0),
+                new(0, 1),
+                new(1, 1),
+                new(2, 1),
+                new(0, 2),
+                new(1, 2),
+                new(2, 2),
+            };
+
+            grid = new Grid(initialBlocks, groundBlocks);
         }
 
         [Test]

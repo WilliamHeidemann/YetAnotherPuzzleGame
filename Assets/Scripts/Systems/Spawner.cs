@@ -55,19 +55,15 @@ namespace Systems
 
         private void InstantiateGroundBlocks(Level level)
         {
-            for (int i = 0; i < level.height; i++)
+            foreach (var location in level.groundBlocks)
             {
-                for (int j = 0; j < level.width; j++)
+                var position = location.asVector3.With(y: -1);
+                var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
+                groundBlocks.Add(groundBlock);
+                var targetOption = level.targetConfiguration.FirstOption(block => block.location == location);
+                if (targetOption.IsSome(out var target))
                 {
-                    var position = new Vector3(j, -1, i);
-                    var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
-                    groundBlocks.Add(groundBlock);
-                    var location = new Location(j, i);
-                    var targetOption = level.targetConfiguration.FirstOption(block => block.location == location);
-                    if (targetOption.IsSome(out var target))
-                    {
-                        groundBlock.GetComponent<MeshRenderer>().material = target.material;
-                    }
+                    groundBlock.GetComponent<MeshRenderer>().material = target.material;
                 }
             }
         }

@@ -11,20 +11,19 @@ namespace GameState
     public class Grid
     {
         private readonly ICollection<Block> blocks;
-        private readonly int width;
-        private readonly int height;
+        private readonly List<Location> ground;
 
-        public Grid(int width, int height, IEnumerable<Block> startingBlocks)
+        public Grid(IEnumerable<Block> startingBlocks, List<Location> groundBlocks)
         {
             blocks = new List<Block>();
-            this.width = width;
-            this.height = height;
+            ground = groundBlocks;
             startingBlocks.ForEach(AddBlock);
         }
 
         public void AddBlock(Block block)
         {
             if (ContainsBlock(block)) return;
+            if (!HasGroundAt(block.location)) return;
             blocks.Add(block);
         }
 
@@ -42,6 +41,7 @@ namespace GameState
                 Debug.LogWarning($"Move is invalid: {move}");
                 return;
             }
+
             var blockOption = GetBlock(move.previous);
             if (!blockOption.IsSome(out var block))
                 return;
@@ -60,11 +60,10 @@ namespace GameState
         public bool ContainsBlock(Block block) => blocks.Any(b => b.location == block.location);
 
         public bool IsAvailable(Location location) =>
-            IsWithinBounds(location) && !HasBlockAt(location);
+            HasGroundAt(location) && !HasBlockAt(location);
 
-        private bool IsWithinBounds(Location location) =>
-            location.x >= 0 && location.y >= 0 &&
-            location.x < width && location.y < height;
+        private bool HasGroundAt(Location location) =>
+            ground.Contains(location);
 
         private bool HasBlockAt(Location location) =>
             blocks.Any(b => b.location == location);

@@ -37,7 +37,7 @@ namespace Systems
         public async void Initialize(Level level, LevelManager manager)
         {
             await spawner.SpawnLevel(level);
-            grid = new Grid(level.width, level.height, level.startingConfiguration);
+            grid = new Grid(level.startingConfiguration, level.groundBlocks);
             history = new History();
             levelManager = manager;
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
