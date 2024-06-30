@@ -87,7 +87,7 @@ namespace Systems
             {
                 TryUndo(type);
                 count++;
-                if (count == 10)
+                if (count == 6)
                 {
                     Debug.Log("Limit reached");
                     break;

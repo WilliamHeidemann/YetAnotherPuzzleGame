@@ -4,6 +4,7 @@ using System.Linq;
 using Model;
 using UnityEngine;
 using UnityUtils;
+using UtilityToolkit.Runtime;
 
 namespace GameState
 {
@@ -36,20 +37,24 @@ namespace GameState
 
         public void Move(Move move)
         {
-            var isValid = IsMoveValid(move);
-            if (!isValid)
-                throw new Exception("Move is invalid");
-            var block = GetBlock(move.previous);
+            if (!IsMoveValid(move))
+            {
+                Debug.LogWarning($"Move is invalid: {move}");
+                return;
+            }
+            var blockOption = GetBlock(move.previous);
+            if (!blockOption.IsSome(out var block))
+                return;
             blocks.Remove(block);
             block.location = move.next;
             blocks.Add(block);
         }
 
-        public Block GetBlock(Location location)
+        private Option<Block> GetBlock(Location location)
         {
             if (IsAvailable(location))
                 throw new Exception($"No block at {location}");
-            return blocks.First(b => b.location == location);
+            return blocks.FirstOption(b => b.location == location);
         }
 
         public bool ContainsBlock(Block block) => blocks.Any(b => b.location == block.location);
