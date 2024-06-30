@@ -77,6 +77,11 @@ namespace Systems
 
         public void Rewind()
         {
+            For.Range(5, RewindIteration);
+        }
+
+        private void RewindIteration()
+        {
             For.Each<Type>(Rewind);
         }
 
