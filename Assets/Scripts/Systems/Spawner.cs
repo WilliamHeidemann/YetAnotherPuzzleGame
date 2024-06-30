@@ -8,7 +8,6 @@ using ScriptableObjects;
 using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Runtime;
-using Grid = UnityEngine.Grid;
 using Type = Model.Type;
 
 namespace Systems
@@ -19,8 +18,6 @@ namespace Systems
         [SerializeField] private MovableBlock diagonalPrefab;
         [SerializeField] private GhostBlock ghostPrefab;
         [SerializeField] private GameObject groundPrefab;
-        [SerializeField] private Material blue;
-        [SerializeField] private Material red;
 
         private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GhostBlock> ghostBlocks = new();
@@ -69,12 +66,7 @@ namespace Systems
                     var targetOption = level.targetConfiguration.FirstOption(block => block.location == location);
                     if (targetOption.IsSome(out var target))
                     {
-                        groundBlock.GetComponent<MeshRenderer>().material = target.type switch
-                        {
-                            Type.Cardinal => blue,
-                            Type.Diagonal => red,
-                            _ => throw new ArgumentOutOfRangeException()
-                        };
+                        groundBlock.GetComponent<MeshRenderer>().material = target.material;
                     }
                 }
             }
@@ -107,12 +99,7 @@ namespace Systems
                 if (!isMoveValidPredicate(neighbor)) continue;
                 var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
                 ghost.location = neighbor;
-                ghost.GetComponent<MeshRenderer>().material = hover.type switch
-                {
-                    Type.Cardinal => blue,
-                    Type.Diagonal => red,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
+                ghost.GetComponent<MeshRenderer>().material = hover.material;
                 ghostBlocks.Add(ghost);
             }
         }

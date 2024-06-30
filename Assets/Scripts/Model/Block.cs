@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Model
 {
@@ -20,6 +21,8 @@ namespace Model
             Type.Diagonal => diagonals,
             _ => throw new ArgumentOutOfRangeException()
         };
+
+        public Material material => Resources.Load<Material>($"Materials/{type.ToString()}");
 
         private Location[] cardinals => new[]
         {

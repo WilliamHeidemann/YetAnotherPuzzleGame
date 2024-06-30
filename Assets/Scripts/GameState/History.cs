@@ -1,45 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Model;
-using Type = Model.Type;
+using UnityEngine;
+using UtilityToolkit.Runtime;
 
 namespace GameState
 {
     public class History
     {
-        public int count => cardinalMoves.Count + diagonalMoves.Count;
-        public int cardinalCount => cardinalMoves.Count;
-        public int diagonalCount => diagonalMoves.Count;
+        private readonly Dictionary<Type, LinkedList<Move>> moveStacks = new();
+        private readonly List<Move> allMoves = new();
 
-        // Maybe just have a dictionary mapping every type to a stack?
-        private readonly Stack<Move> cardinalMoves = new();
-        private readonly Stack<Move> diagonalMoves = new();
-
-        private Stack<Move> GetMoveStack(Type type) =>
-            type switch
+        public History()
+        {
+            var types = For.GetValues<Type>();
+            foreach (var type in types)
             {
-                Type.Cardinal => cardinalMoves,
-                Type.Diagonal => diagonalMoves,
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
+                moveStacks.Add(type, new LinkedList<Move>());
+            }
+        }
 
         public void Add(Move move)
         {
-            GetMoveStack(move.type).Push(move);
+            allMoves.Add(move);
+            if (!move.isUndo)
+                moveStacks[move.type].AddLast(move);
         }
 
-        public bool HasUndo(Type type, out Move move)
+        public Option<Move> GetLastMove(Type type)
         {
-            var moves = GetMoveStack(type);
-            moves.TryPeek(out move);
-            return moves.Any();
+            if (moveStacks[type].Count <= 0) 
+                return Option<Move>.None;
+            
+            var last = moveStacks[type].Last.Value;
+            return Option<Move>.Some(last);
         }
 
-        public void Undo(Type type)
+        public void Undo(Move move)
         {
-            if (!HasUndo(type, out var _)) return;
-            GetMoveStack(type).Pop();
+            moveStacks[move.type].Remove(move);
         }
+
+        public Option<Move> GetMove(Location next)
+        {
+            return allMoves.LastOption(m => m.next == next);
+        }
+        
+        public int Count(Type type) => moveStacks[type].Count(m => m.type == type);
+        public int count => moveStacks.Values.Sum(moves => moves.Count);
     }
 }

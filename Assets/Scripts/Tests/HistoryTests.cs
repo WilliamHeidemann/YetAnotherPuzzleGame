@@ -1,136 +1,107 @@
-﻿using GameState;
-using Model;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using GameState;
+using Model;
+using Type = Model.Type;
 
 namespace Tests
 {
+    [TestFixture]
     public class HistoryTests
     {
         private History history;
-        private Move cardinalMove1;
-        private Move cardinalMove2;
-        private Move diagonalMove1;
-        private Move diagonalMove2;
+        private Type typeCardinal;
+        private Type typeDiagonal;
+        private Move move1;
+        private Move move2;
+        private Move moveUndo;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
             history = new History();
+            typeCardinal = Type.Cardinal;
+            typeDiagonal = Type.Diagonal;
 
-            cardinalMove1 = new Move(new Location(0, 0), new Location(0, 1), Type.Cardinal);
-            cardinalMove2 = new Move(new Location(1, 0), new Location(1, 1), Type.Cardinal);
-
-            diagonalMove1 = new Move(new Location(0, 0), new Location(1, 1), Type.Diagonal);
-            diagonalMove2 = new Move(new Location(1, 1), new Location(2, 2), Type.Diagonal);
+            move1 = new Move(new Location(0, 0), new Location(1, 1), typeCardinal);
+            move2 = new Move(new Location(1, 1), new Location(2, 2), typeDiagonal);
+            moveUndo = new Move(new Location(0, 0), new Location(1, 1), typeCardinal, true);
         }
 
         [Test]
-        public void Add_AddsCardinalMove()
+        public void TestAddMove()
         {
-            history.Add(cardinalMove1);
-
-            Assert.AreEqual(1, history.cardinalCount);
+            history.Add(move1);
+            Assert.AreEqual(1, history.Count(typeCardinal));
             Assert.AreEqual(1, history.count);
         }
 
         [Test]
-        public void Add_AddsDiagonalMove()
+        public void TestAddMoveWithUndo()
         {
-            history.Add(diagonalMove1);
-
-            Assert.AreEqual(1, history.diagonalCount);
-            Assert.AreEqual(1, history.count);
-        }
-
-        [Test]
-        public void Add_AddsMultipleMoves()
-        {
-            history.Add(cardinalMove1);
-            history.Add(diagonalMove1);
-            history.Add(cardinalMove2);
-            history.Add(diagonalMove2);
-
-            Assert.AreEqual(2, history.cardinalCount);
-            Assert.AreEqual(2, history.diagonalCount);
-            Assert.AreEqual(4, history.count);
-        }
-
-        [Test]
-        public void HasUndo_ReturnsFalse_WhenNoCardinalMove()
-        {
-            var result = history.HasUndo(Type.Cardinal, out var move);
-
-            Assert.IsFalse(result);
-            Assert.AreEqual(default(Move), move);
-        }
-
-        [Test]
-        public void HasUndo_ReturnsFalse_WhenNoDiagonalMove()
-        {
-            var result = history.HasUndo(Type.Diagonal, out var move);
-
-            Assert.IsFalse(result);
-            Assert.AreEqual(default(Move), move);
-        }
-
-        [Test]
-        public void HasUndo_ReturnsTrue_WhenCardinalMoveExists()
-        {
-            history.Add(cardinalMove1);
-
-            var result = history.HasUndo(Type.Cardinal, out var move);
-
-            Assert.IsTrue(result);
-            Assert.AreEqual(cardinalMove1, move);
-        }
-
-        [Test]
-        public void HasUndo_ReturnsTrue_WhenDiagonalMoveExists()
-        {
-            history.Add(diagonalMove1);
-
-            var result = history.HasUndo(Type.Diagonal, out var move);
-
-            Assert.IsTrue(result);
-            Assert.AreEqual(diagonalMove1, move);
-        }
-
-        [Test]
-        public void Undo_RemovesCardinalMove()
-        {
-            history.Add(cardinalMove1);
-            history.Undo(Type.Cardinal);
-
-            Assert.AreEqual(0, history.cardinalCount);
+            history.Add(moveUndo);
+            Assert.AreEqual(0, history.Count(typeCardinal));
             Assert.AreEqual(0, history.count);
         }
 
         [Test]
-        public void Undo_RemovesDiagonalMove()
+        public void TestGetLastMove()
         {
-            history.Add(diagonalMove1);
-            history.Undo(Type.Diagonal);
+            history.Add(move1);
+            var lastMove = history.GetLastMove(typeCardinal);
+            Assert.IsTrue(lastMove.IsSome(out var move));
+            Assert.AreEqual(move1, move);
+        }
 
-            Assert.AreEqual(0, history.diagonalCount);
+        [Test]
+        public void TestGetLastMoveWhenNone()
+        {
+            var lastMove = history.GetLastMove(typeCardinal);
+            Assert.IsFalse(lastMove.IsSome(out _));
+        }
+
+        [Test]
+        public void TestUndoMove()
+        {
+            history.Add(move1);
+            history.Undo(move1);
+            Assert.AreEqual(0, history.Count(typeCardinal));
             Assert.AreEqual(0, history.count);
         }
 
         [Test]
-        public void Undo_DoesNothing_WhenNoCardinalMove()
+        public void TestGetMoveByLocation()
         {
-            history.Undo(Type.Cardinal);
-
-            Assert.AreEqual(0, history.cardinalCount);
-            Assert.AreEqual(0, history.count);
+            history.Add(move1);
+            var foundMove = history.GetMove(move1.next);
+            Assert.IsTrue(foundMove.IsSome(out var move));
+            Assert.AreEqual(move1, move);
         }
 
         [Test]
-        public void Undo_DoesNothing_WhenNoDiagonalMove()
+        public void TestGetMoveByLocationWhenNone()
         {
-            history.Undo(Type.Diagonal);
+            var location = new Location(3, 3);
+            var foundMove = history.GetMove(location);
+            Assert.IsFalse(foundMove.IsSome(out _));
+        }
 
-            Assert.AreEqual(0, history.diagonalCount);
-            Assert.AreEqual(0, history.count);
+        [Test]
+        public void TestCountByType()
+        {
+            history.Add(move1);
+            history.Add(move2);
+            Assert.AreEqual(1, history.Count(typeCardinal));
+            Assert.AreEqual(1, history.Count(typeDiagonal));
+        }
+
+        [Test]
+        public void TestOverallCount()
+        {
+            history.Add(move1);
+            history.Add(move2);
+            Assert.AreEqual(2, history.count);
         }
     }
 }

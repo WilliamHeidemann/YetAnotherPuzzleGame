@@ -18,8 +18,8 @@ namespace Tests
         {
             initialBlocks = new List<Block>
             {
-                new Block(new Location(0, 0), Type.Cardinal),
-                new Block(new Location(1, 1), Type.Cardinal)
+                new (new Location(0, 0), Type.Cardinal),
+                new (new Location(1, 1), Type.Cardinal)
             };
             grid = new Grid(3, 3, initialBlocks);
         }
@@ -67,11 +67,12 @@ namespace Tests
         }
 
         [Test]
-        public void Move_ThrowsException_IfMoveIsInvalid()
+        public void Move_WillNotAddBlocks_IfMoveIsInvalid()
         {
             var move = new Move(new Location(2, 2), new Location(2, 1), Type.Cardinal);
-
-            Assert.Throws<Exception>(() => grid.Move(move));
+            grid.Move(move);
+            Assert.IsFalse(grid.ContainsBlock(new Block(new Location(2, 2), Type.Cardinal)));
+            Assert.IsFalse(grid.ContainsBlock(new Block(new Location(2, 1), Type.Cardinal)));
         }
 
         [Test]

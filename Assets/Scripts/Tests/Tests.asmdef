@@ -4,7 +4,8 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "CommandGame"
+        "CommandGame",
+        "WilliamHeidemann.UtilityToolkit"
     ],
     "includePlatforms": [
         "Editor"

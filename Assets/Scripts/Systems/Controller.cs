@@ -22,7 +22,7 @@ namespace Systems
         [SerializeField] private Spawner spawner;
         [SerializeField] private MoveSelector moveSelector;
         private Grid grid;
-        private History2 history;
+        private History history;
         private LevelManager levelManager;
         private MoveCounter moveCounter;
 
@@ -38,7 +38,7 @@ namespace Systems
         {
             await spawner.SpawnLevel(level);
             grid = new Grid(level.width, level.height, level.startingConfiguration);
-            history = new History2();
+            history = new History();
             levelManager = manager;
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
             UpdateButtons();
