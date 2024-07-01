@@ -29,23 +29,34 @@ namespace GameState
 
         public Option<Move> GetLastMove(Type type)
         {
-            if (moveStacks[type].Count <= 0) 
+            if (moveStacks[type].Count <= 0)
                 return Option<Move>.None;
-            
+
             var last = moveStacks[type].Last.Value;
             return Option<Move>.Some(last);
         }
 
         public void Undo(Move move)
         {
-            moveStacks[move.type].Remove(move);
+            var moveStack = moveStacks[move.type];
+            var current = moveStack.Last;
+            while (current != null)
+            {
+                if (current.Value.Equals(move))
+                {
+                    moveStack.Remove(current);
+                    break;
+                }
+
+                current = current.Previous;
+            }
         }
 
         public Option<Move> GetMove(Location next)
         {
             return allMoves.LastOption(m => m.next == next);
         }
-        
+
         public int Count(Type type) => moveStacks[type].Count(m => m.type == type);
         public int count => moveStacks.Values.Sum(moves => moves.Count);
     }

@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System;
+
+namespace Model
 {
     public readonly struct Move
     {
@@ -20,6 +22,12 @@
             return $"Move: {previous} -> {next} ({type})";
         }
 
-        public Move reversed => new(next, previous, type, !isUndo);
+        public Move reversed => new(next, previous, type, true);
+        public bool Equals(Move other) => previous.Equals(other.previous) && next.Equals(other.next) &&
+                                          type == other.type && isUndo == other.isUndo;
+        public override bool Equals(object obj) => obj is Move other && Equals(other);
+        public override int GetHashCode() => HashCode.Combine(previous, next, (int)type, isUndo);
+        public static bool operator ==(Move left, Move right) => left.Equals(right);
+        public static bool operator !=(Move left, Move right) => !left.Equals(right);
     }
 }
