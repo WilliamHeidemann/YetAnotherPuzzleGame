@@ -45,6 +45,7 @@ namespace GameState
             var blockOption = GetBlock(move.previous);
             if (!blockOption.IsSome(out var block))
                 return;
+
             blocks.Remove(block);
             block.location = move.next;
             blocks.Add(block);

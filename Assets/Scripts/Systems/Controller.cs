@@ -17,49 +17,46 @@ namespace Systems
     public class Controller : Singleton<Controller>
     {
         [SerializeField] private TextMeshProUGUI moveCounterText;
-        [SerializeField] private Image undoCardinal;
-        [SerializeField] private Image undoDiagonal;
         [SerializeField] private Spawner spawner;
-        [SerializeField] private MoveSelector moveSelector;
+        [SerializeField] private Selector selector;
         private Grid grid;
         private History history;
         private LevelManager levelManager;
         private MoveCounter moveCounter;
-
-        protected override void Awake()
-        {
-            base.Awake();
-            MovableBlock.OnHover += BlockHover;
-        }
 
         private bool HasMoves() => moveCounter.hasMovesLeft && levelManager.isLevelComplete == false;
 
         public async void Initialize(Level level, LevelManager manager)
         {
             await spawner.SpawnLevel(level);
-            grid = new Grid(level.startingConfiguration, level.groundBlocks);
-            history = new History();
             levelManager = manager;
-            moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
-            UpdateButtons();
-            spawner.HighLightMovableBlocks(l => grid.IsAvailable(l) && HasMoves());
+            ResetGameState(level);
+            // spawner.HighLightMovableBlocks(l => grid.IsAvailable(l) && HasMoves());
         }
 
-        private void BlockHover(Block block)
+        private void ResetGameState(Level level)
         {
+            grid = new Grid(level.startingConfiguration, level.groundBlocks);
+            history = new History();
+            moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
+        }
+
+        public void Select(MovableBlock movable)
+        {
+            selector.Select(movable);
+
             if (!HasMoves())
                 return;
+
+            var block = movable.model;
 
             if (block.neighbors.Any(grid.IsAvailable))
             {
                 spawner.ShowGhostBlocks(block, grid.IsAvailable);
-                moveSelector.Select(block);
             }
             else
             {
-                var blockOption = spawner.GetMovableBlock(block.location);
-                if (blockOption.IsSome(out var movableBlock))
-                    Animator.Shake(movableBlock.gameObject);
+                Animator.Shake(movable.gameObject);
             }
         }
 
@@ -69,64 +66,39 @@ namespace Systems
                 return;
             if (!grid.IsMoveValid(move))
                 throw new Exception(
-                    $"Move is not valid {move.previous} -> {move.next} ({move.type}). (Should not be possible)");
+                    $"Move is not valid {move}.");
             if (!moveCounter.hasMovesLeft)
-                throw new Exception($"Move attempted when out of moves. (Should not be possible)");
+                throw new Exception($"Move attempted when out of moves.");
 
             Move(move);
         }
 
-        public void Rewind()
+        public void Rewind() => Rewind(levelManager.current);
+
+        private async void Rewind(Level level)
         {
-            For.Range(5, RewindIteration);
+            ResetGameState(levelManager.current);
+            await spawner.ResetLevel(level);
         }
 
-        private void RewindIteration()
-        {
-            For.Each<Type>(Rewind);
-        }
-
-        private void Rewind(Type type)
-        {
-            var count = 0;
-            while (history.Count(type) > 0)
-            {
-                TryUndo(type);
-                count++;
-                if (count == 6)
-                {
-                    Debug.Log("Limit reached");
-                    break;
-                }
-            }
-        }
-
-        public void UndoCardinal() => TryUndo(Type.Cardinal);
-        public void UndoDiagonal() => TryUndo(Type.Diagonal);
-
-        private void TryUndo(Type type)
+        public void TryUndo(Block block)
         {
             if (levelManager.isLevelComplete)
                 return;
 
-            if (!history.GetLastMove(type).IsSome(out var previousMove))
+            if (!history.GetMove(block.location).IsSome(out var move))
                 return;
 
-            ChainUndo(previousMove);
-        }
-
-        private void ChainUndo(Move move)
-        {
-            var moveThatLedHereOption = history.GetMove(move.previous);
-            if (moveThatLedHereOption.IsSome(out var moveThatLedHere) &&
-                !grid.IsAvailable(move.previous))
+            if (!grid.IsAvailable(move.previous))
             {
-                ChainUndo(moveThatLedHere);
+                // Play animation showing which way is undo, and that something is in the way
+                return;
             }
 
             history.Undo(move);
             Move(move.reversed);
         }
+
 
         private void Move(Move move)
         {
@@ -146,17 +118,9 @@ namespace Systems
             else
                 moveCounter.IncrementCount();
 
-            MovableBlock.NullifyHovered();
             levelManager.CheckCompletion(grid.GetBlocks());
 
-            spawner.HighLightMovableBlocks(l => grid.IsAvailable(l) && HasMoves());
-            UpdateButtons();
-        }
-
-        private void UpdateButtons()
-        {
-            undoCardinal.color = undoCardinal.color.SetAlpha(history.Count(Type.Cardinal) == 0 ? 0.2f : 1f);
-            undoDiagonal.color = undoDiagonal.color.SetAlpha(history.Count(Type.Diagonal) == 0 ? 0.2f : 1f);
+            // spawner.HighLightMovableBlocks(l => grid.IsAvailable(l) && HasMoves());
         }
     }
 }

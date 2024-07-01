@@ -39,6 +39,11 @@ namespace Systems
             await Animator.BlocksIn(AllBlocks());
         }
 
+        public async Task ResetLevel(Level level)
+        {
+            await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
+        }
+
         public Option<MovableBlock> GetMovableBlock(Location location) =>
             movableBlocks.FirstOption(b => b.model.location == location);
 
@@ -106,12 +111,12 @@ namespace Systems
             ghostBlocks.Clear();
         }
 
-        public void HighLightMovableBlocks(Func<Location, bool> isAvailable)
-        {
-            foreach (var block in movableBlocks)
-            {
-                block.GetComponent<Outline>().enabled = block.model.neighbors.Any(isAvailable);
-            }
-        }
+        // public void HighLightMovableBlocks(Func<Location, bool> isAvailable)
+        // {
+        //     foreach (var block in movableBlocks)
+        //     {
+        //         block.GetComponent<Outline>().enabled = block.model.neighbors.Any(isAvailable);
+        //     }
+        // }
     }
 }

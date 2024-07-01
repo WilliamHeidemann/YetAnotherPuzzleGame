@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Components;
+using Model;
 using UnityEngine;
+using UtilityToolkit.Runtime;
 using Random = UnityEngine.Random;
 using Type = Model.Type;
 
@@ -88,6 +91,18 @@ namespace Systems
             }
 
             await Awaitable.WaitForSecondsAsync(FadeTime);
+        }
+        
+        public static async Task ResetLevel(IEnumerable<Block> levelStartingConfiguration, List<MovableBlock> movableBlocks)
+        {
+            var startPositions = levelStartingConfiguration.ToStack();
+            while (startPositions.Count > 0)
+            {
+                var block = startPositions.Pop();
+                var movable = movableBlocks.First(b => b.model.type == block.type);
+                movable.model = block;
+                Move(movable.gameObject, block.location.asVector3, block.type);
+            }
         }
 
         private abstract class AnimationData

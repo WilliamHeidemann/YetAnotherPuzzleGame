@@ -9,7 +9,7 @@ namespace Components
         public Location location;
         private void OnMouseDown()
         {
-            MoveSelector.Instance.Confirm(location);
+            Selector.Instance.MoveTo(location);
         }
 
         private void Start()
