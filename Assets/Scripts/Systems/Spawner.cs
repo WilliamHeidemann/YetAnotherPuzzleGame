@@ -8,6 +8,7 @@ using ScriptableObjects;
 using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Runtime;
+using Animator = Animation.Animator;
 using Type = Model.Type;
 
 namespace Systems

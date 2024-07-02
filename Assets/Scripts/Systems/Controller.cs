@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityUtils;
 using UtilityToolkit.Runtime;
+using Animator = Animation.Animator;
 using Grid = GameState.Grid;
 using Type = Model.Type;
 

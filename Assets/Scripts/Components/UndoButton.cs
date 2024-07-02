@@ -1,5 +1,6 @@
 ﻿using Systems;
 using UnityEngine;
+using Animator = Animation.Animator;
 
 namespace Components
 {
@@ -8,6 +9,7 @@ namespace Components
         public void Interact()
         {
             Selector.Instance.Undo();
+            Animator.Squish(gameObject);
         }
     }
 }

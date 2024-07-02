@@ -1,31 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Components;
 using Model;
-using NUnit.Framework;
 using UnityEngine;
-using UtilityToolkit.Runtime;
 using Random = UnityEngine.Random;
 using Type = Model.Type;
 
-namespace Systems
+namespace Animation
 {
     public static class Animator
     {
         private static readonly Dictionary<GameObject, Queue<AnimationData>> Animations = new();
         private const float FadeTime = 2f;
-        private const float MoveTime = 1f;
+        public const float MoveTime = 1f;
 
-        public static void Move(GameObject objectToMove, Vector3 targetLocation, Type moveType)
+        public static void Move(GameObject obj, Vector3 targetLocation, Type moveType)
         {
-            QueueAnimation(new MoveAnimation(objectToMove, targetLocation, moveType));
+            QueueAnimation(new MoveAnimation(obj, targetLocation, moveType));
         }
 
-        public static void Shake(GameObject objectToMove)
+        public static void Shake(GameObject obj)
         {
-            QueueAnimation(new ShakeAnimation(objectToMove));
+            QueueAnimation(new ShakeAnimation(obj));
+        }
+
+        public static void Squish(GameObject obj)
+        {
+            QueueAnimation(new SquishAnimation(obj));
         }
 
         private static void QueueAnimation(AnimationData animation)
@@ -121,65 +123,6 @@ namespace Systems
             }
 
             await Awaitable.WaitForSecondsAsync(MoveTime);
-        }
-
-        private abstract class AnimationData
-        {
-            public readonly GameObject gameObject;
-
-            public AnimationData(GameObject gameObject)
-            {
-                this.gameObject = gameObject;
-            }
-
-            // Side effect: Starts playing an animation.
-            public abstract LTDescr Tween();
-        }
-
-        // Instead of passing a blockType, there might be a different animation class for each type. 
-        private class MoveAnimation : AnimationData
-        {
-            private readonly Vector3 destination;
-            private readonly Type blockType;
-
-            public MoveAnimation(GameObject gameObject, Vector3 destination, Type type) : base(gameObject)
-            {
-                this.destination = destination;
-                blockType = type;
-            }
-
-            public override LTDescr Tween() =>
-                LeanTween.move(gameObject, destination, MoveTime).setEase(LeanTweenType.easeOutQuad);
-        }
-
-        private class ShakeAnimation : AnimationData
-        {
-            public ShakeAnimation(GameObject gameObject) : base(gameObject)
-            {
-            }
-
-            public override LTDescr Tween()
-            {
-                // Create a new sequence
-                LTSeq shakeSequence = LeanTween.sequence();
-
-                // Define the shaking duration and intensity
-                float duration = 1.0f;
-                float intensity = 10f; // Adjust this value to control the shake intensity
-
-                // Add rotation tweens to the sequence
-                shakeSequence.append(LeanTween.rotateZ(gameObject, intensity, duration / 4)
-                    .setEase(LeanTweenType.easeInOutSine));
-                shakeSequence.append(LeanTween.rotateZ(gameObject, -intensity, duration / 2)
-                    .setEase(LeanTweenType.easeInOutSine));
-                shakeSequence.append(
-                    LeanTween.rotateZ(gameObject, 0, duration / 4).setEase(LeanTweenType.easeInOutSine));
-
-                // Optionally, you can repeat the sequence
-                // shakeSequence.setLoopPingPong(1); // Repeat the shake sequence once (you can adjust the loop count as needed)
-
-                return shakeSequence.tween;
-            }
         }
     }
 }
