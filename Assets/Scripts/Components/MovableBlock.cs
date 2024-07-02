@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace Components
 {
-    public class MovableBlock : MonoBehaviour
+    public class MovableBlock : MonoBehaviour, IInteractable
     {
         public Block model;
-
-        private void OnMouseDown()
+        public void Interact()
         {
             Controller.Instance.Select(this);
         }

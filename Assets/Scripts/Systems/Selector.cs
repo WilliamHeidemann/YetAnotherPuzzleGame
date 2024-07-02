@@ -5,32 +5,45 @@ using Model;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityUtils;
+using UtilityToolkit.Runtime;
 
 namespace Systems
 {
     public class Selector : Singleton<Selector>
     {
-        [SerializeField] private Image undo;
-        private MovableBlock selected;
+        private Option<MovableBlock> selected = Option<MovableBlock>.None;
 
         public void Select(MovableBlock block)
         {
-            if (selected != block && selected != null) 
-                selected.GetComponent<Outline>().enabled = false;
+            if (selected.IsSome(out var previous) && block != previous)
+                    previous.GetComponent<Outline>().enabled = false;
+            
             block.GetComponent<Outline>().enabled = true;
-            selected = block;
-            undo.gameObject.SetActive(true);
+            selected = Option<MovableBlock>.Some(block);
         }
 
         public void MoveTo(Location destination)
         {
-            var move = new Move(selected.model.location, destination, selected.model.type);
+            if (!selected.IsSome(out var movable)) 
+                return;
+            var move = new Move(movable.model.location, destination, movable.model.type);
             Controller.Instance.TryMove(move);
         }
 
         public void Undo()
         {
-            Controller.Instance.TryUndo(selected.model);
+            if (!selected.IsSome(out var movable)) 
+                return;
+            Controller.Instance.TryUndo(movable.model);
+        }
+
+        public void Deselect()
+        {
+            if (!selected.IsSome(out var movable)) 
+                return;
+            movable.GetComponent<Outline>().enabled = false;
+            selected = Option<MovableBlock>.None;
+
         }
     }
 }

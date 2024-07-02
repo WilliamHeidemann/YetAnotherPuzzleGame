@@ -97,4 +97,4 @@ MonoBehaviour:
     y: 2
   - x: 2
     y: 2
-  maxMoves: 10
+  maxMoves: 9
