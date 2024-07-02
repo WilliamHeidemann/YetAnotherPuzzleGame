@@ -44,6 +44,7 @@ namespace Systems
         public void Select(MovableBlock movable)
         {
             selector.Select(movable);
+            spawner.HideGhostBlocks();
 
             if (!HasMoves())
                 return;
@@ -86,7 +87,7 @@ namespace Systems
             if (levelManager.isLevelComplete)
                 return;
 
-            if (!history.GetMove(block.location).IsSome(out var move))
+            if (!history.GetMove(block).IsSome(out var move))
                 return;
 
             if (!grid.IsAvailable(move.previous))
@@ -95,7 +96,7 @@ namespace Systems
                 return;
             }
 
-            history.Undo(move);
+            history.Undo(block, move);
             Move(move.reversed);
         }
 
@@ -103,16 +104,16 @@ namespace Systems
         private void Move(Move move)
         {
             var block = spawner.GetMovableBlock(move.previous);
-            if (block.IsSome(out var blockToMove))
-            {
-                blockToMove.model.location = move.next;
-                var targetLocation = move.next.asVector3;
-                Animator.Move(blockToMove.gameObject, targetLocation, move.type);
-            }
+            if (!block.IsSome(out var blockToMove)) 
+                return;
+
+            blockToMove.model = blockToMove.model.WithLocation(move.next);
+            var targetLocation = move.next.asVector3;
+            Animator.Move(blockToMove.gameObject, targetLocation, move.type);
 
             spawner.HideGhostBlocks();
             grid.Move(move);
-            history.Add(move);
+            history.Add(blockToMove.model, move);
             if (move.isUndo)
                 moveCounter.DecrementCount();
             else

@@ -29,7 +29,11 @@ namespace GameState
 
         public bool IsMoveValid(Move move)
         {
-            if (IsAvailable(move.previous)) return false; // There must be a block where we move from
+            if (IsAvailable(move.previous)) 
+            {
+                Debug.Log("previous is empty");
+                return false; // There must be a block where we move from
+            }
             if (!IsAvailable(move.next)) return false; // There should be space where we move to
             return true;
         }
@@ -47,8 +51,7 @@ namespace GameState
                 return;
 
             blocks.Remove(block);
-            block.location = move.next;
-            blocks.Add(block);
+            blocks.Add(block.WithLocation(move.next));
         }
 
         private Option<Block> GetBlock(Location location)

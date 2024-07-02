@@ -90,8 +90,6 @@ namespace Systems
 
         public void ShowGhostBlocks(Block hover, Func<Location, bool> isMoveValidPredicate)
         {
-            HideGhostBlocks();
-
             var middle = hover.location;
             var neighbors = hover.neighbors;
 

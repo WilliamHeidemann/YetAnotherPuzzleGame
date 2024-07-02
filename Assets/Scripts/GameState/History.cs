@@ -8,22 +8,24 @@ namespace GameState
 {
     public class History
     {
-        private readonly List<Move> allMoves = new();
+        private readonly Dictionary<Block, List<Move>> allMoves = new();
 
-        public void Add(Move move)
+        public void Add(Block block, Move move)
         {
-            allMoves.Add(move);
+            if (!allMoves.ContainsKey(block))
+                allMoves.Add(block, new List<Move>());
+            allMoves[block].Add(move);
         }
 
-        public void Undo(Move move)
+        public void Undo(Block block, Move move)
         {
-            var index = allMoves.FindLastIndex(m => m == move);
-            allMoves.RemoveAt(index);
+            var index = allMoves[block].FindLastIndex(m => m == move);
+            allMoves[block].RemoveAt(index);
         }
 
-        public Option<Move> GetMove(Location next)
+        public Option<Move> GetMove(Block block)
         {
-            return allMoves.LastOption(m => m.next == next && !m.isUndo);
+            return allMoves[block].LastOption(m => m.next == block.location && !m.isUndo);
         }
 
         public int count => allMoves.Count;

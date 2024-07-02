@@ -15,6 +15,8 @@ namespace Model
             this.type = type;
         }
 
+        public Block WithLocation(Location newLocation) => new(newLocation, type);
+
         public Location[] neighbors => type switch
         {
             Type.Cardinal => cardinals,
