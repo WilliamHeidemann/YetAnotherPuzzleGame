@@ -42,12 +42,12 @@ namespace Systems
 
             Animations[animation.gameObject].Enqueue(animation);
         }
-        
+
         private static void CreateTween(AnimationData animation)
         {
             animation.Tween().setOnComplete(() => StartNextAnimation(animation.gameObject));
         }
-        
+
         private static void StartNextAnimation(GameObject obj)
         {
             Animations[obj].Dequeue();
@@ -93,8 +93,9 @@ namespace Systems
 
             await Awaitable.WaitForSecondsAsync(FadeTime);
         }
-        
-        public static async Task ResetLevel(IEnumerable<Block> levelStartingConfiguration, List<MovableBlock> movableBlocks)
+
+        public static async Task ResetLevel(IEnumerable<Block> levelStartingConfiguration,
+            IEnumerable<MovableBlock> movableBlocks)
         {
             while (Animations.Values.Any(queue => queue.Count > 0))
             {
@@ -102,16 +103,23 @@ namespace Systems
             }
 
             var movableList = new List<MovableBlock>(movableBlocks);
-            var startPositions = levelStartingConfiguration.ToStack();
-            while (startPositions.Count > 0)
+            var startPositions = levelStartingConfiguration.ToList();
+
+            var atStart = movableList.Where(b => startPositions.Contains(b.model)).ToList();
+            foreach (var movableBlock in atStart)
             {
-                var block = startPositions.Pop();
+                movableList.Remove(movableBlock);
+                startPositions.Remove(movableBlock.model);
+            }
+
+            foreach (var block in startPositions)
+            {
                 var movable = movableList.First(b => b.model.type == block.type);
-                movableList.Remove(movable);
                 movable.model = block;
+                movableList.Remove(movable);
                 Move(movable.gameObject, block.location.asVector3, block.type);
             }
-            
+
             await Awaitable.WaitForSecondsAsync(MoveTime);
         }
 
@@ -140,7 +148,7 @@ namespace Systems
                 blockType = type;
             }
 
-            public override LTDescr Tween() => 
+            public override LTDescr Tween() =>
                 LeanTween.move(gameObject, destination, MoveTime).setEase(LeanTweenType.easeOutQuad);
         }
 
@@ -160,10 +168,13 @@ namespace Systems
                 float intensity = 10f; // Adjust this value to control the shake intensity
 
                 // Add rotation tweens to the sequence
-                shakeSequence.append(LeanTween.rotateZ(gameObject, intensity, duration / 4).setEase(LeanTweenType.easeInOutSine));
-                shakeSequence.append(LeanTween.rotateZ(gameObject, -intensity, duration / 2).setEase(LeanTweenType.easeInOutSine));
-                shakeSequence.append(LeanTween.rotateZ(gameObject, 0, duration / 4).setEase(LeanTweenType.easeInOutSine));
-        
+                shakeSequence.append(LeanTween.rotateZ(gameObject, intensity, duration / 4)
+                    .setEase(LeanTweenType.easeInOutSine));
+                shakeSequence.append(LeanTween.rotateZ(gameObject, -intensity, duration / 2)
+                    .setEase(LeanTweenType.easeInOutSine));
+                shakeSequence.append(
+                    LeanTween.rotateZ(gameObject, 0, duration / 4).setEase(LeanTweenType.easeInOutSine));
+
                 // Optionally, you can repeat the sequence
                 // shakeSequence.setLoopPingPong(1); // Repeat the shake sequence once (you can adjust the loop count as needed)
 

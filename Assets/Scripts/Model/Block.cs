@@ -41,8 +41,10 @@ namespace Model
             new Location(location.x - 1, location.y + 1),
             new Location(location.x + 1, location.y - 1),
         };
-
+        
         public override string ToString() => location.ToString();
+        public static bool operator ==(Block left, Block right) => left.Equals(right);
+        public static bool operator !=(Block left, Block right) => !left.Equals(right);
         public bool Equals(Block other) => location.Equals(other.location) && type == other.type;
         public override bool Equals(object obj) => obj is Block other && Equals(other);
         public override int GetHashCode() => HashCode.Combine(location, (int)type);
