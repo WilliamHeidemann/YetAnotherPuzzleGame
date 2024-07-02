@@ -26,4 +26,12 @@ namespace Model
         public override bool Equals(object obj) => obj is Location other && Equals(other);
         public override int GetHashCode() => HashCode.Combine(x, y);
     }
+
+    public static class Vector3Extensions
+    {
+        public static Location AsLocation(this Vector3 vector3)
+        {
+            return new Location((int)vector3.x, (int)vector3.z);
+        }
+    }
 }

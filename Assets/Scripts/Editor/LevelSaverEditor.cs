@@ -20,20 +20,20 @@ namespace Editor
             {
                 CreateLevelAsset();
             }
-
         }
 
         private void CreateLevelAsset()
         {
             var levelSaver = (LevelSaver)target;
 
-            var ground = 
+            var ground =
                 FindObjectsByType<GroundEditor>(FindObjectsSortMode.None)
-                .Where(b => b.isActive);
-                
-            var groundLocations = 
+                    .Where(b => b.isActive);
+
+            var groundLocations =
                 ground.Select(b => b.asLocation);
-            var startConfig = 
+            
+            var targetConfig =
                 ground
                     .Where(b => b.type != BlockType.Ground)
                     .Select(b =>
@@ -44,12 +44,15 @@ namespace Editor
                             BlockType.Diagonal => Type.Diagonal,
                             _ => throw new ArgumentOutOfRangeException()
                         };
-                        
+
                         return new Block(b.asLocation, type);
                     });
-            var targetConfig = 
+            
+            var startConfig =
                 FindObjectsByType<MovableEditor>(FindObjectsSortMode.None)
+                    .Where(b => b.isActive)
                     .Select(b => b.asBlock);
+            
             var maxMoves = levelSaver.maxMoves;
 
 
@@ -58,7 +61,7 @@ namespace Editor
             level.startingConfiguration = startConfig.ToList();
             level.targetConfiguration = targetConfig.ToList();
             level.maxMoves = maxMoves;
-            
+
             var path = "Assets/Resources/Levels/New Level.asset";
             path = AssetDatabase.GenerateUniqueAssetPath(path);
             AssetDatabase.CreateAsset(level, path);
