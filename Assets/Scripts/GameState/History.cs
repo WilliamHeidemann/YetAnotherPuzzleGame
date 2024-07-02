@@ -28,6 +28,6 @@ namespace GameState
             return allMoves[block].LastOption(m => m.next == block.location && !m.isUndo);
         }
 
-        public int count => allMoves.Count;
+        // public int count => allMoves.Values.Sum();
     }
 }

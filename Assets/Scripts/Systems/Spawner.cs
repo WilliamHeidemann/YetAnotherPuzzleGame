@@ -108,13 +108,5 @@ namespace Systems
             foreach (var ghostBlock in ghostBlocks) Destroy(ghostBlock.gameObject);
             ghostBlocks.Clear();
         }
-
-        // public void HighLightMovableBlocks(Func<Location, bool> isAvailable)
-        // {
-        //     foreach (var block in movableBlocks)
-        //     {
-        //         block.GetComponent<Outline>().enabled = block.model.neighbors.Any(isAvailable);
-        //     }
-        // }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Components;
 using Model;
+using NUnit.Framework;
 using UnityEngine;
 using UtilityToolkit.Runtime;
 using Random = UnityEngine.Random;
@@ -95,14 +96,23 @@ namespace Systems
         
         public static async Task ResetLevel(IEnumerable<Block> levelStartingConfiguration, List<MovableBlock> movableBlocks)
         {
+            while (Animations.Values.Any(queue => queue.Count > 0))
+            {
+                await Awaitable.NextFrameAsync();
+            }
+
+            var movableList = new List<MovableBlock>(movableBlocks);
             var startPositions = levelStartingConfiguration.ToStack();
             while (startPositions.Count > 0)
             {
                 var block = startPositions.Pop();
-                var movable = movableBlocks.First(b => b.model.type == block.type);
+                var movable = movableList.First(b => b.model.type == block.type);
+                movableList.Remove(movable);
                 movable.model = block;
                 Move(movable.gameObject, block.location.asVector3, block.type);
             }
+            
+            await Awaitable.WaitForSecondsAsync(MoveTime);
         }
 
         private abstract class AnimationData
@@ -121,8 +131,8 @@ namespace Systems
         // Instead of passing a blockType, there might be a different animation class for each type. 
         private class MoveAnimation : AnimationData
         {
-            public readonly Vector3 destination;
-            public readonly Type blockType;
+            private readonly Vector3 destination;
+            private readonly Type blockType;
 
             public MoveAnimation(GameObject gameObject, Vector3 destination, Type type) : base(gameObject)
             {
