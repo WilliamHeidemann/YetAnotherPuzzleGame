@@ -33,8 +33,6 @@ namespace Tests
                 var targetDiagonals = 
                     level.targetConfiguration.Where(block => block.type == Type.Diagonal);
                 
-                Debug.Log($"{level.name} has {startingCardinals.Count()} starting bobs and {targetCardinals.Count()} target bobs. ");
-                
                 Assert.AreEqual(startingCardinals.Count(), targetCardinals.Count(), $"Cardinals of {level.name}");
                 Assert.AreEqual(startingDiagonals.Count(), targetDiagonals.Count(), $"Diagonals of {level.name}");
             }

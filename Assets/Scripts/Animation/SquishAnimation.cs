@@ -8,13 +8,13 @@ namespace Animation
         private const float SquishDuration = .1f;
         private const float RaiseDuration = .3f;
 
-        private readonly float originalScaleY = 1f;
-        private readonly float originalPositionY = 0f;
+        private readonly float originalScaleY;
+        private readonly float originalPositionY;
 
         public SquishAnimation(GameObject gameObject) : base(gameObject)
         {
-            // originalScaleY = gameObject.transform.localScale.y;
-            // originalPositionY = gameObject.transform.localPosition.y;
+            originalScaleY = gameObject.transform.localScale.y;
+            originalPositionY = gameObject.transform.localPosition.y;
             Debug.Log($"original scale y: {originalScaleY}");
             Debug.Log($"original position y: {originalPositionY}");
         }
