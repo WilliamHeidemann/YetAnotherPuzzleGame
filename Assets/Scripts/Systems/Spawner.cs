@@ -17,6 +17,7 @@ namespace Systems
     {
         [SerializeField] private MovableBlock cardinalPrefab;
         [SerializeField] private MovableBlock diagonalPrefab;
+        [SerializeField] private MovableBlock frogPrefab;
         [SerializeField] private GhostBlock ghostPrefab;
         [SerializeField] private GameObject groundPrefab;
 
@@ -80,6 +81,7 @@ namespace Systems
             {
                 Type.Cardinal => cardinalPrefab,
                 Type.Diagonal => diagonalPrefab,
+                Type.Frog => frogPrefab,
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -89,14 +91,12 @@ namespace Systems
             movableBlocks.Add(movableBlock);
         }
 
-        public void ShowGhostBlocks(Block hover, Func<Location, bool> isMoveValidPredicate)
+        public void ShowGhostBlocks(Block hover, IEnumerable<Location> validLocations)
         {
             var middle = hover.location;
-            var neighbors = hover.neighbors;
 
-            foreach (var neighbor in neighbors)
+            foreach (var neighbor in validLocations)
             {
-                if (!isMoveValidPredicate(neighbor)) continue;
                 var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
                 ghost.location = neighbor;
                 ghost.GetComponent<MeshRenderer>().material = hover.material;

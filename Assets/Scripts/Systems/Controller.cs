@@ -51,10 +51,11 @@ namespace Systems
                 return;
 
             var block = movable.model;
-
-            if (block.neighbors.Any(grid.IsAvailable))
+            var validNeighbors = block.GetAvailableNeighbors(grid.HasBlockAt, grid.HasGroundAt).ToList();
+            
+            if (validNeighbors.Count > 0)
             {
-                spawner.ShowGhostBlocks(block, grid.IsAvailable);
+                spawner.ShowGhostBlocks(block, validNeighbors);
             }
             else
             {

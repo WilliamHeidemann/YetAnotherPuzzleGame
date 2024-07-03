@@ -3,6 +3,7 @@
     public enum Type
     {
         Cardinal,
-        Diagonal
+        Diagonal,
+        Frog
     }
 }

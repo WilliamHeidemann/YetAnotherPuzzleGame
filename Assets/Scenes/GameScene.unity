@@ -1917,6 +1917,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardinalPrefab: {fileID: -2166095562911369665, guid: 7dae9d7db01765948ad9c0b2947e824c, type: 3}
   diagonalPrefab: {fileID: 3132879200977078548, guid: d84defc0545663d4bbeca0ff988a28b4, type: 3}
+  frogPrefab: {fileID: -2166095562911369665, guid: 2fda0bc10c68e7e4bbb83d6aa26f52ae, type: 3}
   ghostPrefab: {fileID: 1919144606535907794, guid: 360936aacd2d70046ae81e2dcad825f5, type: 3}
   groundPrefab: {fileID: 401113552903002070, guid: 79226737c910e4a40aee1b4b35dc88d0, type: 3}
 --- !u!1 &1591793700
@@ -2008,13 +2009,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levels:
-  - {fileID: 11400000, guid: 985633b9e6cdbfe408e67376fcd606e3, type: 2}
+  - {fileID: 11400000, guid: acd0998f41da1bf46a7453212449c71b, type: 2}
   - {fileID: 11400000, guid: d7207abe2f5d10248a0db3bd28b3d46e, type: 2}
   - {fileID: 11400000, guid: 2661aa8a488309d43afc0fb06a71159f, type: 2}
   - {fileID: 11400000, guid: 9cfd6cc42bbb0f84fad21caa58b7f37e, type: 2}
   - {fileID: 11400000, guid: aa4e49e7ce678b84eb986acfda660fd2, type: 2}
   - {fileID: 11400000, guid: 738c932b8455ff640b07e092e4ae6088, type: 2}
   - {fileID: 11400000, guid: 1eda0aebb085ae946b4992acaa0eee62, type: 2}
+  - {fileID: 11400000, guid: 985633b9e6cdbfe408e67376fcd606e3, type: 2}
   - {fileID: 11400000, guid: 4edcb87b36e6ffe4ab43a3233d158c27, type: 2}
   - {fileID: 11400000, guid: 254eaa12d06055844a04b61d2dbefeb4, type: 2}
 --- !u!1 &1939946118

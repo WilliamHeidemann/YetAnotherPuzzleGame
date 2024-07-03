@@ -16,6 +16,11 @@ namespace Model
             this.y = y;
         }
 
+        public Location With(int addX = 0, int addY = 0)
+        {
+            return new Location(x + addX, y + addY);
+        }
+
         public static bool operator ==(Location a, Location b) => a.x == b.x && a.y == b.y;
         public static bool operator !=(Location a, Location b) => !(a == b);
 

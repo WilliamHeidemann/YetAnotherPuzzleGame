@@ -66,10 +66,10 @@ namespace GameState
         public bool IsAvailable(Location location) =>
             HasGroundAt(location) && !HasBlockAt(location);
 
-        private bool HasGroundAt(Location location) =>
+        public bool HasGroundAt(Location location) =>
             ground.Contains(location);
 
-        private bool HasBlockAt(Location location) =>
+        public bool HasBlockAt(Location location) =>
             blocks.Any(b => b.location == location);
 
         public IEnumerable<Block> GetBlocks() => blocks;

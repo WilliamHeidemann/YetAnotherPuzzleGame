@@ -1,4 +1,5 @@
 using Model;
+using UnityEditor;
 using UnityEngine;
 
 namespace LevelEditor
@@ -20,6 +21,7 @@ namespace LevelEditor
     {
         Cardinal, 
         Diagonal, 
+        Frog,
         Ground
     }
 }

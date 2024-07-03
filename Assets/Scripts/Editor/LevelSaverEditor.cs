@@ -42,6 +42,7 @@ namespace Editor
                         {
                             BlockType.Cardinal => Type.Cardinal,
                             BlockType.Diagonal => Type.Diagonal,
+                            BlockType.Frog => Type.Frog,
                             _ => throw new ArgumentOutOfRangeException()
                         };
 
