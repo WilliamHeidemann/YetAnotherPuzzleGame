@@ -29,10 +29,9 @@ namespace Systems
 
         public async void Initialize(Level level, LevelManager manager)
         {
-            await spawner.SpawnLevel(level);
             levelManager = manager;
             ResetGameState(level);
-            // spawner.HighLightMovableBlocks(l => grid.IsAvailable(l) && HasMoves());
+            await spawner.SpawnLevel(level);
         }
 
         private void ResetGameState(Level level)
@@ -40,6 +39,7 @@ namespace Systems
             grid = new Grid(level.startingConfiguration, level.groundBlocks);
             history = new History();
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
+            selector.Deselect();
         }
 
         public void Select(MovableBlock movable)

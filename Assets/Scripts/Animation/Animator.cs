@@ -37,9 +37,14 @@ namespace Animation
                 Animations.Add(animation.gameObject, new Queue<AnimationData>());
             }
 
-            if (Animations[animation.gameObject].Count == 0)
+            var queueLength = Animations[animation.gameObject].Count;
+            if (queueLength == 0)
             {
                 CreateTween(animation);
+            }
+            else if (queueLength == 2)
+            {
+                return;
             }
 
             Animations[animation.gameObject].Enqueue(animation);
@@ -47,7 +52,7 @@ namespace Animation
 
         private static void CreateTween(AnimationData animation)
         {
-            animation.Tween().setOnComplete(() => StartNextAnimation(animation.gameObject));
+            animation.Tween().append(() => StartNextAnimation(animation.gameObject));
         }
 
         private static void StartNextAnimation(GameObject obj)

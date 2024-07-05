@@ -12,6 +12,6 @@ namespace Animation
         }
 
         // Side effect: Starts playing an animation.
-        public abstract LTDescr Tween();
+        public abstract LTSeq Tween();
     }
 }

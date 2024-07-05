@@ -1,51 +1,48 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Animation
 {
     public class SquishAnimation : AnimationData
     {
-        private const float SquishScale = 0.8f;
+        private const float SquishScale = 0.2f;
         private const float SquishDuration = .1f;
         private const float RaiseDuration = .3f;
 
-        private readonly float originalScaleY;
-        private readonly float originalPositionY;
+        private readonly float originalScaleY = 0.9f;
+        private readonly float originalPositionY = 0f;
 
         public SquishAnimation(GameObject gameObject) : base(gameObject)
         {
-            originalScaleY = gameObject.transform.localScale.y;
-            originalPositionY = gameObject.transform.localPosition.y;
-            Debug.Log($"original scale y: {originalScaleY}");
-            Debug.Log($"original position y: {originalPositionY}");
+            // originalScaleY = gameObject.transform.localScale.y;
+            // originalPositionY = gameObject.transform.localPosition.y;
         }
 
-        public override LTDescr Tween()
+        public override LTSeq Tween()
         {
             var targetScaleY = originalScaleY * SquishScale;
             var targetPositionY = originalPositionY - (originalScaleY - targetScaleY) / 2f;
-            Debug.Log($"target scale y: {targetScaleY}");
-            Debug.Log($"target position y: {targetPositionY}");
 
-            return LeanTween.scaleY(gameObject, targetScaleY, SquishDuration)
+            var downTween = LeanTween.scaleY(gameObject, targetScaleY, SquishDuration)
                 .setEaseOutCubic()
                 .setOnStart(() =>
                 {
-                    // Adjust position for downward scaling effect
                     LeanTween.moveY(gameObject, targetPositionY, SquishDuration)
                         .setEaseOutCubic();
-                })
-                .setOnComplete(() =>
-                {
-                    // Raise back up animation
-                    LeanTween.scaleY(gameObject, originalScaleY / targetScaleY, RaiseDuration)
-                        .setEaseOutBounce()
-                        .setOnStart(() =>
-                        {
-                            // Adjust position for downward scaling effect
-                            LeanTween.moveY(gameObject, originalPositionY / targetPositionY, RaiseDuration)
-                                .setEaseOutBounce();
-                        });
                 });
+
+            var upTween = LeanTween.scaleY(gameObject, originalScaleY, RaiseDuration)
+                .setEaseOutBounce()
+                .setOnStart(() =>
+                {
+                    LeanTween.moveY(gameObject, originalPositionY, RaiseDuration)
+                        .setEaseOutBounce();
+                });
+
+            var sequence = LeanTween.sequence();
+            sequence.append(downTween);
+            sequence.append(upTween);
+            return sequence;
         }
     }
 }

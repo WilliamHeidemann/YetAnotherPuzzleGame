@@ -14,7 +14,12 @@ namespace Animation
             blockType = type;
         }
 
-        public override LTDescr Tween() =>
-            LeanTween.move(gameObject, destination, Animator.MoveTime).setEase(LeanTweenType.easeOutQuad);
+        public override LTSeq Tween()
+        {
+            var sequence = LeanTween.sequence();
+            var move = LeanTween.move(gameObject, destination, Animator.MoveTime).setEase(LeanTweenType.easeOutQuad);
+            sequence.append(move);
+            return sequence;
+        }
     }
 }
