@@ -18,19 +18,19 @@ namespace Systems
         [SerializeField] private MovableBlock cardinalPrefab;
         [SerializeField] private MovableBlock diagonalPrefab;
         [SerializeField] private MovableBlock frogPrefab;
-        [SerializeField] private GhostBlock ghostPrefab;
-        [SerializeField] private GameObject groundPrefab;
+        [SerializeField] private GroundBlock groundPrefab;
+        [SerializeField] private GameObject highlightPrefab;
 
         private readonly List<MovableBlock> movableBlocks = new();
-        private readonly List<GhostBlock> ghostBlocks = new();
-        private readonly List<GameObject> groundBlocks = new();
+        private readonly List<GroundBlock> groundBlocks = new();
+        private readonly List<GameObject> highlights = new();
 
         private IEnumerable<GameObject> AllBlocks()
         {
             var movables = movableBlocks.Select(b => b.gameObject);
-            var ghosts = ghostBlocks.Select(b => b.gameObject);
+            var lights = highlights.Select(b => b.gameObject);
             var ground = groundBlocks.Select(b => b.gameObject);
-            return movables.Concat(ghosts).Concat(ground);
+            return movables.Concat(lights).Concat(ground);
         }
 
         public async Task SpawnLevel(Level level)
@@ -56,8 +56,8 @@ namespace Systems
             await Animator.BlocksOut(AllBlocks());
             AllBlocks().ForEach(b => Destroy(b.gameObject, 2f));
             movableBlocks.Clear();
-            ghostBlocks.Clear();
             groundBlocks.Clear();
+            highlights.Clear();
         }
 
         private void InstantiateGroundBlocks(Level level)
@@ -67,6 +67,7 @@ namespace Systems
                 var position = location.asVector3.With(y: -1);
                 var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
                 groundBlocks.Add(groundBlock);
+                groundBlock.location = location;
                 var targetOption = level.targetConfiguration.FirstOption(block => block.location == location);
                 if (targetOption.IsSome(out var target))
                 {
@@ -91,23 +92,22 @@ namespace Systems
             movableBlocks.Add(movableBlock);
         }
 
-        public void ShowGhostBlocks(Block hover, IEnumerable<Location> validLocations)
+        public void ShowHighlights(IEnumerable<Location> locationsToHighlight)
         {
-            var middle = hover.location;
-
-            foreach (var neighbor in validLocations)
+            foreach (var location in locationsToHighlight)
             {
-                var ghost = Instantiate(ghostPrefab, middle.asVector3, Quaternion.identity);
-                ghost.location = neighbor;
-                ghost.GetComponent<MeshRenderer>().material = hover.material;
-                ghostBlocks.Add(ghost);
+                var highlight = Instantiate(highlightPrefab, location.asVector3, highlightPrefab.transform.rotation);
+                highlights.Add(highlight);
             }
         }
-
-        public void HideGhostBlocks()
+        
+        public void HideHighlights()
         {
-            foreach (var ghostBlock in ghostBlocks) Destroy(ghostBlock.gameObject);
-            ghostBlocks.Clear();
+            foreach (var highlight in highlights) 
+                Destroy(highlight.gameObject);
+            highlights.Clear();
         }
+
+
     }
 }

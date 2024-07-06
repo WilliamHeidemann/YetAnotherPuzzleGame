@@ -1918,8 +1918,8 @@ MonoBehaviour:
   cardinalPrefab: {fileID: -2166095562911369665, guid: 7dae9d7db01765948ad9c0b2947e824c, type: 3}
   diagonalPrefab: {fileID: 3132879200977078548, guid: d84defc0545663d4bbeca0ff988a28b4, type: 3}
   frogPrefab: {fileID: -2166095562911369665, guid: 2fda0bc10c68e7e4bbb83d6aa26f52ae, type: 3}
-  ghostPrefab: {fileID: 1919144606535907794, guid: 360936aacd2d70046ae81e2dcad825f5, type: 3}
-  groundPrefab: {fileID: 401113552903002070, guid: 79226737c910e4a40aee1b4b35dc88d0, type: 3}
+  groundPrefab: {fileID: -796449188040751468, guid: 79226737c910e4a40aee1b4b35dc88d0, type: 3}
+  highlightPrefab: {fileID: 4623575010790887140, guid: 9231c793fa6c5b74aae12c8f20d4467b, type: 3}
 --- !u!1 &1591793700
 GameObject:
   m_ObjectHideFlags: 0

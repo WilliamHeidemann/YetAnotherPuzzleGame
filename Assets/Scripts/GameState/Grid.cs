@@ -5,6 +5,7 @@ using Model;
 using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Runtime;
+using Type = Model.Type;
 
 namespace GameState
 {
@@ -30,11 +31,11 @@ namespace GameState
         public bool IsMoveValid(Move move)
         {
             if (IsAvailable(move.previous)) 
-            {
-                Debug.Log("previous is empty");
                 return false; // There must be a block where we move from
-            }
-            if (!IsAvailable(move.next)) return false; // There should be space where we move to
+            if (!IsAvailable(move.next)) 
+                return false; // There should be space where we move to
+            if (!HasBlockOfTypeAtLocation(move.type, move.previous))
+                return false;
             return true;
         }
 
@@ -73,6 +74,14 @@ namespace GameState
             blocks.Any(b => b.location == location);
 
         public IEnumerable<Block> GetBlocks() => blocks;
+
+        private bool HasBlockOfTypeAtLocation(Type type, Location location)
+        {
+            var blockOption = GetBlock(location);
+            if (!blockOption.IsSome(out var block))
+                return false;
+            return block.type == type;
+        }
 
         public void PrintOccupiedBlocks()
         {

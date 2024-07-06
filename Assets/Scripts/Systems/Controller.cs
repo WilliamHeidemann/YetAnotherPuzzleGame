@@ -47,7 +47,7 @@ namespace Systems
         {
             selector.Select(movable);
             UndoButton.Instance.SetActive(BlockCanUndo(movable.model));
-            spawner.HideGhostBlocks();
+            spawner.HideHighlights();
 
             if (!HasMoves())
                 return;
@@ -57,7 +57,7 @@ namespace Systems
 
             if (validNeighbors.Count > 0)
             {
-                spawner.ShowGhostBlocks(block, validNeighbors);
+                spawner.ShowHighlights(validNeighbors);
             }
             else
             {
@@ -70,10 +70,9 @@ namespace Systems
             if (levelManager.isLevelComplete)
                 return;
             if (!grid.IsMoveValid(move))
-                throw new Exception(
-                    $"Move is not valid {move}.");
+                return;
             if (!moveCounter.hasMovesLeft)
-                throw new Exception($"Move attempted when out of moves.");
+                return;
 
             Move(move);
         }
@@ -96,6 +95,7 @@ namespace Systems
 
             if (!grid.IsAvailable(move.previous))
             {
+                // Currently the player is not given the option to undo, if it is not valid. Otherwise, 
                 // Play animation showing which way is undo, and that something is in the way
                 return;
             }
@@ -115,7 +115,7 @@ namespace Systems
             var targetLocation = move.next.asVector3;
             Animator.Move(blockToMove.gameObject, targetLocation, move.type);
 
-            spawner.HideGhostBlocks();
+            spawner.HideHighlights();
             grid.Move(move);
             history.Add(blockToMove.model, move);
             UndoButton.Instance.SetActive(BlockCanUndo(blockToMove.model));
