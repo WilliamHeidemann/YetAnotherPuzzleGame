@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace Animation
 {
-    public class SquishAnimation : AnimationData
+    public class ButtonClickAnimation : AnimationData
     {
         private const float SquishScale = 0.2f;
         private const float SquishDuration = .1f;
         private const float RaiseDuration = .3f;
 
         private readonly float originalScaleY = 0.9f;
-        private readonly float originalPositionY = 0f;
+        private readonly float originalPositionY = -1f;
 
-        public SquishAnimation(GameObject gameObject) : base(gameObject)
+        public ButtonClickAnimation(GameObject gameObject) : base(gameObject)
         {
             // originalScaleY = gameObject.transform.localScale.y;
             // originalPositionY = gameObject.transform.localPosition.y;

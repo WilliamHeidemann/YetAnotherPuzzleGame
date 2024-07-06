@@ -9,7 +9,17 @@ namespace Components
         public void Interact()
         {
             Controller.Instance.Rewind();
-            Animator.Squish(gameObject);
+            Animator.ButtonClick(gameObject);
+        }
+        
+        public void Hide()
+        {
+            
+        }
+
+        public void Show()
+        {
+            
         }
     }
 }

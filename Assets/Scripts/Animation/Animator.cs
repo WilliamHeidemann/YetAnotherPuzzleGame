@@ -25,11 +25,21 @@ namespace Animation
             QueueAnimation(new ShakeAnimation(obj));
         }
 
-        public static void Squish(GameObject obj)
+        public static void ButtonClick(GameObject obj)
         {
-            QueueAnimation(new SquishAnimation(obj));
+            QueueAnimation(new ButtonClickAnimation(obj));
         }
 
+        public static void ButtonHide(GameObject obj)
+        {
+            QueueAnimation(new ButtonHideAnimation(obj));
+        }
+        
+        public static void ButtonShow(GameObject obj)
+        {
+            QueueAnimation(new ButtonShowAnimation(obj));
+        }
+        
         private static void QueueAnimation(AnimationData animation)
         {
             if (!Animations.ContainsKey(animation.gameObject))

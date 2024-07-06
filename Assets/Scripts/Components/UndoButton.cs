@@ -1,15 +1,35 @@
 ﻿using Systems;
-using UnityEngine;
+using UnityUtils;
 using Animator = Animation.Animator;
 
 namespace Components
 {
-    public class UndoButton : MonoBehaviour, IInteractable
+    public class UndoButton : Singleton<UndoButton>, IInteractable
     {
+        private bool isActive;
+
         public void Interact()
         {
+            if (!isActive)
+                return;
+            // Animator.ButtonClick(gameObject);
+            Animator.ButtonHide(gameObject);
             Selector.Instance.Undo();
-            Animator.Squish(gameObject);
+        }
+
+        public void SetActive(bool active)
+        {
+            if (active)
+            {
+                Animator.ButtonShow(gameObject);
+            }
+            else
+            {
+                Animator.ButtonHide(gameObject);
+            }
+
+            
+            isActive = active;
         }
     }
 }

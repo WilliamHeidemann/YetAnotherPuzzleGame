@@ -25,6 +25,8 @@ namespace GameState
 
         public Option<Move> GetMove(Block block)
         {
+            if (!allMoves.ContainsKey(block)) 
+                return Option<Move>.None;
             return allMoves[block].LastOption(m => m.next == block.location && !m.isUndo);
         }
 
