@@ -46,7 +46,7 @@ namespace Systems
         public void Select(MovableBlock movable)
         {
             selector.Select(movable);
-            AnimateUndo(movable.model);
+            UndoButton.Instance.SetActive(BlockCanUndo(movable.model));
             spawner.HideGhostBlocks();
 
             if (!HasMoves())
@@ -54,7 +54,7 @@ namespace Systems
 
             var block = movable.model;
             var validNeighbors = block.GetAvailableNeighbors(grid.HasBlockAt, grid.HasGroundAt).ToList();
-            
+
             if (validNeighbors.Count > 0)
             {
                 spawner.ShowGhostBlocks(block, validNeighbors);
@@ -108,7 +108,7 @@ namespace Systems
         private void Move(Move move)
         {
             var block = spawner.GetMovableBlock(move.previous);
-            if (!block.IsSome(out var blockToMove)) 
+            if (!block.IsSome(out var blockToMove))
                 return;
 
             blockToMove.model = blockToMove.model.WithLocation(move.next);
@@ -118,7 +118,7 @@ namespace Systems
             spawner.HideGhostBlocks();
             grid.Move(move);
             history.Add(blockToMove.model, move);
-            AnimateUndo(blockToMove.model);
+            UndoButton.Instance.SetActive(BlockCanUndo(blockToMove.model));
 
             if (move.isUndo)
                 moveCounter.DecrementCount();
@@ -128,10 +128,12 @@ namespace Systems
             levelManager.CheckCompletion(grid.GetBlocks());
         }
 
-        private void AnimateUndo(Block block)
+        private bool BlockCanUndo(Block block)
         {
-            var active = history.GetMove(block).IsSome(out var move) && !move.isUndo;
-            UndoButton.Instance.SetActive(active);
+            if (!history.GetMove(block).IsSome(out var move)) return false;
+            if (move.isUndo) return false;
+            if (!grid.IsAvailable(move.previous)) return false;
+            return true;
         }
     }
 }

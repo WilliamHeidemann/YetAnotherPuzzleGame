@@ -12,7 +12,6 @@ namespace Components
         {
             if (!isActive)
                 return;
-            // Animator.ButtonClick(gameObject);
             Animator.ButtonHide(gameObject);
             Selector.Instance.Undo();
         }
@@ -28,7 +27,6 @@ namespace Components
                 Animator.ButtonHide(gameObject);
             }
 
-            
             isActive = active;
         }
     }
