@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Components;
@@ -17,7 +18,17 @@ namespace Animation
 
         public static void Move(GameObject obj, Vector3 targetLocation, Type moveType)
         {
-            QueueAnimation(new MoveAnimation(obj, targetLocation, moveType));
+            switch (moveType)
+            {
+                case Type.Frog:
+                    QueueAnimation(new FrogAnimation(obj, targetLocation));
+                    break;
+                case Type.Cardinal:
+                case Type.Diagonal:
+                default:
+                    QueueAnimation(new MoveAnimation(obj, targetLocation));
+                    break;
+            }
         }
 
         public static void Shake(GameObject obj)
