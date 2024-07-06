@@ -52,7 +52,7 @@ namespace Animation
             {
                 CreateTween(animation);
             }
-            else if (queueLength == 2)
+            else if (queueLength == 3)
             {
                 return;
             }
