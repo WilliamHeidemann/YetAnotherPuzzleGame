@@ -5,6 +5,7 @@ using Model;
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Type = Model.Type;
 
 namespace Editor
@@ -19,6 +20,16 @@ namespace Editor
             if (GUILayout.Button("Save To Assets"))
             {
                 CreateLevelAsset();
+            }
+            
+            if (GUILayout.Button("Select Ground"))
+            {
+                SelectGameObjects<GroundEditor>();
+            }
+            
+            if (GUILayout.Button("Select Movables"))
+            {
+                SelectGameObjects<MovableEditor>();
             }
         }
 
@@ -68,6 +79,16 @@ namespace Editor
             AssetDatabase.CreateAsset(level, path);
             AssetDatabase.SaveAssets();
             Selection.activeObject = level;
+        }
+
+        private static void SelectGameObjects<T>() where T : Component
+        {
+            var selectedObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None)
+                .Where(obj => obj.GetComponent<T>() != null)
+                .Select(g => g as Object)
+                .ToArray();
+
+            Selection.objects = selectedObjects;
         }
     }
 }
