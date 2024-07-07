@@ -21,8 +21,8 @@ namespace Animation
             switch (moveType)
             {
                 case Type.Frog:
-                    QueueAnimation(new FrogAnimation(obj, targetLocation));
-                    break;
+                    // QueueAnimation(new FrogAnimation(obj, targetLocation));
+                    // break;
                 case Type.Cardinal:
                 case Type.Diagonal:
                 default:
