@@ -21,15 +21,20 @@ namespace Editor
             {
                 CreateLevelAsset();
             }
-            
+
             if (GUILayout.Button("Select Ground"))
             {
                 SelectGameObjects<GroundEditor>();
             }
-            
+
             if (GUILayout.Button("Select Movables"))
             {
                 SelectGameObjects<MovableEditor>();
+            }
+
+            if (GUILayout.Button("Load Level"))
+            {
+                LoadLevel();
             }
         }
 
@@ -43,7 +48,7 @@ namespace Editor
 
             var groundLocations =
                 ground.Select(b => b.asLocation);
-            
+
             var targetConfig =
                 ground
                     .Where(b => b.type != BlockType.Ground)
@@ -59,12 +64,12 @@ namespace Editor
 
                         return new Block(b.asLocation, type);
                     });
-            
+
             var startConfig =
                 FindObjectsByType<MovableEditor>(FindObjectsSortMode.None)
                     .Where(b => b.isActive)
                     .Select(b => b.asBlock);
-            
+
             var maxMoves = levelSaver.maxMoves;
 
 
@@ -89,6 +94,68 @@ namespace Editor
                 .ToArray();
 
             Selection.objects = selectedObjects;
+        }
+
+        private void LoadLevel()
+        {
+            var levelSaver = (LevelSaver)target;
+            var level = levelSaver.levelToLoad;
+
+            foreach (var ground in FindObjectsByType<GroundEditor>(FindObjectsSortMode.None))
+            {
+                ground.isActive = false;
+                EditorUtility.SetDirty(ground);
+            }
+
+            foreach (var groundLocation in level.groundBlocks)
+            {
+                var ground = FindObjectsByType<GroundEditor>(FindObjectsSortMode.None)
+                    .First(g => g.transform.position.AsLocation() == groundLocation);
+                ground.type = BlockType.Ground;
+                ground.isActive = true;
+                EditorUtility.SetDirty(ground);
+            }
+
+            foreach (var block in level.targetConfiguration)
+            {
+                var ground = FindObjectsByType<GroundEditor>(FindObjectsSortMode.None)
+                    .First(m => m.transform.position.AsLocation() == block.location);
+                ground.type = GetBlockType(block.type);
+                ground.isActive = true;
+                EditorUtility.SetDirty(ground);
+            }
+
+
+            foreach (var movable in FindObjectsByType<MovableEditor>(FindObjectsSortMode.None))
+            {
+                movable.isActive = false;
+                EditorUtility.SetDirty(movable);
+            }
+            
+            foreach (var block in level.startingConfiguration)
+            {
+                var movable = FindObjectsByType<MovableEditor>(FindObjectsSortMode.None)
+                    .First(m => m.transform.position.AsLocation() == block.location);
+                movable.type = block.type;
+                movable.isActive = true;
+                EditorUtility.SetDirty(movable);
+            }
+
+            levelSaver.maxMoves = level.maxMoves;
+
+            levelSaver.levelToLoad = null; 
+        }
+
+        private BlockType GetBlockType(Type type)
+        {
+            return type switch
+            {
+                Type.Cardinal => BlockType.Cardinal,
+                Type.Diagonal => BlockType.Diagonal,
+                Type.Frog => BlockType.Frog,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
         }
     }
 }
