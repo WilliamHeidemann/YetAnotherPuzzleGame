@@ -22,7 +22,7 @@ namespace Systems
             selected = Option<MovableBlock>.Some(block);
         }
 
-        public void MoveTo(Location destination)
+        public void TryMoveTo(Location destination)
         {
             if (!selected.IsSome(out var movable))
                 return;

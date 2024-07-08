@@ -9,7 +9,7 @@ namespace Components
         public Location location;
         public void Interact()
         {
-            Selector.Instance.MoveTo(location);
+            Selector.Instance.TryMoveTo(location);
         }
     }
 }

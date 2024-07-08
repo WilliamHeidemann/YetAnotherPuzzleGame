@@ -14,47 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingConfiguration:
   - location:
-      x: 2
+      x: 0
       y: 2
     type: 2
   - location:
       x: 2
-      y: 0
-    type: 2
-  - location:
-      x: 2
       y: 1
-    type: 0
+    type: 1
   targetConfiguration:
   - location:
-      x: 0
-      y: 0
-    type: 2
-  - location:
       x: 2
       y: 1
-    type: 0
+    type: 1
   - location:
       x: 2
-      y: 2
+      y: 0
     type: 2
   groundBlocks:
-  - x: 1
-    y: 0
-  - x: 0
-    y: 0
-  - x: 1
-    y: 2
-  - x: 1
+  - x: 2
     y: 1
   - x: 0
     y: 1
   - x: 2
-    y: 1
-  - x: 2
+    y: 2
+  - x: 1
+    y: 2
+  - x: 0
     y: 2
   - x: 2
     y: 0
+  - x: 1
+    y: 0
   - x: 0
-    y: 2
+    y: 0
   maxMoves: 2

@@ -30,13 +30,20 @@ namespace GameState
 
         public bool IsMoveValid(Move move)
         {
-            if (IsAvailable(move.previous)) 
+            if (IsAvailable(move.previous))
                 return false; // There must be a block where we move from
-            if (!IsAvailable(move.next)) 
+            if (!IsAvailable(move.next))
                 return false; // There should be space where we move to
             if (!HasBlockOfTypeAtLocation(move.type, move.previous))
                 return false;
-            return true;
+            return move.isUndo || MoveSatisfiesTypeConstraint(move);
+        }
+
+        private bool MoveSatisfiesTypeConstraint(Move move)
+        {
+            var blockOption = GetBlock(move.previous);
+            return blockOption.IsSome(out var block) &&
+                   block.GetAvailableNeighbors(HasBlockAt, HasGroundAt).Contains(move.next);
         }
 
         public void Move(Move move)
@@ -55,12 +62,7 @@ namespace GameState
             blocks.Add(block.WithLocation(move.next));
         }
 
-        private Option<Block> GetBlock(Location location)
-        {
-            if (IsAvailable(location))
-                throw new Exception($"No block at {location}");
-            return blocks.FirstOption(b => b.location == location);
-        }
+        private Option<Block> GetBlock(Location location) => blocks.FirstOption(b => b.location == location);
 
         public bool ContainsBlock(Block block) => blocks.Any(b => b.location == block.location);
 
