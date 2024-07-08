@@ -14,19 +14,8 @@ namespace Systems
         [SerializeField] private Level[] levels;
         public Level current { get; private set; }
         private int currentLevelIndex;
-        public bool isLevelComplete { get; private set; }
         [Space] [SerializeField] private bool showLevelName;
         [SerializeField] private TextMeshProUGUI levelName;
-
-        public void CheckCompletion(IEnumerable<Block> board)
-        {
-            isLevelComplete = current.targetConfiguration.TrueForAll(board.Contains);
-            if (isLevelComplete)
-            {
-                currentLevelIndex++;
-                EnterLevel(levels[currentLevelIndex]);
-            }
-        }
 
         public void SetWorld()
         {
@@ -40,15 +29,21 @@ namespace Systems
                 Debug.LogWarning("Level index out of bounds");
                 return;
             }
-            print("enter level");
+
+            currentLevelIndex = index;
             EnterLevel(levels[index]);
         }
 
+        public void EnterNextLevel()
+        {
+            currentLevelIndex++;
+            EnterLevel(levels[currentLevelIndex]);
+        }
+        
         private void EnterLevel(Level level)
         {
             current = level;
-            isLevelComplete = false;
-            Controller.Instance.Initialize(level, this);
+            Controller.Instance.Initialize(level);
             levelName.text = level.name;
             levelName.gameObject.SetActive(showLevelName);
         }

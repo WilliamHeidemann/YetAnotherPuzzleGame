@@ -22,14 +22,14 @@ namespace Systems
         [SerializeField] private Selector selector;
         private Grid grid;
         private History history;
-        private LevelManager levelManager;
+        // private LevelManager levelManager;
         private MoveCounter moveCounter;
+        private bool isLevelComplete;
 
-        private bool HasMoves() => moveCounter.hasMovesLeft && levelManager.isLevelComplete == false;
+        private bool HasMoves() => moveCounter.hasMovesLeft && isLevelComplete == false;
 
-        public async void Initialize(Level level, LevelManager manager)
+        public async void Initialize(Level level)
         {
-            levelManager = manager;
             ResetGameState(level);
             await spawner.SpawnLevel(level);
         }
@@ -40,6 +40,7 @@ namespace Systems
             history = new History();
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
             selector.Deselect();
+            isLevelComplete = false;
             UndoButton.Instance.SetActive(false);
         }
 
@@ -67,7 +68,7 @@ namespace Systems
 
         public void TryMove(Move move)
         {
-            if (levelManager.isLevelComplete)
+            if (isLevelComplete)
                 return;
             if (!grid.IsMoveValid(move))
                 return;
@@ -77,17 +78,17 @@ namespace Systems
             Move(move);
         }
 
-        public void Rewind() => Rewind(levelManager.current);
+        public void Rewind() => Rewind(LevelManager.Instance.current);
 
         private async void Rewind(Level level)
         {
-            ResetGameState(levelManager.current);
+            ResetGameState(level);
             await spawner.ResetLevel(level);
         }
 
         public void TryUndo(Block block)
         {
-            if (levelManager.isLevelComplete)
+            if (isLevelComplete)
                 return;
 
             if (!history.GetMove(block).IsSome(out var move))
@@ -125,7 +126,9 @@ namespace Systems
             else
                 moveCounter.IncrementCount();
 
-            levelManager.CheckCompletion(grid.GetBlocks());
+            isLevelComplete = LevelManager.Instance.current.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
+            if (isLevelComplete) 
+                LevelManager.Instance.EnterNextLevel();
         }
 
         private bool BlockCanUndo(Block block)
