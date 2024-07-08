@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Components;
+using MainMenu;
 using Model;
 using ScriptableObjects;
 using UnityEngine;
@@ -35,92 +36,107 @@ namespace Systems
 
         public async Task SpawnLevel(Level level)
         {
-            await ClearLevel();
-            InstantiateGroundBlocks(level.groundBlocks);
+            SpawnGroundBlocks(level);
+            AnimateGroundBlocks(level);
             ColorGroundBlocks(level);
-            level.startingConfiguration.ForEach(InstantiateBlock);
-            await Animator.BlocksIn(AllBlocks());
-        }
-
-        public async Task ResetLevel(Level level)
-        {
-            await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
-        }
-
-        public async void RealignGroundBlocks(List<GameObject> availableBlocks, Level level)
-        {
-            // if (availableBlocks.Count > level.groundBlocks)
-            // {
-            //     
-            // }
-            //
-            //
-            // while (gameObjectEnumerator.MoveNext())
-            // {
-            //     var groundLocation = levelEnumerator.Current;
-            //     var groundBlock = gameObjectGround.AddComponent<GroundBlock>();
-            //     groundBlock.location = groundLocation;
-            //     groundBlocks.Add(groundBlock);
-            //     groundBlock.transform.position = groundLocation.asVector3.With(y: -1);
-            //     if (!levelEnumerator.MoveNext())
-            //     {
-            //         // spawn the rest and quit
-            //     }
-            // }
             
-            
-
-            
-            // foreach available
-                // add to ground blocks
-                // set correct position
-                // Tween it individually
-                
-            // if there are any left overs, animate them out
-            // if there are not enough, spawn the rest needed
-                
-            // Change to BlocksIn dont move these blocks also
-            
-            ColorGroundBlocks(level);
-        }
-
-        public Option<MovableBlock> GetMovableBlock(Location location) =>
-            movableBlocks.FirstOption(b => b.model.location == location);
-
-        private async Task ClearLevel()
-        {
-            var allBlocks = AllBlocks();
-            if (!allBlocks.Any()) return;
-            await Animator.BlocksOut(AllBlocks());
-            AllBlocks().ForEach(b => Destroy(b.gameObject, 2f));
-            movableBlocks.Clear();
-            groundBlocks.Clear();
+            SpawnMovableBlocks(level);
+            AnimateMovableBlocks(level);
             highlights.Clear();
         }
 
-        private void InstantiateGroundBlocks(List<Location> groundBlocksToSpawn)
+        private void AnimateMovableBlocks(Level level)
         {
-            foreach (var location in groundBlocksToSpawn)
-            {
-                var position = location.asVector3.With(y: -1);
-                var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
-                groundBlocks.Add(groundBlock);
-                groundBlock.location = location;
-            }
+            
         }
 
-        private void ColorGroundBlocks(Level level)
+        private void AnimateGroundBlocks(Level level)
         {
-            foreach (var block in level.targetConfiguration)
+            For.Range(groundBlocks.Count,
+                i => Animator.Move(groundBlocks[i].gameObject, level.groundBlocks[i].asVector3.With(y: -1), Type.Cardinal));
+        }
+
+
+        private void SpawnGroundBlocks(Level level)
+        {
+            groundBlocks.AddRange(GetLevelButtonBlocks());
+
+            if (groundBlocks.Count > level.groundBlocks.Count)
             {
-                if (groundBlocks.FirstOption(g => g.location == block.location).IsSome(out var ground))
+                var amountDiscard = groundBlocks.Count - level.groundBlocks.Count;
+                var blocksToDiscard = groundBlocks.Take(amountDiscard);
+                foreach (var groundBlock in blocksToDiscard)
                 {
-                    ground.GetComponent<MeshRenderer>().material = block.material;
+                    groundBlocks.Remove(groundBlock);
                 }
+                // animate blocksToDiscard away
+            }
+            else
+            {
+                var amountAdd = level.groundBlocks.Count - groundBlocks.Count;
+                For.Range(amountAdd, i => InstantiateGroundBlock(level.groundBlocks[i]));
+            }
+
+            // now groundBlocks.Count == level.groundBlocks.Count
+
+            // animate all ground blocks to their respective locations (some of them are already there if they were just spawned)
+            // do so the total travel distance is minimized
+
+            // give them all their correct color
+        }
+
+        private void InstantiateGroundBlock(Location location)
+        {
+            var position = location.asVector3.With(y: -1);
+            var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
+            groundBlock.location = location;
+            groundBlocks.Add(groundBlock);
+        }
+
+        private IEnumerable<GroundBlock> GetLevelButtonBlocks()
+        {
+            var levelButtonBlocks =
+                FindObjectsByType<LevelButton>(FindObjectsSortMode.None)
+                    .Select(b => b.gameObject)
+                    .ToList();
+
+            levelButtonBlocks.ForEach(b =>
+            {
+                Destroy(b.GetComponent<LevelButton>());
+                var groundBlock = b.AddComponent<GroundBlock>();
+                groundBlocks.Add(groundBlock);
+            });
+
+            return levelButtonBlocks.Select(b => b.GetComponent<GroundBlock>());
+        }
+
+        private void SpawnMovableBlocks(Level level)
+        {
+            For.Each<Type>(t => AdjustMovableBlocksOfType(t, level));
+            // now movableBlocks.Count == level.startingConfiguration.Count
+            // // animate all blocks to their respective locations
+        }
+
+        private void AdjustMovableBlocksOfType(Type type, Level level)
+        {
+            if (movableBlocks.Count(b => b.model.type == type) > level.startingConfiguration.Count(b => b.type == type))
+            {
+                var amountDiscard = movableBlocks.Count - level.startingConfiguration.Count(b => b.type == type);
+                var blocksToDiscard = movableBlocks.Where(b => b.model.type == type).Take(amountDiscard);
+                foreach (var block in blocksToDiscard)
+                {
+                    movableBlocks.Remove(block);
+                }
+                // animate blocksToDiscard away
+            }
+            else
+            {
+                var amountAdd = level.startingConfiguration.Count - movableBlocks.Count;
+                For.Range(amountAdd, i => InstantiateMovableBlock(level.startingConfiguration[i], type));
             }
         }
 
-        private void InstantiateBlock(Block block)
+        private void InstantiateMovableBlock(Block block, Type type)
         {
             var prefab = block.type switch
             {
@@ -134,6 +150,25 @@ namespace Systems
             var movableBlock = Instantiate(prefab, position, Quaternion.identity);
             movableBlock.model = block;
             movableBlocks.Add(movableBlock);
+        }
+
+        public async Task ResetLevel(Level level)
+        {
+            await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
+        }
+
+        public Option<MovableBlock> GetMovableBlock(Location location) =>
+            movableBlocks.FirstOption(b => b.model.location == location);
+
+        private void ColorGroundBlocks(Level level)
+        {
+            foreach (var block in level.targetConfiguration)
+            {
+                if (groundBlocks.FirstOption(g => g.location == block.location).IsSome(out var ground))
+                {
+                    ground.GetComponent<MeshRenderer>().material = block.material;
+                }
+            }
         }
 
         public void ShowHighlights(IEnumerable<Location> locationsToHighlight)

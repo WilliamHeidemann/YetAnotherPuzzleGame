@@ -22,7 +22,6 @@ namespace Systems
         [SerializeField] private Selector selector;
         private Grid grid;
         private History history;
-        // private LevelManager levelManager;
         private MoveCounter moveCounter;
         private bool isLevelComplete;
 
