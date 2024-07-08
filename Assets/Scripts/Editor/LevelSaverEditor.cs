@@ -4,7 +4,9 @@ using LevelEditor;
 using Model;
 using ScriptableObjects;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 using Type = Model.Type;
 
@@ -105,6 +107,7 @@ namespace Editor
             {
                 ground.isActive = false;
                 EditorUtility.SetDirty(ground);
+                ForceValidate(ground);
             }
 
             foreach (var groundLocation in level.groundBlocks)
@@ -114,6 +117,7 @@ namespace Editor
                 ground.type = BlockType.Ground;
                 ground.isActive = true;
                 EditorUtility.SetDirty(ground);
+                ForceValidate(ground);
             }
 
             foreach (var block in level.targetConfiguration)
@@ -123,6 +127,7 @@ namespace Editor
                 ground.type = GetBlockType(block.type);
                 ground.isActive = true;
                 EditorUtility.SetDirty(ground);
+                ForceValidate(ground);
             }
 
 
@@ -130,8 +135,9 @@ namespace Editor
             {
                 movable.isActive = false;
                 EditorUtility.SetDirty(movable);
+                ForceValidate(movable);
             }
-            
+
             foreach (var block in level.startingConfiguration)
             {
                 var movable = FindObjectsByType<MovableEditor>(FindObjectsSortMode.None)
@@ -139,11 +145,14 @@ namespace Editor
                 movable.type = block.type;
                 movable.isActive = true;
                 EditorUtility.SetDirty(movable);
+                ForceValidate(movable);
             }
 
             levelSaver.maxMoves = level.maxMoves;
 
-            levelSaver.levelToLoad = null; 
+            levelSaver.levelToLoad = null;
+            AssetDatabase.SaveAssets();
+            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         }
 
         private BlockType GetBlockType(Type type)
@@ -155,7 +164,13 @@ namespace Editor
                 Type.Frog => BlockType.Frog,
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
 
+        private void ForceValidate(Object obj)
+        {
+            var serialized = new SerializedObject(obj);
+            serialized.UpdateIfRequiredOrScript();
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Components;
 using Model;
 using UnityEngine;
+using UnityUtils;
 using Random = UnityEngine.Random;
 using Type = Model.Type;
 
@@ -21,8 +22,8 @@ namespace Animation
             switch (moveType)
             {
                 case Type.Frog:
-                    // QueueAnimation(new FrogAnimation(obj, targetLocation));
-                    // break;
+                // QueueAnimation(new FrogAnimation(obj, targetLocation));
+                // break;
                 case Type.Cardinal:
                 case Type.Diagonal:
                 default:
@@ -45,12 +46,12 @@ namespace Animation
         {
             QueueAnimation(new ButtonHideAnimation(obj));
         }
-        
+
         public static void ButtonShow(GameObject obj)
         {
             QueueAnimation(new ButtonShowAnimation(obj));
         }
-        
+
         private static void QueueAnimation(AnimationData animation)
         {
             if (!Animations.ContainsKey(animation.gameObject))
@@ -149,6 +150,17 @@ namespace Animation
             }
 
             await Awaitable.WaitForSecondsAsync(MoveTime);
+        }
+
+        public static void LevelButtonsIn(IEnumerable<GameObject> levelButtons)
+        {
+            foreach (var levelButton in levelButtons)
+            {
+                var fallTime = Random.Range(.6f, 2f);
+                var targetPosition = levelButton.transform.position;
+                levelButton.transform.position = targetPosition.With(y: targetPosition.y + 8);
+                LeanTween.move(levelButton, targetPosition, fallTime).setEase(LeanTweenType.easeOutBounce);
+            }
         }
     }
 }

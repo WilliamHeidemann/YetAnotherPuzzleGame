@@ -5,10 +5,11 @@ using Model;
 using ScriptableObjects;
 using TMPro;
 using UnityEngine;
+using UnityUtils;
 
 namespace Systems
 {
-    public class LevelManager : MonoBehaviour
+    public class LevelManager : Singleton<LevelManager>
     {
         [SerializeField] private Level[] levels;
         public Level current { get; private set; }
@@ -16,12 +17,6 @@ namespace Systems
         public bool isLevelComplete { get; private set; }
         [Space] [SerializeField] private bool showLevelName;
         [SerializeField] private TextMeshProUGUI levelName;
-
-        private void Start()
-        {
-            isLevelComplete = false;
-            EnterLevel(levels[currentLevelIndex]);
-        }
 
         public void CheckCompletion(IEnumerable<Block> board)
         {
@@ -33,7 +28,23 @@ namespace Systems
             }
         }
 
-        public void EnterLevel(Level level)
+        public void SetWorld()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EnterLevelIndex(int index)
+        {
+            if (index >= levels.Length)
+            {
+                Debug.LogWarning("Level index out of bounds");
+                return;
+            }
+            print("enter level");
+            EnterLevel(levels[index]);
+        }
+
+        private void EnterLevel(Level level)
         {
             current = level;
             isLevelComplete = false;

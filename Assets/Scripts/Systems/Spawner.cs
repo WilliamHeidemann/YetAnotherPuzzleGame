@@ -36,7 +36,8 @@ namespace Systems
         public async Task SpawnLevel(Level level)
         {
             await ClearLevel();
-            InstantiateGroundBlocks(level);
+            InstantiateGroundBlocks(level.groundBlocks);
+            ColorGroundBlocks(level);
             level.startingConfiguration.ForEach(InstantiateBlock);
             await Animator.BlocksIn(AllBlocks());
         }
@@ -44,6 +45,43 @@ namespace Systems
         public async Task ResetLevel(Level level)
         {
             await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
+        }
+
+        public async void RealignGroundBlocks(List<GameObject> availableBlocks, Level level)
+        {
+            // if (availableBlocks.Count > level.groundBlocks)
+            // {
+            //     
+            // }
+            //
+            //
+            // while (gameObjectEnumerator.MoveNext())
+            // {
+            //     var groundLocation = levelEnumerator.Current;
+            //     var groundBlock = gameObjectGround.AddComponent<GroundBlock>();
+            //     groundBlock.location = groundLocation;
+            //     groundBlocks.Add(groundBlock);
+            //     groundBlock.transform.position = groundLocation.asVector3.With(y: -1);
+            //     if (!levelEnumerator.MoveNext())
+            //     {
+            //         // spawn the rest and quit
+            //     }
+            // }
+            
+            
+
+            
+            // foreach available
+                // add to ground blocks
+                // set correct position
+                // Tween it individually
+                
+            // if there are any left overs, animate them out
+            // if there are not enough, spawn the rest needed
+                
+            // Change to BlocksIn dont move these blocks also
+            
+            ColorGroundBlocks(level);
         }
 
         public Option<MovableBlock> GetMovableBlock(Location location) =>
@@ -60,18 +98,24 @@ namespace Systems
             highlights.Clear();
         }
 
-        private void InstantiateGroundBlocks(Level level)
+        private void InstantiateGroundBlocks(List<Location> groundBlocksToSpawn)
         {
-            foreach (var location in level.groundBlocks)
+            foreach (var location in groundBlocksToSpawn)
             {
                 var position = location.asVector3.With(y: -1);
                 var groundBlock = Instantiate(groundPrefab, position, Quaternion.identity);
                 groundBlocks.Add(groundBlock);
                 groundBlock.location = location;
-                var targetOption = level.targetConfiguration.FirstOption(block => block.location == location);
-                if (targetOption.IsSome(out var target))
+            }
+        }
+
+        private void ColorGroundBlocks(Level level)
+        {
+            foreach (var block in level.targetConfiguration)
+            {
+                if (groundBlocks.FirstOption(g => g.location == block.location).IsSome(out var ground))
                 {
-                    groundBlock.GetComponent<MeshRenderer>().material = target.material;
+                    ground.GetComponent<MeshRenderer>().material = block.material;
                 }
             }
         }
@@ -100,14 +144,12 @@ namespace Systems
                 highlights.Add(highlight);
             }
         }
-        
+
         public void HideHighlights()
         {
-            foreach (var highlight in highlights) 
+            foreach (var highlight in highlights)
                 Destroy(highlight.gameObject);
             highlights.Clear();
         }
-
-
     }
 }
