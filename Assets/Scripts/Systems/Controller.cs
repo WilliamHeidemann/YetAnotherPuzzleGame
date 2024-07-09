@@ -27,10 +27,10 @@ namespace Systems
 
         private bool HasMoves() => moveCounter.hasMovesLeft && isLevelComplete == false;
 
-        public async void Initialize(Level level)
+        public void Initialize(Level level)
         {
             ResetGameState(level);
-            await spawner.SpawnLevel(level);
+            spawner.SpawnLevel(level);
         }
 
         private void ResetGameState(Level level)

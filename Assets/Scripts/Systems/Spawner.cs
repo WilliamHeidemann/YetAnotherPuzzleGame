@@ -51,7 +51,7 @@ namespace Systems
             await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
         }
 
-        public async Task SpawnLevel(Level level)
+        public void SpawnLevel(Level level)
         {
             SpawnGroundBlocks(level);
             AnimateGroundBlocks(level);
