@@ -17,17 +17,17 @@ namespace MainMenu
 
         private readonly Location[] spawnLocations =
         {
-            new(-1, 4),
-            new(0, 3),
+            new(3, 4),
+            new(2, 3),
             new(1, 2),
-            new(2, 1),
-            new(3, 0),
-
-            new(-2, 3),
-            new(-1, 2),
             new(0, 1),
+            new(-1, 0),
+
+            new(4, 3),
+            new(3, 2),
+            new(2, 1),
             new(1, 0),
-            new(2, -1),
+            new(0, -1),
         };
 
         private void Start()
@@ -40,7 +40,7 @@ namespace MainMenu
             SpawnLevelButtons();
             Animator.LevelButtonsIn(sceneLevelButtons.Select(b => b.gameObject));
         }
-        
+
         [Button]
         public void SpawnLevelButtons()
         {
@@ -63,6 +63,7 @@ namespace MainMenu
             {
                 DestroyImmediate(sceneLevelButton.gameObject);
             }
+
             sceneLevelButtons.Clear();
         }
     }
