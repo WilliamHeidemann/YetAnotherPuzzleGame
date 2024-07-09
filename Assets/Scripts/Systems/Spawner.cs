@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Runtime;
 using Animator = Animation.Animator;
+using Random = UnityEngine.Random;
 using Type = Model.Type;
 
 namespace Systems
@@ -26,12 +27,28 @@ namespace Systems
         private readonly List<GroundBlock> groundBlocks = new();
         private readonly List<GameObject> highlights = new();
 
-        private IEnumerable<GameObject> AllBlocks()
+        public Option<MovableBlock> GetMovableBlock(Location location) =>
+            movableBlocks.FirstOption(b => b.model.location == location);
+
+        public void ShowHighlights(IEnumerable<Location> locationsToHighlight)
         {
-            var movables = movableBlocks.Select(b => b.gameObject);
-            var lights = highlights.Select(b => b.gameObject);
-            var ground = groundBlocks.Select(b => b.gameObject);
-            return movables.Concat(lights).Concat(ground);
+            foreach (var location in locationsToHighlight)
+            {
+                var highlight = Instantiate(highlightPrefab, location.asVector3, highlightPrefab.transform.rotation);
+                highlights.Add(highlight);
+            }
+        }
+
+        public void HideHighlights()
+        {
+            foreach (var highlight in highlights)
+                Destroy(highlight.gameObject);
+            highlights.Clear();
+        }
+        
+        public async Task ResetLevel(Level level)
+        {
+            await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
         }
 
         public async Task SpawnLevel(Level level)
@@ -39,50 +56,39 @@ namespace Systems
             SpawnGroundBlocks(level);
             AnimateGroundBlocks(level);
             ColorGroundBlocks(level);
-            
+
             SpawnMovableBlocks(level);
             AnimateMovableBlocks(level);
+
             highlights.Clear();
         }
-
-        private void AnimateMovableBlocks(Level level)
-        {
-            
-        }
-
-        private void AnimateGroundBlocks(Level level)
-        {
-            For.Range(groundBlocks.Count,
-                i => Animator.Move(groundBlocks[i].gameObject, level.groundBlocks[i].asVector3.With(y: -1), Type.Cardinal));
-        }
-
 
         private void SpawnGroundBlocks(Level level)
         {
             groundBlocks.AddRange(GetLevelButtonBlocks());
 
-            if (groundBlocks.Count > level.groundBlocks.Count)
+            var have = groundBlocks.Count;
+            var need = level.groundBlocks.Count;
+
+            if (have == need)
+                return;
+
+            if (have > need)
             {
-                var amountDiscard = groundBlocks.Count - level.groundBlocks.Count;
-                var blocksToDiscard = groundBlocks.Take(amountDiscard);
+                var amountDiscard = have - need;
+                var blocksToDiscard = groundBlocks.Take(amountDiscard).ToList();
                 foreach (var groundBlock in blocksToDiscard)
                 {
                     groundBlocks.Remove(groundBlock);
+                    Destroy(groundBlock.gameObject);
                 }
                 // animate blocksToDiscard away
             }
             else
             {
-                var amountAdd = level.groundBlocks.Count - groundBlocks.Count;
+                var amountAdd = need - have;
                 For.Range(amountAdd, i => InstantiateGroundBlock(level.groundBlocks[i]));
             }
-
-            // now groundBlocks.Count == level.groundBlocks.Count
-
-            // animate all ground blocks to their respective locations (some of them are already there if they were just spawned)
-            // do so the total travel distance is minimized
-
-            // give them all their correct color
         }
 
         private void InstantiateGroundBlock(Location location)
@@ -99,44 +105,40 @@ namespace Systems
                 FindObjectsByType<LevelButton>(FindObjectsSortMode.None)
                     .Select(b => b.gameObject)
                     .ToList();
-
-            levelButtonBlocks.ForEach(b =>
-            {
-                Destroy(b.GetComponent<LevelButton>());
-                var groundBlock = b.AddComponent<GroundBlock>();
-                groundBlocks.Add(groundBlock);
-            });
-
-            return levelButtonBlocks.Select(b => b.GetComponent<GroundBlock>());
+            levelButtonBlocks.ForEach(b => Destroy(b.GetComponent<LevelButton>()));
+            return levelButtonBlocks.Select(b => b.AddComponent<GroundBlock>());
         }
 
-        private void SpawnMovableBlocks(Level level)
-        {
-            For.Each<Type>(t => AdjustMovableBlocksOfType(t, level));
-            // now movableBlocks.Count == level.startingConfiguration.Count
-            // // animate all blocks to their respective locations
-        }
+        private void SpawnMovableBlocks(Level level) => For.Each<Type>(t => SpawnMovableBlocksOfType(t, level));
 
-        private void AdjustMovableBlocksOfType(Type type, Level level)
+        private void SpawnMovableBlocksOfType(Type type, Level level)
         {
-            if (movableBlocks.Count(b => b.model.type == type) > level.startingConfiguration.Count(b => b.type == type))
+            var neededBlocks = level.startingConfiguration.Where(b => b.type == type).ToList();
+            var have = movableBlocks.Count(b => b.model.type == type);
+            var need = level.startingConfiguration.Count(b => b.type == type);
+            
+            if (have == need)
+                return;
+            
+            if (have > need)
             {
-                var amountDiscard = movableBlocks.Count - level.startingConfiguration.Count(b => b.type == type);
-                var blocksToDiscard = movableBlocks.Where(b => b.model.type == type).Take(amountDiscard);
+                var amountDiscard = have - need;
+                var blocksToDiscard = movableBlocks.Where(b => b.model.type == type).Take(amountDiscard).ToList();
                 foreach (var block in blocksToDiscard)
                 {
                     movableBlocks.Remove(block);
+                    Destroy(block.gameObject);
                 }
                 // animate blocksToDiscard away
             }
             else
             {
-                var amountAdd = level.startingConfiguration.Count - movableBlocks.Count;
-                For.Range(amountAdd, i => InstantiateMovableBlock(level.startingConfiguration[i], type));
+                var amountAdd = need - have;
+                For.Range(amountAdd, i => InstantiateMovableBlock(neededBlocks[i]));
             }
         }
 
-        private void InstantiateMovableBlock(Block block, Type type)
+        private void InstantiateMovableBlock(Block block)
         {
             var prefab = block.type switch
             {
@@ -147,21 +149,54 @@ namespace Systems
             };
 
             var position = block.location.asVector3;
+            position += Random.onUnitSphere * 8;
             var movableBlock = Instantiate(prefab, position, Quaternion.identity);
             movableBlock.model = block;
             movableBlocks.Add(movableBlock);
         }
 
-        public async Task ResetLevel(Level level)
+        private void AnimateMovableBlocks(Level level)
         {
-            await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
+            For.Each<Type>(t => AnimateMovableOfType(t, level));
         }
 
-        public Option<MovableBlock> GetMovableBlock(Location location) =>
-            movableBlocks.FirstOption(b => b.model.location == location);
+        private void AnimateMovableOfType(Type type, Level level)
+        {
+            var movables = movableBlocks
+                .Where(b => b.model.type == type)
+                .ToList();
+            var startingPositions =
+                level.startingConfiguration
+                    .Where(b => b.type == type)
+                    .Select(b => b.location.asVector3)
+                    .ToList();
 
+            void Animate(int i) => Animator.Move(movables[i].gameObject, startingPositions[i], Type.Cardinal);
+            For.Range(movables.Count, Animate);
+        }
+
+        private void AnimateGroundBlocks(Level level)
+        {
+            void SetLocation(int i)
+            {
+                var groundBlock = groundBlocks[i];
+                var location = level.groundBlocks[i];
+                groundBlock.location = location;
+
+                Animator.Move(groundBlock.gameObject, location.asVector3.With(y: -1), Type.Cardinal);
+            }
+
+            For.Range(groundBlocks.Count, SetLocation);
+        }
+        
         private void ColorGroundBlocks(Level level)
         {
+            foreach (var groundBlock in groundBlocks)
+            {
+                groundBlock.GetComponent<MeshRenderer>().material = Resources.Load<Material>($"Materials/Ground");
+            }
+            
+            
             foreach (var block in level.targetConfiguration)
             {
                 if (groundBlocks.FirstOption(g => g.location == block.location).IsSome(out var ground))
@@ -169,22 +204,6 @@ namespace Systems
                     ground.GetComponent<MeshRenderer>().material = block.material;
                 }
             }
-        }
-
-        public void ShowHighlights(IEnumerable<Location> locationsToHighlight)
-        {
-            foreach (var location in locationsToHighlight)
-            {
-                var highlight = Instantiate(highlightPrefab, location.asVector3, highlightPrefab.transform.rotation);
-                highlights.Add(highlight);
-            }
-        }
-
-        public void HideHighlights()
-        {
-            foreach (var highlight in highlights)
-                Destroy(highlight.gameObject);
-            highlights.Clear();
         }
     }
 }

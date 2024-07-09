@@ -34,6 +34,12 @@ namespace Systems
             EnterLevel(levels[index]);
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.N))
+                EnterNextLevel();
+        }
+
         public void EnterNextLevel()
         {
             currentLevelIndex++;
