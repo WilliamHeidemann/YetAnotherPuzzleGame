@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Components;
 using Model;
 using UnityEngine;
 using UnityUtils;
@@ -8,9 +8,9 @@ using UtilityToolkit.Editor;
 using UtilityToolkit.Runtime;
 using Animator = Animation.Animator;
 
-namespace MainMenu
+namespace Systems
 {
-    public class MainMenu : MonoBehaviour
+    public class MainMenu : Singleton<MainMenu>
     {
         [SerializeField] private LevelButton levelButtonPrefab;
         private List<LevelButton> sceneLevelButtons;
@@ -54,6 +54,7 @@ namespace MainMenu
             levelButton.transform.position = spawnLocations[index].asVector3.With(y: -1);
             sceneLevelButtons.Add(levelButton);
             levelButton.index = index;
+            levelButton.SetText(index.ToString());
         }
 
         [Button]
@@ -65,6 +66,14 @@ namespace MainMenu
             }
 
             sceneLevelButtons.Clear();
+        }
+
+        public void SetTextOnButtonsActive(bool active)
+        {
+            foreach (var sceneLevelButton in sceneLevelButtons)
+            {
+                sceneLevelButton.SetTextActive(active);
+            }
         }
     }
 }
