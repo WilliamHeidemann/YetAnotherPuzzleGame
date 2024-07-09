@@ -158,7 +158,7 @@ namespace Animation
             {
                 var fallTime = Random.Range(.6f, 2f);
                 var targetPosition = levelButton.transform.position;
-                levelButton.transform.position = targetPosition.With(y: targetPosition.y + 8);
+                levelButton.transform.position = targetPosition.With(y: 20);
                 LeanTween.move(levelButton, targetPosition, fallTime).setEase(LeanTweenType.easeOutBounce);
             }
         }
