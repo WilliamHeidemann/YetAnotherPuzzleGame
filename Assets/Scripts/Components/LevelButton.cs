@@ -11,7 +11,7 @@ namespace Components
         public int index;
         public void Interact()
         {
-            MainMenu.Instance.SetTextOnButtonsActive(false);
+            MainMenu.Instance.OnLevelSelected();
             LevelManager.Instance.EnterLevelIndex(index);
         }
 
@@ -24,7 +24,6 @@ namespace Components
         {
             var color = text.color.SetAlpha(active ? 1f : 0f);
             text.CrossFadeColor(color, 1f, false, true);
-            // text.gameObject.SetActive(active);
         }
     }
 }

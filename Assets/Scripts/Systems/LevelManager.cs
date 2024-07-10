@@ -11,16 +11,14 @@ namespace Systems
 {
     public class LevelManager : Singleton<LevelManager>
     {
-        [SerializeField] private Level[] levels;
-        public Level current { get; private set; }
+        private Level[] levels => GetLevels();
+        [SerializeField] private Level[] worldOne;
+        [SerializeField] private Level[] frogWorld;
+        private World currentWorld;
+        public Level currentLevel { get; private set; }
         private int currentLevelIndex;
         [Space] [SerializeField] private bool showLevelName;
         [SerializeField] private TextMeshProUGUI levelName;
-
-        public void SetWorld()
-        {
-            throw new NotImplementedException();
-        }
 
         public void EnterLevelIndex(int index)
         {
@@ -45,13 +43,28 @@ namespace Systems
             currentLevelIndex++;
             EnterLevel(levels[currentLevelIndex]);
         }
-        
+
         private void EnterLevel(Level level)
         {
-            current = level;
+            currentLevel = level;
             Controller.Instance.Initialize(level);
             levelName.text = level.name;
             levelName.gameObject.SetActive(showLevelName);
+        }
+        
+        private Level[] GetLevels() => currentWorld switch
+        {
+            World.One => worldOne,
+            World.Frog => frogWorld,
+            _ => throw new ArgumentOutOfRangeException(nameof(currentWorld), currentWorld, null)
+        };
+
+        public void SetWorld(World world) => currentWorld = world;
+
+        public enum World
+        {
+            One,
+            Frog
         }
     }
 }

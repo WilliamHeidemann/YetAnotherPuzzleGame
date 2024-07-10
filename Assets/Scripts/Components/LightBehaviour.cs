@@ -6,7 +6,7 @@ namespace Components
     public class LightBehaviour : MonoBehaviour
     {
         private Quaternion targetRotation;
-        private Vector3 targetPoint = new (2f, 2f, 2f);
+        private Vector3 targetPoint = new (1f, 2f, 1f);
         [SerializeField] private float rotationSpeed;
         [SerializeField] private float flyingSpeed;
         private Camera mainCamera;

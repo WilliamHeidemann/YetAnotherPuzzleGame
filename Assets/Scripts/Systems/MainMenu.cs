@@ -2,6 +2,7 @@
 using System.Linq;
 using Components;
 using Model;
+using TMPro;
 using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Editor;
@@ -13,6 +14,8 @@ namespace Systems
     public class MainMenu : Singleton<MainMenu>
     {
         [SerializeField] private LevelButton levelButtonPrefab;
+        [SerializeField] private List<GameObject> worldButtons;
+        [SerializeField] private TextMeshProUGUI menuText;
         private List<LevelButton> sceneLevelButtons;
 
         private readonly Location[] spawnLocations =
@@ -30,12 +33,29 @@ namespace Systems
             new(0, -1),
         };
 
-        private void Start()
+        public void OnWorldSelected()
         {
+            HideWorldButtons();
             DisplayLevelButtons();
+            menuText.text = "Select Level";
         }
 
-        public void DisplayLevelButtons()
+        public void OnLevelSelected()
+        {
+            menuText.gameObject.SetActive(false);
+            SetTextOnButtonsActive(false);
+        }
+
+        private void HideWorldButtons()
+        {
+            worldButtons.ForEach(b =>
+            {
+                LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
+                    .setOnComplete(() => b.SetActive(false));
+            });
+        }
+
+        private void DisplayLevelButtons()
         {
             SpawnLevelButtons();
             Animator.LevelButtonsIn(sceneLevelButtons.Select(b => b.gameObject));
@@ -54,7 +74,7 @@ namespace Systems
             levelButton.transform.position = spawnLocations[index].asVector3.With(y: -1);
             sceneLevelButtons.Add(levelButton);
             levelButton.index = index;
-            levelButton.SetText(index.ToString());
+            levelButton.SetText((index + 1).ToString());
         }
 
         [Button]
@@ -68,7 +88,7 @@ namespace Systems
             sceneLevelButtons.Clear();
         }
 
-        public void SetTextOnButtonsActive(bool active)
+        private void SetTextOnButtonsActive(bool active)
         {
             foreach (var sceneLevelButton in sceneLevelButtons)
             {

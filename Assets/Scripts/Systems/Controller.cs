@@ -77,7 +77,7 @@ namespace Systems
             Move(move);
         }
 
-        public void Rewind() => Rewind(LevelManager.Instance.current);
+        public void Rewind() => Rewind(LevelManager.Instance.currentLevel);
 
         private async void Rewind(Level level)
         {
@@ -125,7 +125,7 @@ namespace Systems
             else
                 moveCounter.IncrementCount();
 
-            isLevelComplete = LevelManager.Instance.current.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
+            isLevelComplete = LevelManager.Instance.currentLevel.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
             if (isLevelComplete) 
                 LevelManager.Instance.EnterNextLevel();
         }

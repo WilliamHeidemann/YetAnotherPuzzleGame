@@ -22,6 +22,8 @@ namespace Systems
         [SerializeField] private GroundBlock groundPrefab;
         [SerializeField] private GameObject highlightPrefab;
 
+        [SerializeField] private List<GameObject> gameObjectsToEnableOnStart;
+        
         private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GroundBlock> groundBlocks = new();
         private readonly List<GameObject> highlights = new();
@@ -52,6 +54,8 @@ namespace Systems
 
         public void SpawnLevel(Level level)
         {
+            gameObjectsToEnableOnStart.ForEach(g => g.SetActive(true));
+            
             SpawnGroundBlocks(level);
             AnimateGroundBlocks(level);
             ColorGroundBlocks(level);
