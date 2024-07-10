@@ -168,19 +168,24 @@ namespace Systems
             var movables = movableBlocks
                 .Where(b => b.model.type == type)
                 .ToList();
-            var startingPositions =
+            
+            var startingBlocks =
                 level.startingConfiguration
                     .Where(b => b.type == type)
-                    .Select(b => b.location.asVector3)
                     .ToList();
 
-            void Animate(int i) => Animator.Move(movables[i].gameObject, startingPositions[i], Type.Cardinal);
-            For.Range(movables.Count, Animate);
+            void SetBlock(int i)
+            {
+                movables[i].model = startingBlocks[i];
+                Animator.Move(movables[i].gameObject, startingBlocks[i].location.asVector3, Type.Cardinal);
+            }
+
+            For.Range(movables.Count, SetBlock);
         }
 
         private void AnimateGroundBlocks(Level level)
         {
-            void SetLocation(int i)
+            void SetBlock(int i)
             {
                 var groundBlock = groundBlocks[i];
                 var location = level.groundBlocks[i];
@@ -189,7 +194,7 @@ namespace Systems
                 Animator.Move(groundBlock.gameObject, location.asVector3.With(y: -1), Type.Cardinal);
             }
 
-            For.Range(groundBlocks.Count, SetLocation);
+            For.Range(groundBlocks.Count, SetBlock);
         }
         
         private void ColorGroundBlocks(Level level)
