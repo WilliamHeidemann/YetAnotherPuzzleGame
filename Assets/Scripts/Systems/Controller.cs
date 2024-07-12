@@ -40,13 +40,11 @@ namespace Systems
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
             selector.Deselect();
             isLevelComplete = false;
-            UndoButton.Instance.SetActive(false);
         }
 
         public void Select(MovableBlock movable)
         {
             selector.Select(movable);
-            UndoButton.Instance.SetActive(BlockCanUndo(movable.model));
             spawner.HideHighlights();
 
             if (!HasMoves())
@@ -118,7 +116,6 @@ namespace Systems
             spawner.HideHighlights();
             grid.Move(move);
             history.Add(blockToMove.model, move);
-            UndoButton.Instance.SetActive(BlockCanUndo(blockToMove.model));
 
             if (move.isUndo)
                 moveCounter.DecrementCount();
