@@ -12,6 +12,7 @@ namespace Systems
     public class LevelManager : Singleton<LevelManager>
     {
         private Level[] levels => GetLevels();
+        [SerializeField] private Level[] trialWorld;
         [SerializeField] private Level[] worldOne;
         [SerializeField] private Level[] frogWorld;
         private World currentWorld;
@@ -51,9 +52,10 @@ namespace Systems
             levelName.text = level.name;
             levelName.gameObject.SetActive(showLevelName);
         }
-        
+
         private Level[] GetLevels() => currentWorld switch
         {
+            World.Trial => trialWorld,
             World.One => worldOne,
             World.Frog => frogWorld,
             _ => throw new ArgumentOutOfRangeException(nameof(currentWorld), currentWorld, null)
@@ -63,6 +65,7 @@ namespace Systems
 
         public enum World
         {
+            Trial,
             One,
             Frog
         }

@@ -2,7 +2,6 @@
 using System.Linq;
 using Components;
 using Model;
-using TMPro;
 using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Editor;
@@ -14,8 +13,7 @@ namespace Systems
     public class MainMenu : Singleton<MainMenu>
     {
         [SerializeField] private LevelButton levelButtonPrefab;
-        [SerializeField] private List<GameObject> worldButtons;
-        [SerializeField] private List<GameObject> menuBlocks;
+        [SerializeField] private GameObject worldSelectionGrid;
         private List<LevelButton> sceneLevelButtons;
 
         private readonly Location[] spawnLocations =
@@ -35,7 +33,7 @@ namespace Systems
 
         public void OnWorldSelected()
         {
-            // HideWorldButtons();
+            worldSelectionGrid.SetActive(false);
             DisplayLevelButtons();
         }
 
@@ -43,21 +41,6 @@ namespace Systems
         {
             SetTextOnButtonsActive(false);
         }
-
-        // private void HideWorldButtons()
-        // {
-        //     worldButtons.ForEach(b =>
-        //     {
-        //         LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
-        //             .setOnComplete(() => b.SetActive(false));
-        //     });
-        //     
-        //     menuBlocks.ForEach(b =>
-        //     {
-        //         LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
-        //             .setOnComplete(() => b.SetActive(false));
-        //     });
-        // }
 
         private void DisplayLevelButtons()
         {
