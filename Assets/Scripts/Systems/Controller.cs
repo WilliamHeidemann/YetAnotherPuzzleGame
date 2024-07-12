@@ -129,7 +129,7 @@ namespace Systems
             isLevelComplete =
                 LevelManager.Instance.currentLevel.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
             if (isLevelComplete)
-                LevelManager.Instance.EnterNextLevel();
+                DelayedEnterNextLevel();
         }
 
         private bool BlockCanUndo(Block block)
@@ -144,6 +144,12 @@ namespace Systems
         {
             await Awaitable.WaitForSecondsAsync(Animator.MoveTime * 0.5f);
             Select(movableBlock);
+        }
+
+        private async void DelayedEnterNextLevel()
+        {
+            await Awaitable.WaitForSecondsAsync(Animator.MoveTime);
+            LevelManager.Instance.EnterNextLevel();
         }
     }
 }
