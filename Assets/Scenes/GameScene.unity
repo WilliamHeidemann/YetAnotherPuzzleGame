@@ -2641,7 +2641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531afd65a758aeb4591a292716672f0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  world: 0
+  world: 1
 --- !u!4 &1316671031 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3691880238749171508, guid: 79226737c910e4a40aee1b4b35dc88d0, type: 3}
@@ -3093,6 +3093,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldOne:
+  - {fileID: 11400000, guid: 2b56a4c201838124c84e7fdca59ee252, type: 2}
+  - {fileID: 11400000, guid: ee2ba1202e925ea4c9d01e7fb66ea266, type: 2}
+  - {fileID: 11400000, guid: 4ff5f13bfa2d1d047897d6d187b8dba1, type: 2}
   - {fileID: 11400000, guid: d7207abe2f5d10248a0db3bd28b3d46e, type: 2}
   - {fileID: 11400000, guid: 2661aa8a488309d43afc0fb06a71159f, type: 2}
   - {fileID: 11400000, guid: 9cfd6cc42bbb0f84fad21caa58b7f37e, type: 2}
@@ -3110,6 +3113,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3c834f4a9d3f91c43b8b9f41d6ebbde5, type: 2}
   - {fileID: 11400000, guid: 52762ce8b5452414791b9c72e16212f0, type: 2}
   - {fileID: 11400000, guid: d3370054d1d2fde4db8bca2874edf3da, type: 2}
+  - {fileID: 11400000, guid: 50a1e3eded30f2c45a4368ffd203963c, type: 2}
+  - {fileID: 11400000, guid: d31d6a67045527044a96adf27e6a48c2, type: 2}
+  - {fileID: 11400000, guid: 0b804d8a04c339f47bc616eb45fb1519, type: 2}
   showLevelName: 1
   levelName: {fileID: 409383367}
 --- !u!1001 &1771368565
