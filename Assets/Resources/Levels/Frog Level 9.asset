@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eed5b29d5eb54a92a83c4793ae88f28c, type: 3}
   m_Name: Frog Level 9
   m_EditorClassIdentifier: 
+  image: {fileID: 2800000, guid: 311072cfa7961c24386d96162ad06131, type: 3}
   startingConfiguration:
   - location:
       x: 2

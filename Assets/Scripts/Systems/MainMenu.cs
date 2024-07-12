@@ -35,7 +35,7 @@ namespace Systems
 
         public void OnWorldSelected()
         {
-            HideWorldButtons();
+            // HideWorldButtons();
             DisplayLevelButtons();
         }
 
@@ -44,20 +44,20 @@ namespace Systems
             SetTextOnButtonsActive(false);
         }
 
-        private void HideWorldButtons()
-        {
-            worldButtons.ForEach(b =>
-            {
-                LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
-                    .setOnComplete(() => b.SetActive(false));
-            });
-            
-            menuBlocks.ForEach(b =>
-            {
-                LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
-                    .setOnComplete(() => b.SetActive(false));
-            });
-        }
+        // private void HideWorldButtons()
+        // {
+        //     worldButtons.ForEach(b =>
+        //     {
+        //         LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
+        //             .setOnComplete(() => b.SetActive(false));
+        //     });
+        //     
+        //     menuBlocks.ForEach(b =>
+        //     {
+        //         LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
+        //             .setOnComplete(() => b.SetActive(false));
+        //     });
+        // }
 
         private void DisplayLevelButtons()
         {

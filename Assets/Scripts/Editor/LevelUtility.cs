@@ -14,8 +14,14 @@ namespace Editor
 
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
             var level = (Level)target;
+
+            if (level.image != null)
+            {
+                GUILayout.Label(level.image, GUILayout.Width(256), GUILayout.Height(256));
+            }
+
+            base.OnInspectorGUI();
 
             confirmCopy = EditorGUILayout.Toggle("Confirm Copy", confirmCopy);
             EditorGUI.BeginDisabledGroup(!confirmCopy);
