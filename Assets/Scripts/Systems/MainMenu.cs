@@ -15,7 +15,7 @@ namespace Systems
     {
         [SerializeField] private LevelButton levelButtonPrefab;
         [SerializeField] private List<GameObject> worldButtons;
-        [SerializeField] private TextMeshProUGUI menuText;
+        [SerializeField] private List<GameObject> menuBlocks;
         private List<LevelButton> sceneLevelButtons;
 
         private readonly Location[] spawnLocations =
@@ -37,18 +37,22 @@ namespace Systems
         {
             HideWorldButtons();
             DisplayLevelButtons();
-            menuText.text = "Select Level";
         }
 
         public void OnLevelSelected()
         {
-            menuText.gameObject.SetActive(false);
             SetTextOnButtonsActive(false);
         }
 
         private void HideWorldButtons()
         {
             worldButtons.ForEach(b =>
+            {
+                LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
+                    .setOnComplete(() => b.SetActive(false));
+            });
+            
+            menuBlocks.ForEach(b =>
             {
                 LeanTween.moveY(b, -20, 1f).setEase(LeanTweenType.easeOutQuad)
                     .setOnComplete(() => b.SetActive(false));
