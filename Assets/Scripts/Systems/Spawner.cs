@@ -14,7 +14,7 @@ using Type = Model.Type;
 
 namespace Systems
 {
-    public class Spawner : MonoBehaviour
+    public class Spawner : Singleton<Spawner>
     {
         [SerializeField] private MovableBlock cardinalPrefab;
         [SerializeField] private MovableBlock diagonalPrefab;
@@ -23,20 +23,26 @@ namespace Systems
         [SerializeField] private GameObject highlightPrefab;
 
         [SerializeField] private List<GameObject> gameObjectsToEnableOnStart;
-        
+
         private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GroundBlock> groundBlocks = new();
         private readonly List<GameObject> highlights = new();
+        private readonly List<Location> highlightLocations = new();
 
         public Option<MovableBlock> GetMovableBlock(Location location) =>
             movableBlocks.FirstOption(b => b.model.location == location);
 
-        public void ShowHighlights(IEnumerable<Location> locationsToHighlight)
+        public void ShowHighlights(List<Location> locationsToHighlight)
         {
+            if (locationsToHighlight.All(highlightLocations.Contains) && highlightLocations.All(locationsToHighlight.Contains))
+                return;
+
+            HideHighlights();
             foreach (var location in locationsToHighlight)
             {
                 var highlight = Instantiate(highlightPrefab, location.asVector3, highlightPrefab.transform.rotation);
                 highlights.Add(highlight);
+                highlightLocations.Add(location);
             }
         }
 
@@ -45,8 +51,9 @@ namespace Systems
             foreach (var highlight in highlights)
                 Destroy(highlight.gameObject);
             highlights.Clear();
+            highlightLocations.Clear();
         }
-        
+
         public async Task ResetLevel(Level level)
         {
             await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
@@ -55,7 +62,7 @@ namespace Systems
         public void SpawnLevel(Level level)
         {
             gameObjectsToEnableOnStart.ForEach(g => g.SetActive(true));
-            
+
             SpawnGroundBlocks(level);
             AnimateGroundBlocks(level);
             ColorGroundBlocks(level);
@@ -119,10 +126,10 @@ namespace Systems
             var neededBlocks = level.startingConfiguration.Where(b => b.type == type).ToList();
             var have = movableBlocks.Count(b => b.model.type == type);
             var need = level.startingConfiguration.Count(b => b.type == type);
-            
+
             if (have == need)
                 return;
-            
+
             if (have > need)
             {
                 var amountDiscard = have - need;
@@ -168,7 +175,7 @@ namespace Systems
             var movables = movableBlocks
                 .Where(b => b.model.type == type)
                 .ToList();
-            
+
             var startingBlocks =
                 level.startingConfiguration
                     .Where(b => b.type == type)
@@ -196,15 +203,15 @@ namespace Systems
 
             For.Range(groundBlocks.Count, SetBlock);
         }
-        
+
         private void ColorGroundBlocks(Level level)
         {
             foreach (var groundBlock in groundBlocks)
             {
                 groundBlock.GetComponent<MeshRenderer>().material = Resources.Load<Material>($"Materials/Ground");
             }
-            
-            
+
+
             foreach (var block in level.targetConfiguration)
             {
                 if (groundBlocks.FirstOption(g => g.location == block.location).IsSome(out var ground))

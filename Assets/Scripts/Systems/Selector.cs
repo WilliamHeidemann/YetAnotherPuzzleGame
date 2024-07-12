@@ -18,6 +18,9 @@ namespace Systems
             if (selected.IsSome(out var previous) && block != previous)
                 previous.GetComponent<Outline>().enabled = false;
 
+            if (previous == block)
+                return; 
+            
             block.GetComponent<Outline>().enabled = true;
             selected = Option<MovableBlock>.Some(block);
         }

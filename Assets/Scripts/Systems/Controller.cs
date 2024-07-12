@@ -18,7 +18,6 @@ namespace Systems
     public class Controller : Singleton<Controller>
     {
         [SerializeField] private TextMeshProUGUI moveCounterText;
-        [SerializeField] private Spawner spawner;
         [SerializeField] private Selector selector;
         private Grid grid;
         private History history;
@@ -30,7 +29,7 @@ namespace Systems
         public void Initialize(Level level)
         {
             ResetGameState(level);
-            spawner.SpawnLevel(level);
+            Spawner.Instance.SpawnLevel(level);
         }
 
         private void ResetGameState(Level level)
@@ -45,20 +44,23 @@ namespace Systems
         public void Select(MovableBlock movable)
         {
             selector.Select(movable);
-            spawner.HideHighlights();
 
             if (!HasMoves())
+            {
+                Spawner.Instance.HideHighlights();
                 return;
+            }
 
             var block = movable.model;
             var validNeighbors = block.GetAvailableNeighbors(grid.HasBlockAt, grid.HasGroundAt).ToList();
 
             if (validNeighbors.Count > 0)
             {
-                spawner.ShowHighlights(validNeighbors);
+                Spawner.Instance.ShowHighlights(validNeighbors);
             }
             else
             {
+                Spawner.Instance.HideHighlights();
                 Animator.Shake(movable.gameObject);
             }
         }
@@ -80,7 +82,7 @@ namespace Systems
         private async void Rewind(Level level)
         {
             ResetGameState(level);
-            await spawner.ResetLevel(level);
+            await Spawner.Instance.ResetLevel(level);
         }
 
         public void TryUndo(Block block)
@@ -105,7 +107,7 @@ namespace Systems
 
         private void Move(Move move)
         {
-            var block = spawner.GetMovableBlock(move.previous);
+            var block = Spawner.Instance.GetMovableBlock(move.previous);
             if (!block.IsSome(out var blockToMove))
                 return;
 
@@ -113,7 +115,7 @@ namespace Systems
             var targetLocation = move.next.asVector3;
             Animator.Move(blockToMove.gameObject, targetLocation, move.type);
 
-            spawner.HideHighlights();
+            Spawner.Instance.HideHighlights();
             grid.Move(move);
             history.Add(blockToMove.model, move);
 
@@ -122,8 +124,11 @@ namespace Systems
             else
                 moveCounter.IncrementCount();
 
-            isLevelComplete = LevelManager.Instance.currentLevel.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
-            if (isLevelComplete) 
+            DelayedSelect(blockToMove);
+
+            isLevelComplete =
+                LevelManager.Instance.currentLevel.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
+            if (isLevelComplete)
                 LevelManager.Instance.EnterNextLevel();
         }
 
@@ -133,6 +138,12 @@ namespace Systems
             if (move.isUndo) return false;
             if (!grid.IsAvailable(move.previous)) return false;
             return true;
+        }
+
+        private async void DelayedSelect(MovableBlock movableBlock)
+        {
+            await Awaitable.WaitForSecondsAsync(Animator.MoveTime * 0.5f);
+            Select(movableBlock);
         }
     }
 }
