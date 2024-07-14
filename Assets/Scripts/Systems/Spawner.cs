@@ -160,7 +160,7 @@ namespace Systems
 
             var position = block.location.asVector3;
             position += Random.onUnitSphere * 8;
-            var movableBlock = Instantiate(prefab, position, Quaternion.identity);
+            var movableBlock = Instantiate(prefab, position, Quaternion.Euler(-90, 0, 0));
             movableBlock.model = block;
             movableBlocks.Add(movableBlock);
         }
@@ -184,7 +184,7 @@ namespace Systems
             void SetBlock(int i)
             {
                 movables[i].model = startingBlocks[i];
-                Animator.Move(movables[i].gameObject, startingBlocks[i].location.asVector3, Type.Cardinal);
+                Animator.Move(movables[i].gameObject, startingBlocks[i].location.asVector3.With(y: -0.35f), Type.Cardinal);
             }
 
             For.Range(movables.Count, SetBlock);

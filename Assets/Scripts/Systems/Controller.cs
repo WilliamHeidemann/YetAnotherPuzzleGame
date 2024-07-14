@@ -112,7 +112,7 @@ namespace Systems
                 return;
 
             blockToMove.model = blockToMove.model.WithLocation(move.next);
-            var targetLocation = move.next.asVector3;
+            var targetLocation = move.next.asVector3.With(y: -0.35f);
             Animator.Move(blockToMove.gameObject, targetLocation, move.type);
 
             Spawner.Instance.HideHighlights();
@@ -142,7 +142,7 @@ namespace Systems
 
         private async void DelayedSelect(MovableBlock movableBlock)
         {
-            await Awaitable.WaitForSecondsAsync(Animator.MoveTime * 0.5f);
+            await Awaitable.WaitForSecondsAsync(Animator.MoveTime * 0.3f);
             Select(movableBlock);
         }
 

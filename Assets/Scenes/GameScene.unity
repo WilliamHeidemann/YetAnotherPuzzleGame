@@ -769,7 +769,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveCounterText: {fileID: 1553079734}
-  spawner: {fileID: 1566599759}
   selector: {fileID: 1591793702}
 --- !u!1 &440089269
 GameObject:
@@ -2945,10 +2944,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a230071ea9f141d99032c6fd1d942662, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardinalPrefab: {fileID: -2166095562911369665, guid: 7dae9d7db01765948ad9c0b2947e824c, type: 3}
-  diagonalPrefab: {fileID: 3132879200977078548, guid: d84defc0545663d4bbeca0ff988a28b4, type: 3}
-  frogPrefab: {fileID: -2166095562911369665, guid: 2fda0bc10c68e7e4bbb83d6aa26f52ae, type: 3}
-  groundPrefab: {fileID: -796449188040751468, guid: 79226737c910e4a40aee1b4b35dc88d0, type: 3}
+  cardinalPrefab: {fileID: -8110027111985612634, guid: 2dc06f814ef131048a823dc058481406, type: 3}
+  diagonalPrefab: {fileID: -8896135366892300861, guid: 4db7e50200e6f954dae7e6cef20bcd21, type: 3}
+  frogPrefab: {fileID: -5752987093988519833, guid: 206687983c5fdce48aa59e77d015e23e, type: 3}
+  groundPrefab: {fileID: 8981457382458868077, guid: 09ecd4f1c4ee84a4aa194cadbc06ade3, type: 3}
   highlightPrefab: {fileID: 4623575010790887140, guid: 9231c793fa6c5b74aae12c8f20d4467b, type: 3}
   gameObjectsToEnableOnStart:
   - {fileID: 739567486}
@@ -3098,7 +3097,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f85bb4b6a8f4f9a8027dd64bf284c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelButtonPrefab: {fileID: -5628318385396736971, guid: ce6b97d51fec2e44fb21f60a9cb063c4, type: 3}
+  levelButtonPrefab: {fileID: -3922134090318874922, guid: 5d683d61e588c2d43ae4eab005a1414b, type: 3}
   worldSelectionGrid: {fileID: 1767303456}
 --- !u!1001 &1736918376
 PrefabInstance:

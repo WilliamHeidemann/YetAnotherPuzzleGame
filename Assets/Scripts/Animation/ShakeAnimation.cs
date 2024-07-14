@@ -14,11 +14,11 @@ namespace Animation
             const float intensity = 10f;
 
             var shakeSequence = LeanTween.sequence();
-            shakeSequence.append(LeanTween.rotateZ(gameObject, intensity, duration / 4)
+            shakeSequence.append(LeanTween.rotateY(gameObject, intensity, duration / 4)
                 .setEase(LeanTweenType.easeInOutSine));
-            shakeSequence.append(LeanTween.rotateZ(gameObject, -intensity, duration / 2)
+            shakeSequence.append(LeanTween.rotateY(gameObject, -intensity, duration / 2)
                 .setEase(LeanTweenType.easeInOutSine));
-            shakeSequence.append(LeanTween.rotateZ(gameObject, 0, duration / 4)
+            shakeSequence.append(LeanTween.rotateY(gameObject, 0, duration / 4)
                 .setEase(LeanTweenType.easeInOutSine));
 
             return shakeSequence;

@@ -146,7 +146,7 @@ namespace Animation
                 var movable = movableList.First(b => b.model.type == block.type);
                 movable.model = block;
                 movableList.Remove(movable);
-                Move(movable.gameObject, block.location.asVector3, block.type);
+                Move(movable.gameObject, block.location.asVector3.With(y: -0.35f), block.type);
             }
 
             await Awaitable.WaitForSecondsAsync(MoveTime);
