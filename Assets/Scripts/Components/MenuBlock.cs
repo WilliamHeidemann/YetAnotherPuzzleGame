@@ -1,3 +1,5 @@
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Editor;
@@ -15,7 +17,6 @@ namespace Components
             var blocks = FindObjectsByType<MenuBlock>(FindObjectsSortMode.None);
             blocks.ForEach(b => b.transform.position += translation);
         }
-        
         
         [Button]
         public void UpX()

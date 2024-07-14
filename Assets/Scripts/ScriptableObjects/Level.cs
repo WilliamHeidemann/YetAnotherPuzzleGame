@@ -12,5 +12,6 @@ namespace ScriptableObjects
         public List<Block> targetConfiguration;
         public List<Location> groundBlocks;
         public int maxMoves;
+        public bool hasInfiniteMoves;
     }
 }

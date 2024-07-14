@@ -9,8 +9,11 @@ namespace Components
     {
         [SerializeField] private TextMeshProUGUI text;
         public int index;
+        public Status status;
         public void Interact()
         {
+            if (status == Status.Locked)
+                return;
             MainMenu.Instance.onLevelSelected?.Invoke();
             LevelManager.Instance.EnterLevelIndex(index);
         }
@@ -24,6 +27,13 @@ namespace Components
         {
             var color = text.color.SetAlpha(active ? 1f : 0f);
             text.CrossFadeColor(color, 0.5f, false, true);
+        }
+        
+        public enum Status
+        {
+            Locked,
+            Open,
+            OpenAndDone
         }
     }
 }

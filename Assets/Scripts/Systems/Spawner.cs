@@ -21,35 +21,24 @@ namespace Systems
         [SerializeField] private MovableBlock frogPrefab;
         [SerializeField] private GroundBlock groundPrefab;
         [SerializeField] private GameObject highlightPrefab;
-        [SerializeField] private LevelButton levelButtonPrefab;
+
+        [SerializeField] private GameObject trialWorldMenuBlocks;
+        [SerializeField] private GameObject worldOneMenuBlocks;
+        [SerializeField] private GameObject frogWorldMenuBlocks;
 
         private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GroundBlock> groundBlocks = new();
         private readonly List<GameObject> highlights = new();
         private readonly List<Location> highlightLocations = new();
-        private readonly List<GameObject> sceneLevelButtons = new();
+        private readonly List<GameObject> menuBlocks = new();
 
-        private readonly Location[] spawnLocations = {
-            new(3, 4),
-            new(2, 3),
-            new(1, 2),
-            new(0, 1),
-            new(-1, 0),
-
-            new(4, 3),
-            new(3, 2),
-            new(2, 1),
-            new(1, 0),
-            new(0, -1),
-        };
-
-        
         public Option<MovableBlock> GetMovableBlock(Location location) =>
             movableBlocks.FirstOption(b => b.model.location == location);
 
         public void ShowHighlights(List<Location> locationsToHighlight)
         {
-            if (locationsToHighlight.All(highlightLocations.Contains) && highlightLocations.All(locationsToHighlight.Contains))
+            if (locationsToHighlight.All(highlightLocations.Contains) &&
+                highlightLocations.All(locationsToHighlight.Contains))
                 return;
 
             HideHighlights();
@@ -74,30 +63,36 @@ namespace Systems
             await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
         }
 
-        public void SpawnLevelButtons()
+        public void InitLevelButtons()
         {
-            sceneLevelButtons.Clear();
-            For.Range(spawnLocations.Length, SpawnLevelButton);
-            Animator.LevelButtonsIn(sceneLevelButtons.Select(b => b.gameObject));
-        }
-        
-        private void SpawnLevelButton(int index)
-        {
-            var levelButton = Instantiate(levelButtonPrefab);
-            levelButton.transform.position = spawnLocations[index].asVector3.With(y: -1);
-            sceneLevelButtons.Add(levelButton.gameObject);
-            levelButton.index = index;
-            levelButton.SetText((index + 1).ToString());
-        }
-        
-        public void SetTextOnButtonsActive(bool active)
-        {
-            foreach (var sceneLevelButton in sceneLevelButtons)
+            menuBlocks.Clear();
+            var parent = LevelManager.Instance.world switch
             {
-                sceneLevelButton.GetComponent<LevelButton>().SetTextActive(active);
-            }
-        }
+                LevelManager.World.Trial => trialWorldMenuBlocks,
+                LevelManager.World.One => worldOneMenuBlocks,
+                LevelManager.World.Frog => frogWorldMenuBlocks,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            parent.transform.ForEveryChild(t =>
+            {
+                var block = Instantiate(t.gameObject);
+                menuBlocks.Add(block);
+                block.SetActive(true);
+            });
 
+            // load status of all levels and set their status accordingly
+            menuBlocks
+                .Where(g => g.GetComponent<LevelButton>() != null)
+                .Select(g => g.GetComponent<LevelButton>())
+                .ForEach(b => b.status = LevelButton.Status.OpenAndDone);
+
+            // set availability visual accordingly
+            // Locked: lock icon + dark grey 
+            // Open: Bright grey
+            // Open and Complete: ground grey
+
+            Animator.LevelButtonsIn(menuBlocks.Select(b => b.gameObject));
+        }
 
         public void SpawnLevel(Level level)
         {
@@ -115,19 +110,20 @@ namespace Systems
         {
             movableBlocks.ForEach(block => Destroy(block.gameObject));
             groundBlocks.ForEach(block => Destroy(block.gameObject));
-            highlights.ForEach(o => Destroy(o.gameObject));
-            sceneLevelButtons.ForEach(block => Destroy(block.gameObject));
-            
+            highlights.ForEach(Destroy);
+            menuBlocks.ForEach(Destroy);
+
             movableBlocks.Clear();
             groundBlocks.Clear();
             highlights.Clear();
             highlightLocations.Clear();
-            sceneLevelButtons.Clear();
+            menuBlocks.Clear();
         }
 
         private void SpawnGroundBlocks(Level level)
         {
-            groundBlocks.AddRange(GetLevelButtonBlocks());
+            // groundBlocks.AddRange(ConvertMenuBlocksToGround());
+            ConvertMenuBlocksToGround();
 
             var have = groundBlocks.Count;
             var need = level.groundBlocks.Count;
@@ -164,14 +160,15 @@ namespace Systems
             groundBlocks.Add(groundBlock);
         }
 
-        private IEnumerable<GroundBlock> GetLevelButtonBlocks()
+        private void ConvertMenuBlocksToGround()
         {
-            var levelButtonBlocks =
-                FindObjectsByType<LevelButton>(FindObjectsSortMode.None)
-                    .Select(b => b.gameObject)
-                    .ToList();
-            levelButtonBlocks.ForEach(b => Destroy(b.GetComponent<LevelButton>()));
-            return levelButtonBlocks.Select(b => b.AddComponent<GroundBlock>());
+            menuBlocks.ForEach(b =>
+            {
+                if (b.TryGetComponent<LevelButton>(out var levelButton))
+                    Destroy(levelButton);
+            });
+            groundBlocks.AddRange(menuBlocks.Select(b => b.GetOrAdd<GroundBlock>()));
+            menuBlocks.Clear();
         }
 
         private void SpawnMovableBlocks(Level level) => For.Each<Type>(t => SpawnMovableBlocksOfType(t, level));
@@ -239,7 +236,8 @@ namespace Systems
             void SetBlock(int i)
             {
                 movables[i].model = startingBlocks[i];
-                Animator.Move(movables[i].gameObject, startingBlocks[i].location.asVector3.With(y: -0.35f), Type.Cardinal);
+                Animator.Move(movables[i].gameObject, startingBlocks[i].location.asVector3.With(y: -0.35f),
+                    Type.Cardinal);
             }
 
             For.Range(movables.Count, SetBlock);

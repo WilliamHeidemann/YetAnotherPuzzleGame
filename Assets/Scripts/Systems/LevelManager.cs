@@ -16,6 +16,7 @@ namespace Systems
         [SerializeField] private Level[] worldOne;
         [SerializeField] private Level[] frogWorld;
         private World currentWorld;
+        public World world => currentWorld;
         public Level currentLevel { get; private set; }
         private int currentLevelIndex;
         [Space] [SerializeField] private bool showLevelName;

@@ -80,6 +80,7 @@ namespace Editor
             level.startingConfiguration = startConfig.ToList();
             level.targetConfiguration = targetConfig.ToList();
             level.maxMoves = maxMoves;
+            level.hasInfiniteMoves = levelSaver.hasInfiniteMoves;
 
             var path = "Assets/Resources/Levels/New Level.asset";
             path = AssetDatabase.GenerateUniqueAssetPath(path);

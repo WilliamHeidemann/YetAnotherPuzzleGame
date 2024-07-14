@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eed5b29d5eb54a92a83c4793ae88f28c, type: 3}
+  m_Name: Trial Block Cardinal
+  m_EditorClassIdentifier: 
+  image: {fileID: 2800000, guid: 7969319b60d42434f9bb975af38bc7df, type: 3}
+  startingConfiguration:
+  - location:
+      x: 0
+      y: 1
+    type: 0
+  targetConfiguration:
+  - location:
+      x: 2
+      y: 0
+    type: 0
+  groundBlocks:
+  - x: 1
+    y: 1
+  - x: 2
+    y: 0
+  - x: 1
+    y: 0
+  - x: 0
+    y: 0
+  - x: 2
+    y: 1
+  - x: 0
+    y: 1
+  maxMoves: 100
+  hasInfiniteMoves: 1
