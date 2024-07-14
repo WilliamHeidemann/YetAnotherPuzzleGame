@@ -9,7 +9,7 @@ namespace Components
         public void Interact()
         {
             LevelManager.Instance.SetWorld(world);
-            MainMenu.Instance.OnWorldSelected();
+            MainMenu.Instance.onWorldSelected?.Invoke();
         }
     }
 }

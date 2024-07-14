@@ -3,6 +3,7 @@ using System.Linq;
 using Components;
 using Model;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityUtils;
 using UtilityToolkit.Editor;
 using UtilityToolkit.Runtime;
@@ -13,7 +14,6 @@ namespace Systems
     public class MainMenu : Singleton<MainMenu>
     {
         [SerializeField] private LevelButton levelButtonPrefab;
-        [SerializeField] private GameObject worldSelectionGrid;
         private List<LevelButton> sceneLevelButtons;
 
         private readonly Location[] spawnLocations =
@@ -31,18 +31,13 @@ namespace Systems
             new(0, -1),
         };
 
-        public void OnWorldSelected()
-        {
-            worldSelectionGrid.SetActive(false);
-            DisplayLevelButtons();
-        }
+        public UnityEvent onWorldSelected;
+        public UnityEvent onLevelSelected;
+        public UnityEvent onMenuSelected;
 
-        public void OnLevelSelected()
-        {
-            SetTextOnButtonsActive(false);
-        }
+        public void MenuSelected() => onMenuSelected?.Invoke();
 
-        private void DisplayLevelButtons()
+        public void DisplayLevelButtons()
         {
             SpawnLevelButtons();
             Animator.LevelButtonsIn(sceneLevelButtons.Select(b => b.gameObject));
@@ -75,7 +70,7 @@ namespace Systems
             sceneLevelButtons.Clear();
         }
 
-        private void SetTextOnButtonsActive(bool active)
+        public void SetTextOnButtonsActive(bool active)
         {
             foreach (var sceneLevelButton in sceneLevelButtons)
             {

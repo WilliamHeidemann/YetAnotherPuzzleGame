@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Codice.Client.BaseCommands;
 using Components;
 using Model;
+using Systems;
 using UnityEngine;
 using UnityUtils;
 using Random = UnityEngine.Random;
@@ -35,6 +37,11 @@ namespace Animation
         public static void Shake(GameObject obj)
         {
             QueueAnimation(new ShakeAnimation(obj));
+        }
+
+        public static void Spin(GameObject obj)
+        {
+            QueueAnimation(new SpinAnimation(obj));
         }
 
         public static void ButtonClick(GameObject obj)
@@ -84,45 +91,6 @@ namespace Animation
             CreateTween(next);
         }
 
-        public static async Task BlocksOut(IEnumerable<GameObject> blocks)
-        {
-            while (Animations.Values.Any(queue => queue.Count > 0))
-            {
-                await Awaitable.NextFrameAsync();
-            }
-
-            Animations.Clear();
-
-            foreach (var block in blocks)
-            {
-                var distance = (Random.value + 1) * 10;
-                var point = Random.insideUnitSphere * distance;
-                LeanTween.move(block, point, FadeTime).setEase(LeanTweenType.easeOutQuad);
-                LeanTween.scale(block, Vector3.zero, FadeTime).setEase(LeanTweenType.easeInQuad);
-            }
-
-            await Awaitable.WaitForSecondsAsync(FadeTime);
-        }
-
-        public static async Task BlocksIn(IEnumerable<GameObject> blocks)
-        {
-            foreach (var block in blocks)
-            {
-                var originalPosition = block.transform.position;
-                var distance = (Random.value + 1) * 10;
-                var point = Random.insideUnitSphere * distance;
-                block.transform.position = point;
-
-                var originalScale = block.transform.lossyScale;
-                block.transform.localScale = Vector3.zero;
-
-                LeanTween.move(block, originalPosition, FadeTime).setEase(LeanTweenType.easeOutQuad);
-                LeanTween.scale(block, originalScale, FadeTime).setEase(LeanTweenType.easeInQuad);
-            }
-
-            await Awaitable.WaitForSecondsAsync(FadeTime);
-        }
-
         public static async Task ResetLevel(IEnumerable<Block> levelStartingConfiguration,
             IEnumerable<MovableBlock> movableBlocks)
         {
@@ -130,6 +98,8 @@ namespace Animation
             {
                 await Awaitable.NextFrameAsync();
             }
+            
+            Spawner.Instance.HideHighlights();
 
             var movableList = new List<MovableBlock>(movableBlocks);
             var startPositions = levelStartingConfiguration.ToList();

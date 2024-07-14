@@ -4,22 +4,11 @@ using Animator = Animation.Animator;
 
 namespace Components
 {
-    public class RewindButton : MonoBehaviour, IInteractable
+    public class RewindButton : MonoBehaviour
     {
-        public void Interact()
+        public void Spin()
         {
-            Controller.Instance.Rewind();
-            Animator.ButtonClick(gameObject);
-        }
-        
-        public void Hide()
-        {
-            
-        }
-
-        public void Show()
-        {
-            
+            Animator.Spin(gameObject);
         }
     }
 }

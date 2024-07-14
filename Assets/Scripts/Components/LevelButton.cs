@@ -11,7 +11,7 @@ namespace Components
         public int index;
         public void Interact()
         {
-            MainMenu.Instance.OnLevelSelected();
+            MainMenu.Instance.onLevelSelected?.Invoke();
             LevelManager.Instance.EnterLevelIndex(index);
         }
 

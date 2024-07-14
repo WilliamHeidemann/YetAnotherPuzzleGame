@@ -22,8 +22,6 @@ namespace Systems
         [SerializeField] private GroundBlock groundPrefab;
         [SerializeField] private GameObject highlightPrefab;
 
-        [SerializeField] private List<GameObject> gameObjectsToEnableOnStart;
-
         private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GroundBlock> groundBlocks = new();
         private readonly List<GameObject> highlights = new();
@@ -61,8 +59,6 @@ namespace Systems
 
         public void SpawnLevel(Level level)
         {
-            gameObjectsToEnableOnStart.ForEach(g => g.SetActive(true));
-
             SpawnGroundBlocks(level);
             AnimateGroundBlocks(level);
             ColorGroundBlocks(level);
@@ -71,6 +67,18 @@ namespace Systems
             AnimateMovableBlocks(level);
 
             highlights.Clear();
+        }
+
+        public void DespawnLevel()
+        {
+            movableBlocks.ForEach(block => Destroy(block.gameObject));
+            groundBlocks.ForEach(block => Destroy(block.gameObject));
+            highlights.ForEach(o => Destroy(o.gameObject));
+            
+            movableBlocks.Clear();
+            groundBlocks.Clear();
+            highlights.Clear();
+            highlightLocations.Clear();
         }
 
         private void SpawnGroundBlocks(Level level)
@@ -90,7 +98,10 @@ namespace Systems
                 foreach (var groundBlock in blocksToDiscard)
                 {
                     groundBlocks.Remove(groundBlock);
-                    Destroy(groundBlock.gameObject);
+                    var position = groundBlock.transform.position;
+                    var zPosition = position.z + 10f;
+                    Animator.Move(groundBlock.gameObject, position.With(z: zPosition), Type.Cardinal);
+                    Destroy(groundBlock.gameObject, Animator.MoveTime);
                 }
                 // animate blocksToDiscard away
             }
