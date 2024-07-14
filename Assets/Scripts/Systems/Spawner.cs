@@ -27,7 +27,7 @@ namespace Systems
         private readonly List<GroundBlock> groundBlocks = new();
         private readonly List<GameObject> highlights = new();
         private readonly List<Location> highlightLocations = new();
-        private readonly List<LevelButton> sceneLevelButtons = new();
+        private readonly List<GameObject> sceneLevelButtons = new();
 
         private readonly Location[] spawnLocations = {
             new(3, 4),
@@ -85,7 +85,7 @@ namespace Systems
         {
             var levelButton = Instantiate(levelButtonPrefab);
             levelButton.transform.position = spawnLocations[index].asVector3.With(y: -1);
-            sceneLevelButtons.Add(levelButton);
+            sceneLevelButtons.Add(levelButton.gameObject);
             levelButton.index = index;
             levelButton.SetText((index + 1).ToString());
         }
@@ -94,7 +94,7 @@ namespace Systems
         {
             foreach (var sceneLevelButton in sceneLevelButtons)
             {
-                sceneLevelButton.SetTextActive(active);
+                sceneLevelButton.GetComponent<LevelButton>().SetTextActive(active);
             }
         }
 
@@ -116,11 +116,13 @@ namespace Systems
             movableBlocks.ForEach(block => Destroy(block.gameObject));
             groundBlocks.ForEach(block => Destroy(block.gameObject));
             highlights.ForEach(o => Destroy(o.gameObject));
+            sceneLevelButtons.ForEach(block => Destroy(block.gameObject));
             
             movableBlocks.Clear();
             groundBlocks.Clear();
             highlights.Clear();
             highlightLocations.Clear();
+            sceneLevelButtons.Clear();
         }
 
         private void SpawnGroundBlocks(Level level)
