@@ -122,7 +122,6 @@ namespace Systems
 
         private void SpawnGroundBlocks(Level level)
         {
-            // groundBlocks.AddRange(ConvertMenuBlocksToGround());
             ConvertMenuBlocksToGround();
 
             var have = groundBlocks.Count;
@@ -143,7 +142,6 @@ namespace Systems
                     Animator.Move(groundBlock.gameObject, position.With(z: zPosition), Type.Cardinal);
                     Destroy(groundBlock.gameObject, Animator.MoveTime);
                 }
-                // animate blocksToDiscard away
             }
             else
             {
@@ -189,9 +187,11 @@ namespace Systems
                 foreach (var block in blocksToDiscard)
                 {
                     movableBlocks.Remove(block);
-                    Destroy(block.gameObject);
+                    var position = block.transform.position;
+                    var zPosition = position.z + 10f;
+                    Animator.Move(block.gameObject, position.With(z: zPosition), Type.Cardinal);
+                    Destroy(block.gameObject, Animator.MoveTime);
                 }
-                // animate blocksToDiscard away
             }
             else
             {
