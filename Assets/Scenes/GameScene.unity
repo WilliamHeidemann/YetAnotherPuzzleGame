@@ -4512,6 +4512,7 @@ MonoBehaviour:
   frogPrefab: {fileID: -5752987093988519833, guid: 206687983c5fdce48aa59e77d015e23e, type: 3}
   groundPrefab: {fileID: 8981457382458868077, guid: 09ecd4f1c4ee84a4aa194cadbc06ade3, type: 3}
   highlightPrefab: {fileID: 4623575010790887140, guid: 9231c793fa6c5b74aae12c8f20d4467b, type: 3}
+  levelButtonPrefab: {fileID: -3922134090318874922, guid: 5d683d61e588c2d43ae4eab005a1414b, type: 3}
 --- !u!1 &1591793700
 GameObject:
   m_ObjectHideFlags: 0
@@ -4766,7 +4767,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f85bb4b6a8f4f9a8027dd64bf284c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelButtonPrefab: {fileID: -3922134090318874922, guid: 5d683d61e588c2d43ae4eab005a1414b, type: 3}
   onWorldSelected:
     m_PersistentCalls:
       m_Calls:
@@ -4782,9 +4782,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1724087111}
-        m_TargetAssemblyTypeName: Systems.MainMenu, CommandGame
-        m_MethodName: DisplayLevelButtons
+      - m_Target: {fileID: 1566599759}
+        m_TargetAssemblyTypeName: Systems.Spawner, CommandGame
+        m_MethodName: SpawnLevelButtons
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4809,8 +4809,8 @@ MonoBehaviour:
   onLevelSelected:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1724087111}
-        m_TargetAssemblyTypeName: Systems.MainMenu, CommandGame
+      - m_Target: {fileID: 1566599759}
+        m_TargetAssemblyTypeName: Systems.Spawner, CommandGame
         m_MethodName: SetTextOnButtonsActive
         m_Mode: 6
         m_Arguments:

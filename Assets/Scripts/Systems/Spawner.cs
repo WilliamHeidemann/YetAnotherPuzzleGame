@@ -21,12 +21,29 @@ namespace Systems
         [SerializeField] private MovableBlock frogPrefab;
         [SerializeField] private GroundBlock groundPrefab;
         [SerializeField] private GameObject highlightPrefab;
+        [SerializeField] private LevelButton levelButtonPrefab;
 
         private readonly List<MovableBlock> movableBlocks = new();
         private readonly List<GroundBlock> groundBlocks = new();
         private readonly List<GameObject> highlights = new();
         private readonly List<Location> highlightLocations = new();
+        private readonly List<LevelButton> sceneLevelButtons = new();
 
+        private readonly Location[] spawnLocations = {
+            new(3, 4),
+            new(2, 3),
+            new(1, 2),
+            new(0, 1),
+            new(-1, 0),
+
+            new(4, 3),
+            new(3, 2),
+            new(2, 1),
+            new(1, 0),
+            new(0, -1),
+        };
+
+        
         public Option<MovableBlock> GetMovableBlock(Location location) =>
             movableBlocks.FirstOption(b => b.model.location == location);
 
@@ -56,6 +73,31 @@ namespace Systems
         {
             await Animator.ResetLevel(level.startingConfiguration, movableBlocks);
         }
+
+        public void SpawnLevelButtons()
+        {
+            sceneLevelButtons.Clear();
+            For.Range(spawnLocations.Length, SpawnLevelButton);
+            Animator.LevelButtonsIn(sceneLevelButtons.Select(b => b.gameObject));
+        }
+        
+        private void SpawnLevelButton(int index)
+        {
+            var levelButton = Instantiate(levelButtonPrefab);
+            levelButton.transform.position = spawnLocations[index].asVector3.With(y: -1);
+            sceneLevelButtons.Add(levelButton);
+            levelButton.index = index;
+            levelButton.SetText((index + 1).ToString());
+        }
+        
+        public void SetTextOnButtonsActive(bool active)
+        {
+            foreach (var sceneLevelButton in sceneLevelButtons)
+            {
+                sceneLevelButton.SetTextActive(active);
+            }
+        }
+
 
         public void SpawnLevel(Level level)
         {

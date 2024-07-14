@@ -23,7 +23,7 @@ namespace Components
         public void SetTextActive(bool active)
         {
             var color = text.color.SetAlpha(active ? 1f : 0f);
-            text.CrossFadeColor(color, 1f, false, true);
+            text.CrossFadeColor(color, 0.5f, false, true);
         }
     }
 }
