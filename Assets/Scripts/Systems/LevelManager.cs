@@ -43,7 +43,14 @@ namespace Systems
         public void EnterNextLevel()
         {
             currentLevelIndex++;
-            EnterLevel(levels[currentLevelIndex]);
+            if (currentLevelIndex < levels.Length)
+            {
+                EnterLevel(levels[currentLevelIndex]);
+            }
+            else
+            {
+                MainMenu.Instance.MenuSelected();
+            }
         }
 
         private void EnterLevel(Level level)
