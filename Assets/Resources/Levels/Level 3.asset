@@ -75,3 +75,6 @@ MonoBehaviour:
   - x: 2
     y: 2
   maxMoves: 4
+  hasInfiniteMoves: 0
+  id: 500462016
+  levelsRequiredToUnlock: 2

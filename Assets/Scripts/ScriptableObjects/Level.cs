@@ -13,5 +13,7 @@ namespace ScriptableObjects
         public List<Location> groundBlocks;
         public int maxMoves;
         public bool hasInfiniteMoves;
+        public string id;
+        public int levelsRequiredToUnlock;
     }
 }

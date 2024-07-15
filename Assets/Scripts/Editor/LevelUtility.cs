@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model;
 using ScriptableObjects;
 using UnityEditor;
@@ -38,6 +39,21 @@ namespace Editor
                 Set3X3GroundBlocks(level);
             }
             EditorGUI.EndDisabledGroup();
+
+            if (GUILayout.Button("Set id"))
+            {
+                SetIndexes();
+            }
+        }
+
+        private void SetIndexes()
+        {
+            var levels = Resources.FindObjectsOfTypeAll<Level>();
+            foreach (var level in levels)
+            {
+                level.id = Random.Range(0, int.MaxValue).ToString();
+                EditorUtility.SetDirty(level);
+            }
         }
 
         private void DuplicateStartToTarget(Level level)

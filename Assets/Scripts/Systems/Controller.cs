@@ -149,7 +149,7 @@ namespace Systems
         private async void DelayedEnterNextLevel()
         {
             await Awaitable.WaitForSecondsAsync(Animator.MoveTime);
-            LevelManager.Instance.EnterNextLevel();
+            LevelManager.Instance.LevelComplete();
         }
     }
 }

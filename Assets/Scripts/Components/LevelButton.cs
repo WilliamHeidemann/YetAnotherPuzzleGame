@@ -17,23 +17,12 @@ namespace Components
             MainMenu.Instance.onLevelSelected?.Invoke();
             LevelManager.Instance.EnterLevelIndex(index);
         }
-
-        public void SetText(string newText)
-        {
-            text.text = newText;
-        }
-
-        public void SetTextActive(bool active)
-        {
-            var color = text.color.SetAlpha(active ? 1f : 0f);
-            text.CrossFadeColor(color, 0.5f, false, true);
-        }
         
         public enum Status
         {
             Locked,
             Open,
-            OpenAndDone
+            Complete
         }
     }
 }

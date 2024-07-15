@@ -81,11 +81,22 @@ namespace Systems
             });
 
             // load status of all levels and set their status accordingly
-            menuBlocks
-                .Where(g => g.GetComponent<LevelButton>() != null)
+            var levelButtons = menuBlocks
                 .Select(g => g.GetComponent<LevelButton>())
-                .ForEach(b => b.status = LevelButton.Status.OpenAndDone);
-
+                .Where(b => b != null);
+                
+            levelButtons.ForEach(b =>
+            {
+                b.status = LevelManager.Instance.GetStatus(b.index);
+                var material = Resources.Load<Material>($"Materials/{b.status}");
+                b.GetComponent<MeshRenderer>().material = material;
+                if (b.status == LevelButton.Status.Locked)
+                {
+                    // Display lock
+                }
+            });
+            
+            
             // set availability visual accordingly
             // Locked: lock icon + dark grey 
             // Open: Bright grey

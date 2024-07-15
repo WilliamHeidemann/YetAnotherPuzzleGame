@@ -2,7 +2,6 @@
 using ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
-using UtilityToolkit.Editor;
 
 namespace LevelEditor
 {

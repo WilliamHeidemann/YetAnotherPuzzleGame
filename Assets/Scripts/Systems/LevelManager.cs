@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Components;
 using Model;
 using ScriptableObjects;
 using TMPro;
 using UnityEngine;
 using UnityUtils;
+using UtilityToolkit.Runtime;
 
 namespace Systems
 {
@@ -18,7 +20,8 @@ namespace Systems
         private World currentWorld;
         public World world => currentWorld;
         public Level currentLevel { get; private set; }
-        private int currentLevelIndex;
+        private int levelsCompletedThisWorld => levels.Count(SaveSystem.HasBeenCompleted);
+        
         [Space] [SerializeField] private bool showLevelName;
         [SerializeField] private TextMeshProUGUI levelName;
 
@@ -30,27 +33,44 @@ namespace Systems
                 return;
             }
 
-            currentLevelIndex = index;
             EnterLevel(levels[index]);
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.N))
-                EnterNextLevel();
+                LevelComplete();
         }
 
-        public void EnterNextLevel()
+        public void LevelComplete()
         {
-            currentLevelIndex++;
-            if (currentLevelIndex < levels.Length)
+            SaveSystem.SetComplete(currentLevel);
+            
+            // 1. Find an open level
+            // 2. If all levels have been completed
+            // 2.1 If the last level completed was the last level of the world -> go to main menu
+            // 2.2 If not, the just increment the level index
+            bool OpenLevel(Level l) => !SaveSystem.HasBeenCompleted(l) && levelsCompletedThisWorld >= l.levelsRequiredToUnlock;
+            var firstOpen = levels.FirstOption(OpenLevel);
+            if (firstOpen.IsSome(out var firstOpenLevel))
             {
-                EnterLevel(levels[currentLevelIndex]);
+                EnterLevel(firstOpenLevel);
+                return;
             }
-            else
+
+            if (currentLevel == levels[^1])
             {
                 MainMenu.Instance.MenuSelected();
+                return;
             }
+
+            void EnterNextLevel(int i)
+            {
+                if (levels[i] == currentLevel)
+                    EnterLevelIndex(i + 1);
+            }
+            
+            For.Range(levels.Length, EnterNextLevel);
         }
 
         private void EnterLevel(Level level)
@@ -76,6 +96,17 @@ namespace Systems
             Trial,
             One,
             Frog
+        }
+
+        public LevelButton.Status GetStatus(int levelButtonIndex)
+        {
+            var level = levels[levelButtonIndex];
+            if (SaveSystem.HasBeenCompleted(level))
+                return LevelButton.Status.Complete;
+
+            return levelsCompletedThisWorld >= level.levelsRequiredToUnlock
+                ? LevelButton.Status.Open
+                : LevelButton.Status.Locked;
         }
     }
 }
