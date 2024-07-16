@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.benoitfreslon.vibration": "https://github.com/BenoitFreslon/Vibration.git",
     "com.gitamend.unityutils": "https://github.com/adammyhre/Unity-Utils.git",
     "com.unity.ai.navigation": "2.0.0",
     "com.unity.collab-proxy": "2.3.1",

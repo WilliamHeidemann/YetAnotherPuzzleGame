@@ -43,6 +43,11 @@ namespace Animation
             QueueAnimation(new SpinAnimation(obj));
         }
 
+        public static void FallAndBounce(GameObject obj, Vector3 targetPosition, float fallTime)
+        {
+            QueueAnimation(new FallAndBounceAnimation(obj, targetPosition, fallTime));
+        }
+
         public static void ButtonClick(GameObject obj)
         {
             QueueAnimation(new ButtonClickAnimation(obj));
@@ -128,7 +133,9 @@ namespace Animation
                 var fallTime = Random.Range(.6f, 2f);
                 var targetPosition = levelButton.transform.position;
                 levelButton.transform.position = targetPosition.With(y: 20);
-                LeanTween.move(levelButton, targetPosition, fallTime).setEase(LeanTweenType.easeOutBounce);
+                // LeanTween.move(levelButton, targetPosition, fallTime).setEase(LeanTweenType.easeOutBounce);
+                
+                FallAndBounce(levelButton, targetPosition, fallTime);
             }
         }
     }

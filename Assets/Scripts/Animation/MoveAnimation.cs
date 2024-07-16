@@ -15,6 +15,7 @@ namespace Animation
         public override LTSeq Tween()
         {
             var sequence = LeanTween.sequence();
+            if (gameObject == null) return sequence;
             var move = LeanTween.move(gameObject, destination, Animator.MoveTime).setEase(LeanTweenType.easeOutQuad);
             sequence.append(move);
             return sequence;

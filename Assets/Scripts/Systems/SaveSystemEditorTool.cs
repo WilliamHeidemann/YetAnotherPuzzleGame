@@ -3,13 +3,13 @@ using Components;
 using ScriptableObjects;
 using UnityEngine;
 using UnityUtils;
-using UtilityToolkit.Editor;
+// using UtilityToolkit.Editor;
 
 namespace Systems
 {
     public class SaveSystemEditorTool : MonoBehaviour
     {
-        [Button]
+        // [Button]
         public void ResetProgress()
         {
             PlayerPrefs.DeleteAll();

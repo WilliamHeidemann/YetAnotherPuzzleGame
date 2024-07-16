@@ -29,7 +29,7 @@ namespace Systems
         {
             if (index >= levels.Length)
             {
-                Debug.LogWarning("Level index out of bounds");
+                Debug.LogError("Level index out of bounds");
                 return;
             }
 
@@ -48,8 +48,8 @@ namespace Systems
             
             // 1. Find an open level
             // 2. If all levels have been completed
-            // 2.1 If the last level completed was the last level of the world -> go to main menu
-            // 2.2 If not, the just increment the level index
+            // 3 If the last level completed was the last level of the world -> go to main menu
+            // 4 If not, the just increment the level index
             bool OpenLevel(Level l) => !SaveSystem.HasBeenCompleted(l) && levelsCompletedThisWorld >= l.levelsRequiredToUnlock;
             var firstOpen = levels.FirstOption(OpenLevel);
             if (firstOpen.IsSome(out var firstOpenLevel))
@@ -63,14 +63,13 @@ namespace Systems
                 MainMenu.Instance.MenuSelected();
                 return;
             }
-
-            void EnterNextLevel(int i)
-            {
-                if (levels[i] == currentLevel)
-                    EnterLevelIndex(i + 1);
-            }
             
-            For.Range(levels.Length, EnterNextLevel);
+            for (int i = 0; i < levels.Length; i++)
+            {
+                if (levels[i] != currentLevel) continue;
+                EnterLevelIndex(i + 1);
+                return;
+            }
         }
 
         private void EnterLevel(Level level)
