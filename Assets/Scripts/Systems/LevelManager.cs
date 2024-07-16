@@ -13,7 +13,7 @@ namespace Systems
 {
     public class LevelManager : Singleton<LevelManager>
     {
-        private Level[] levels => GetLevels();
+        private Level[] levels => GetLevels(currentWorld);
         [SerializeField] private Level[] trialWorld;
         [SerializeField] private Level[] worldOne;
         [SerializeField] private Level[] frogWorld;
@@ -21,6 +21,8 @@ namespace Systems
         public World world => currentWorld;
         public Level currentLevel { get; private set; }
         private int levelsCompletedThisWorld => levels.Count(SaveSystem.HasBeenCompleted);
+        public int GetLevelsCompleted(World w) => GetLevels(w).Count(SaveSystem.HasBeenCompleted);
+        public int GetLevelsTotal(World w) => GetLevels(w).Length;
         
         [Space] [SerializeField] private bool showLevelName;
         [SerializeField] private TextMeshProUGUI levelName;
@@ -36,11 +38,11 @@ namespace Systems
             EnterLevel(levels[index]);
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.N))
-                LevelComplete();
-        }
+        // private void Update()
+        // {
+        //     if (Input.GetKeyDown(KeyCode.N))
+        //         LevelComplete();
+        // }
 
         public void LevelComplete()
         {
@@ -80,7 +82,7 @@ namespace Systems
             levelName.gameObject.SetActive(showLevelName);
         }
 
-        private Level[] GetLevels() => currentWorld switch
+        private Level[] GetLevels(World w) => w switch
         {
             World.Trial => trialWorld,
             World.One => worldOne,

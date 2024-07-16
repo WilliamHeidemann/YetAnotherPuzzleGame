@@ -90,10 +90,7 @@ namespace Systems
                 b.status = LevelManager.Instance.GetStatus(b.index);
                 var material = Resources.Load<Material>($"Materials/{b.status}");
                 b.GetComponent<MeshRenderer>().material = material;
-                if (b.status == LevelButton.Status.Locked)
-                {
-                    // Display lock
-                }
+                b.UpdateImage();
             });
             
             
