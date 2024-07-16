@@ -10,54 +10,54 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eed5b29d5eb54a92a83c4793ae88f28c, type: 3}
-  m_Name: Frog Level 5
+  m_Name: Frog Level 5 OLD
   m_EditorClassIdentifier: 
   image: {fileID: 2800000, guid: 0c16a212cbbe54a4f9b4f65a86967a4e, type: 3}
   startingConfiguration:
   - location:
-      x: -1
+      x: 1
       y: 1
-    type: 2
-  - location:
-      x: 2
-      y: 1
-    type: 2
-  - location:
-      x: 0
-      y: 2
-    type: 1
-  targetConfiguration:
-  - location:
-      x: 0
-      y: 2
     type: 1
   - location:
-      x: 2
-      y: 1
+      x: 0
+      y: 0
     type: 2
   - location:
       x: 3
+      y: 0
+    type: 2
+  targetConfiguration:
+  - location:
+      x: 3
+      y: 0
+    type: 2
+  - location:
+      x: 1
       y: 1
+    type: 1
+  - location:
+      x: 4
+      y: 0
     type: 2
   groundBlocks:
-  - x: 2
-    y: 2
-  - x: 1
-    y: 1
-  - x: 1
-    y: 3
-  - x: 0
-    y: 1
-  - x: 0
-    y: 2
-  - x: 2
-    y: 1
-  - x: 1
-    y: 2
+  - x: 3
+    y: 0
   - x: 3
     y: 1
-  - x: -1
+  - x: 2
+    y: 2
+  - x: 1
     y: 1
+  - x: 2
+    y: 1
+  - x: 2
+    y: 0
+  - x: 4
+    y: 0
+  - x: 1
+    y: 0
+  - x: 0
+    y: 0
   maxMoves: 2
   hasInfiniteMoves: 0
   id: 1974790568

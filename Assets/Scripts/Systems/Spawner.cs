@@ -171,7 +171,10 @@ namespace Systems
             menuBlocks.ForEach(b =>
             {
                 if (b.TryGetComponent<LevelButton>(out var levelButton))
+                {
+                    levelButton.HideImage();
                     Destroy(levelButton);
+                }
             });
             groundBlocks.AddRange(menuBlocks.Select(b => b.GetOrAdd<GroundBlock>()));
             menuBlocks.Clear();

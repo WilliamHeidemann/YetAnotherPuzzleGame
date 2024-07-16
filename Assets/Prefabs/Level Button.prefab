@@ -228,6 +228,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 445e6afe2f90f3244bfe17e9a49647dc, type: 3}
+    - target: {fileID: 5495302081190682989, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5625865229815510265, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0.7

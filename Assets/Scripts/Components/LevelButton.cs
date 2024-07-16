@@ -33,6 +33,7 @@ namespace Components
 
         public void UpdateImage()
         {
+            image.color.SetAlpha(1f);
             image.sprite = status switch
             {
                 Status.Locked => locked,
@@ -40,6 +41,11 @@ namespace Components
                 Status.Complete => complete,
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        public void HideImage()
+        {
+            image.color = image.color.SetAlpha(0f);
         }
     }
 }
