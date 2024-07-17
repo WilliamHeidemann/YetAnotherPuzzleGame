@@ -124,8 +124,8 @@ namespace Systems
             else
                 moveCounter.IncrementCount();
 
-            DelayedSelect(blockToMove);
-
+            Select(blockToMove);
+            
             isLevelComplete =
                 LevelManager.Instance.currentLevel.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
             if (isLevelComplete)
@@ -138,12 +138,6 @@ namespace Systems
             if (move.isUndo) return false;
             if (!grid.IsAvailable(move.previous)) return false;
             return true;
-        }
-
-        private async void DelayedSelect(MovableBlock movableBlock)
-        {
-            await Awaitable.WaitForSecondsAsync(Animator.MoveTime * 0.1f);
-            Select(movableBlock);
         }
 
         private async void DelayedEnterNextLevel()
