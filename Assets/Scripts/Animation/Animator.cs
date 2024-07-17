@@ -48,6 +48,11 @@ namespace Animation
             QueueAnimation(new FallAndBounceAnimation(obj, targetPosition, fallTime));
         }
 
+        public static void ClickTutorial(GameObject obj, TutorialSystem.TutorialData data)
+        {
+            QueueAnimation(new ClickTutorialAnimation(obj, data));
+        }
+
         public static void ButtonClick(GameObject obj)
         {
             QueueAnimation(new ButtonClickAnimation(obj));
@@ -61,6 +66,14 @@ namespace Animation
         public static void ButtonShow(GameObject obj)
         {
             QueueAnimation(new ButtonShowAnimation(obj));
+        }
+        
+        public static void ClearQueue(GameObject obj)
+        {
+            if (Animations.TryGetValue(obj, out var queue))
+            {
+                queue.Clear();
+            }   
         }
 
         private static void QueueAnimation(AnimationData animation)

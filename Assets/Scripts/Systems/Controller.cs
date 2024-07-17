@@ -142,7 +142,7 @@ namespace Systems
 
         private async void DelayedSelect(MovableBlock movableBlock)
         {
-            await Awaitable.WaitForSecondsAsync(Animator.MoveTime * 0.3f);
+            await Awaitable.WaitForSecondsAsync(Animator.MoveTime * 0.1f);
             Select(movableBlock);
         }
 
