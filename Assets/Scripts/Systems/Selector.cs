@@ -46,6 +46,7 @@ namespace Systems
                 return;
             movable.GetComponent<Outline>().enabled = false;
             selected = Option<MovableBlock>.None;
+            Spawner.Instance.HideHighlights();
         }
     }
 }
