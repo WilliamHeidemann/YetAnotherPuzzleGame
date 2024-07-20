@@ -6791,7 +6791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 454067200040916576, guid: 2a93d64f9f5d83a4ea046f4c68917a8c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 454067200040916576, guid: 2a93d64f9f5d83a4ea046f4c68917a8c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7196,6 +7196,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0b804d8a04c339f47bc616eb45fb1519, type: 2}
   showLevelName: 0
   levelName: {fileID: 409383367}
+  moveCountGUI: {fileID: 1553079732}
 --- !u!1 &1767303456
 GameObject:
   m_ObjectHideFlags: 0
@@ -8633,7 +8634,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 454067200040916576, guid: 2a93d64f9f5d83a4ea046f4c68917a8c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -145
       objectReference: {fileID: 0}
     - target: {fileID: 454067200040916576, guid: 2a93d64f9f5d83a4ea046f4c68917a8c, type: 3}
       propertyPath: m_LocalPosition.z

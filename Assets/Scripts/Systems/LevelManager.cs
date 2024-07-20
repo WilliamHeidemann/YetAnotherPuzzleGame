@@ -26,6 +26,7 @@ namespace Systems
         
         [Space] [SerializeField] private bool showLevelName;
         [SerializeField] private TextMeshProUGUI levelName;
+        [SerializeField] private GameObject moveCountGUI;
 
         public void EnterLevelIndex(int index)
         {
@@ -47,12 +48,7 @@ namespace Systems
         public void LevelComplete()
         {
             SaveSystem.SetComplete(currentLevel);
-            
-            // 1. Find an open level
-            // 2. If all levels have been completed
-            // 3 If the last level completed was the last level of the world -> go to main menu
-            // 4 If not, the just increment the level index
-            bool OpenLevel(Level l) => !SaveSystem.HasBeenCompleted(l) && levelsCompletedThisWorld >= l.levelsRequiredToUnlock;
+
             var firstOpen = levels.FirstOption(OpenLevel);
             if (firstOpen.IsSome(out var firstOpenLevel))
             {
@@ -72,6 +68,14 @@ namespace Systems
                 EnterLevelIndex(i + 1);
                 return;
             }
+
+            return;
+
+            // 1. Find an open level
+            // 2. If all levels have been completed
+            // 3 If the last level completed was the last level of the world -> go to main menu
+            // 4 If not, the just increment the level index
+            bool OpenLevel(Level l) => !SaveSystem.HasBeenCompleted(l) && levelsCompletedThisWorld >= l.levelsRequiredToUnlock;
         }
 
         private void EnterLevel(Level level)
@@ -80,6 +84,7 @@ namespace Systems
             Controller.Instance.Initialize(level);
             levelName.text = level.name;
             levelName.gameObject.SetActive(showLevelName);
+            moveCountGUI.SetActive(!level.hasInfiniteMoves);
         }
 
         private Level[] GetLevels(World w) => w switch

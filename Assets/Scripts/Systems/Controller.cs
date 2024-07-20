@@ -28,8 +28,8 @@ namespace Systems
 
         public void Initialize(Level level)
         {
-            ResetGameState(level);
             Spawner.Instance.SpawnLevel(level);
+            ResetGameState(level);
         }
 
         private void ResetGameState(Level level)
@@ -37,8 +37,8 @@ namespace Systems
             grid = new Grid(level.startingConfiguration, level.groundBlocks);
             history = new History();
             moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
-            selector.Deselect();
             isLevelComplete = false;
+            Select(Spawner.Instance.getFirstBlock);
         }
 
         public void Select(MovableBlock movable)

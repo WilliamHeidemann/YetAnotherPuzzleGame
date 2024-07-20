@@ -23,13 +23,9 @@ namespace GameState
             allMoves[block].RemoveAt(index);
         }
 
-        public Option<Move> GetMove(Block block)
-        {
-            if (!allMoves.ContainsKey(block)) 
-                return Option<Move>.None;
-            return allMoves[block].LastOption(m => m.next == block.location && !m.isUndo);
-        }
-
-        // public int count => allMoves.Values.Sum();
+        public Option<Move> GetMove(Block block) =>
+            !allMoves.TryGetValue(block, out var move) 
+                ? Option<Move>.None 
+                : move.LastOption(m => m.next == block.location && !m.isUndo);
     }
 }

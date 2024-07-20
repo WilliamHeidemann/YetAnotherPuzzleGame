@@ -32,6 +32,7 @@ namespace Systems
         private readonly List<Location> highlightLocations = new();
         private readonly List<GameObject> menuBlocks = new();
 
+        public MovableBlock getFirstBlock => movableBlocks.First();
         public Option<MovableBlock> GetMovableBlock(Location location) =>
             movableBlocks.FirstOption(b => b.model.location == location);
 
@@ -111,6 +112,7 @@ namespace Systems
             SpawnMovableBlocks(level);
             AnimateMovableBlocks(level);
 
+            highlights.ForEach(Destroy);
             highlights.Clear();
         }
 

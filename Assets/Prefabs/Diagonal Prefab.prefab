@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: aabf8ca3ad3ab8b41aa4015520391aeb, type: 2}
     - target: {fileID: 919132149155446097, guid: e28e3497009f81b458f78f21c5f83a69, type: 3}
       propertyPath: m_Name
-      value: "r\xF8d cube"
+      value: Diagonal Prefab
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 1, g: 0.96862745, b: 0.7529412, a: 1}
-  outlineWidth: 4
+  outlineWidth: 10
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

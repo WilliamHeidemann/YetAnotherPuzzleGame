@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 9b1c5aef7f62c8045a1a83a0b0fd6d4f, type: 2}
     - target: {fileID: 919132149155446097, guid: 596bbb1b03c878b4ba1af22403517af3, type: 3}
       propertyPath: m_Name
-      value: "bl\xE5 fbx1"
+      value: Cardinal Prefab
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 1, g: 0.96862745, b: 0.7529412, a: 1}
-  outlineWidth: 4
+  outlineWidth: 10
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
