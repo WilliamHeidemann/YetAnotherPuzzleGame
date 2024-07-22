@@ -36,12 +36,12 @@ namespace Systems
             Controller.Instance.TryMove(move);
         }
 
-        public void Undo()
-        {
-            if (!selected.IsSome(out var movable))
-                return;
-            Controller.Instance.TryUndo(movable.model);
-        }
+        // public void Undo()
+        // {
+        //     if (!selected.IsSome(out var movable))
+        //         return;
+        //     Controller.Instance.TryUndo(movable.model);
+        // }
 
         public void Deselect()
         {
