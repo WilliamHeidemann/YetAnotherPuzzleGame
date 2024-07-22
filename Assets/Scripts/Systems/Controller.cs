@@ -25,9 +25,7 @@ namespace Systems
         private History history;
         private MoveCounter moveCounter;
         private bool isLevelComplete;
-
-        private bool HasMoves() => moveCounter.hasMovesLeft && isLevelComplete == false;
-
+        
         public void Initialize(Level level)
         {
             Spawner.Instance.SpawnLevel(level);
@@ -78,8 +76,6 @@ namespace Systems
                 return;
             if (!grid.IsMoveValid(move))
                 return;
-            // if (!moveCounter.hasMovesLeft)
-            //     return;
 
             Move(move);
         }
@@ -91,26 +87,6 @@ namespace Systems
             ResetGameState(level);
             await Spawner.Instance.ResetLevel(level);
         }
-
-        // public void TryUndo(Block block)
-        // {
-        //     if (isLevelComplete)
-        //         return;
-        //
-        //     if (!history.GetMove(block).IsSome(out var move))
-        //         return;
-        //
-        //     if (!grid.IsAvailable(move.previous))
-        //     {
-        //         // Currently the player is not given the option to undo, if it is not valid. Otherwise, 
-        //         // Play animation showing which way is undo, and that something is in the way
-        //         return;
-        //     }
-        //
-        //     history.Undo(block, move);
-        //     Move(move.reversed);
-        // }
-
 
         private void Move(Move move)
         {
@@ -139,35 +115,14 @@ namespace Systems
             Animator.Move(blockToMove.gameObject, targetLocation, move.type);
 
             Spawner.Instance.HideHighlights();
-            
-            
-            // Change the following 5 lines
-            // the history should be used to figure out if the move is an undo move,
-            // in which case the user can get back their movement point 
-            
-            // If it is, undo it in history
-            // If it is not, record the move
-            // history.Add(blockToMove.model, move);
-            
-            // Controller might also need history to know where to display undo ghost block
-
-            
 
             Select(blockToMove);
-            
+
             isLevelComplete =
                 LevelManager.Instance.currentLevel.targetConfiguration.TrueForAll(grid.GetBlocks().Contains);
             if (isLevelComplete)
                 DelayedEnterNextLevel();
         }
-
-        // private bool BlockCanUndo(Block block)
-        // {
-            // if (!history.GetMove(block).IsSome(out var move)) return false;
-            // if (move.isUndo) return false;
-            // if (!grid.IsAvailable(move.previous)) return false;
-            // return true;
-        // }
 
         private async void DelayedEnterNextLevel()
         {

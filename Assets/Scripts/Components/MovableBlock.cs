@@ -13,13 +13,6 @@ namespace Components
 
         public void Interact()
         {
-            // if (undoTimer.IsSome(out var timer) && !timer.isFinished)
-            // {
-            //     Selector.Instance.Undo();
-            //     undoTimer = Option<UndoTimer>.None;
-            //     return;
-            // }
-
             Controller.Instance.Select(this);
             undoTimer = Option<UndoTimer>.Some(new UndoTimer());
         }

@@ -29,19 +29,10 @@ namespace Systems
         {
             if (!selected.IsSome(out var movable))
                 return;
-            // call controller and ask it to try and move there.
-            // In the process, figure out if is really an undo move.
             
             var move = new Move(movable.model.location, destination, movable.model.type);
             Controller.Instance.TryMove(move);
         }
-
-        // public void Undo()
-        // {
-        //     if (!selected.IsSome(out var movable))
-        //         return;
-        //     Controller.Instance.TryUndo(movable.model);
-        // }
 
         public void Deselect()
         {
