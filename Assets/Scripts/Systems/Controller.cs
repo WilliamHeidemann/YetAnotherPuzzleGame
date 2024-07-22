@@ -117,6 +117,11 @@ namespace Systems
 
             Spawner.Instance.HideHighlights();
             grid.Move(move);
+            
+            
+            // Change the following 5 lines
+            // the history should be used to figure out if the move is and undo move.
+            // If it is not, record the move
             history.Add(blockToMove.model, move);
 
             if (move.isUndo)
