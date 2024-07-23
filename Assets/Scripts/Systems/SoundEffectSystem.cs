@@ -6,8 +6,9 @@ namespace Systems
 {
     public class SoundEffectSystem : Singleton<SoundEffectSystem>
     {
-        [FormerlySerializedAs("movePop")] [SerializeField] private AudioClip slide;
+        [SerializeField] private AudioClip slide;
         [SerializeField] private AudioClip bubble;
+        [SerializeField] private AudioClip wood;
         [SerializeField] private AudioSource audioSource;
         private const float PitchIncrement = 0.35f;
         private float pitch;
@@ -26,6 +27,12 @@ namespace Systems
             pitch = (pitch + PitchIncrement) % 0.4f + 1;
             audioSource.pitch = pitch;
             audioSource.PlayOneShot(slide);
+        }
+
+        public void PlayWood()
+        {
+            audioSource.pitch = 1f;
+            audioSource.PlayOneShot(wood);
         }
 
         public void PlayBubble()

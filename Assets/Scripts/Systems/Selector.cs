@@ -45,10 +45,9 @@ namespace Systems
 
         public void TryUndo()
         {
-            print(-2);
             if (!selected.IsSome(out var movable))
                 return;
-            print(-1);
+
             Controller.Instance.TryUndo(movable);
         }
     }

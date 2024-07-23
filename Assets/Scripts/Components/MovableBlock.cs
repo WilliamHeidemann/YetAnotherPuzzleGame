@@ -9,20 +9,24 @@ namespace Components
     public class MovableBlock : MonoBehaviour, IInteractable
     {
         public Block model;
-        private Option<UndoTimer> undoTimer = Option<UndoTimer>.None;
 
         public void Interact()
         {
             Controller.Instance.Select(this);
-            undoTimer = Option<UndoTimer>.Some(new UndoTimer());
+            SoundEffectSystem.Instance.PlayWood();
         }
 
         private class UndoTimer
         {
-            public bool isFinished => timeOfCreation + TimeToFinish < Time.time;
-            public float percentDone => (Time.time - timeOfCreation) / TimeToFinish * 100;
-            private const float TimeToFinish = 0.5f;
+            public bool isFinished => timeOfCreation + timeToFinish < Time.time;
+            public float fractionDone => (Time.time - timeOfCreation) / timeToFinish;
+            private readonly float timeToFinish;
             private readonly float timeOfCreation = Time.time;
+
+            public UndoTimer(float timeToFinish)
+            {
+                this.timeToFinish = timeToFinish;
+            }
         }
     }
 }
