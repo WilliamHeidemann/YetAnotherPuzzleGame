@@ -106,7 +106,7 @@ namespace Systems
                 moveCounter.IncrementCount();
                 history.Add(blockToMove, move.previous);
             }
-            else return;
+            else return; 
 
             grid.Move(move);
 

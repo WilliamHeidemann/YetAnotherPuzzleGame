@@ -23,7 +23,7 @@ namespace Animation
             switch (moveType)
             {
                 case Type.Frog:
-                QueueAnimation(new FrogAnimation(obj, targetLocation));
+                    QueueAnimation(new FrogAnimation(obj, targetLocation));
                     break;
                 case Type.Cardinal:
                 case Type.Diagonal:
@@ -88,7 +88,7 @@ namespace Animation
             {
                 CreateTween(animation);
             }
-            else if (queueLength == 3)
+            else if (queueLength == 3 && animation is not MoveAnimation or FrogAnimation)
             {
                 return;
             }

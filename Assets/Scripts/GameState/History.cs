@@ -13,7 +13,6 @@ namespace GameState
 
         public void Add(MovableBlock block, Location previousLocation)
         {
-            Debug.Log("Adding");
             if (!previousLocations.TryGetValue(block, out var stack))
             {
                 stack = new Stack<Location>();
@@ -39,7 +38,6 @@ namespace GameState
             if (!previousLocations.TryGetValue(block, out var stack))
                 return;
 
-            Debug.Log(stack.Count);
             stack.Pop();
         }
     }

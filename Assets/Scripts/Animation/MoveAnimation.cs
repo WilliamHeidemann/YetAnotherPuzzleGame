@@ -1,4 +1,5 @@
 ﻿using Model;
+using Systems;
 using UnityEngine;
 
 namespace Animation
@@ -17,6 +18,7 @@ namespace Animation
             var sequence = LeanTween.sequence();
             if (gameObject == null) return sequence;
             var move = LeanTween.move(gameObject, destination, Animator.MoveTime).setEase(LeanTweenType.easeOutQuad);
+            sequence.append(() => SoundEffectSystem.Instance.PlayMove());
             sequence.append(move);
             return sequence;
         }
