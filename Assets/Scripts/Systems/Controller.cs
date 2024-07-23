@@ -14,7 +14,6 @@ namespace Systems
     public class Controller : Singleton<Controller>
     {
         [SerializeField] private TextMeshProUGUI moveCounterText;
-        [SerializeField] private Selector selector;
         private Grid grid;
         private History history;
         private MoveCounter moveCounter;
@@ -37,13 +36,14 @@ namespace Systems
 
         public void Select(MovableBlock movable)
         {
-            selector.Select(movable);
+            Selector.Instance.Select(movable);
 
             if (isLevelComplete)
             {
                 Spawner.Instance.HideHighlights();
                 return;
             }
+            UpdateUndoButton(movable);
 
             var block = movable.model;
             var validNeighbors = block.GetAvailableNeighbors(grid.HasBlockAt, grid.HasGroundAt).ToList();
@@ -131,6 +131,15 @@ namespace Systems
         {
             await Awaitable.WaitForSecondsAsync(Animator.MoveTime);
             LevelManager.Instance.LevelComplete();
+        }
+
+        public void UpdateUndoButton(MovableBlock block)
+        {
+            if (history.GetPreviousLocation(block).IsSome(out var previous) && 
+                grid.IsAvailable(previous))
+                UndoButton.Instance.Enable(block.model.type);
+            else 
+                UndoButton.Instance.Disable();
         }
     }
 }
