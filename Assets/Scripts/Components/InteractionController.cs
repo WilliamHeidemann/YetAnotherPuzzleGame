@@ -1,6 +1,7 @@
 ﻿using System;
 using Systems;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Components
 {
@@ -16,6 +17,9 @@ namespace Components
         private void Update()
         {
             if (!Input.GetMouseButtonDown(0))
+                return;
+
+            if (EventSystem.current.IsPointerOverGameObject())
                 return;
             
             var ray = cam.ScreenPointToRay(Input.mousePosition);

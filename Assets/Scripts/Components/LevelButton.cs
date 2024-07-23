@@ -33,7 +33,7 @@ namespace Components
 
         public void UpdateImage()
         {
-            image.color.SetAlpha(1f);
+            image.gameObject.SetActive(true);
             image.sprite = status switch
             {
                 Status.Locked => locked,
@@ -45,7 +45,7 @@ namespace Components
 
         public void HideImage()
         {
-            image.color = image.color.SetAlpha(0f);
+            image.gameObject.SetActive(false);
         }
     }
 }

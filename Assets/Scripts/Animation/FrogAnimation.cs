@@ -1,14 +1,11 @@
-﻿using UnityEngine;
+﻿using Systems;
+using UnityEngine;
 
 namespace Animation
 {
     public class FrogAnimation : AnimationData
     {
         private readonly Vector3 targetPosition;
-        private const float JumpHeight = 2f;
-        private const float JumpDuration = 1f;
-        private const float CrouchDuration = 0.2f;
-
 
         public FrogAnimation(GameObject gameObject, Vector3 targetPosition) : base(gameObject)
         {
@@ -20,6 +17,7 @@ namespace Animation
             var middle = (gameObject.transform.position + targetPosition) / 2 + Vector3.up;
 
             var sequence = LeanTween.sequence();
+            sequence.append(() => SoundEffectSystem.Instance.PlayMove());
             sequence.append(() =>
             {
                 LeanTween.moveX(gameObject, middle.x, Animator.MoveTime / 2).setEase(LeanTweenType.easeInQuad);

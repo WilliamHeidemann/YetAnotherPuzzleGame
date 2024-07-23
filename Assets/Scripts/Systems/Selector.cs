@@ -42,5 +42,14 @@ namespace Systems
             selected = Option<MovableBlock>.None;
             Spawner.Instance.HideHighlights();
         }
+
+        public void TryUndo()
+        {
+            print(-2);
+            if (!selected.IsSome(out var movable))
+                return;
+            print(-1);
+            Controller.Instance.TryUndo(movable);
+        }
     }
 }

@@ -52,21 +52,6 @@ namespace Animation
         {
             QueueAnimation(new ClickTutorialAnimation(obj, data));
         }
-
-        public static void ButtonClick(GameObject obj)
-        {
-            QueueAnimation(new ButtonClickAnimation(obj));
-        }
-
-        public static void ButtonHide(GameObject obj)
-        {
-            QueueAnimation(new ButtonHideAnimation(obj));
-        }
-
-        public static void ButtonShow(GameObject obj)
-        {
-            QueueAnimation(new ButtonShowAnimation(obj));
-        }
         
         public static void ClearQueue(GameObject obj)
         {

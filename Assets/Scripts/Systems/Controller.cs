@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Components;
 using GameState;
 using Model;
-using NUnit.Framework;
 using ScriptableObjects;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityUtils;
-using UtilityToolkit.Runtime;
 using Animator = Animation.Animator;
 using Grid = GameState.Grid;
-using Type = Model.Type;
 
 namespace Systems
 {
@@ -68,6 +62,15 @@ namespace Systems
                 Spawner.Instance.HideHighlights();
                 Animator.Shake(movable.gameObject);
             }
+        }
+
+        public void TryUndo(MovableBlock movable)
+        {
+            if (!history.GetPreviousLocation(movable).IsSome(out var previous))
+                return;
+
+            var move = new Move(movable.model.location, previous, movable.model.type, true);
+            TryMove(move);
         }
 
         public void TryMove(Move move)

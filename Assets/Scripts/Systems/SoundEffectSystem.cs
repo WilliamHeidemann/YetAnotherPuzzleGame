@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityUtils;
 
 namespace Systems
 {
     public class SoundEffectSystem : Singleton<SoundEffectSystem>
     {
-        [SerializeField] private AudioClip movePop;
-        [SerializeField] private AudioClip undoPop;
+        [FormerlySerializedAs("movePop")] [SerializeField] private AudioClip slide;
+        [SerializeField] private AudioClip bubble;
         [SerializeField] private AudioSource audioSource;
         private const float PitchIncrement = 0.35f;
         private float pitch;
@@ -24,12 +25,13 @@ namespace Systems
         {
             pitch = (pitch + PitchIncrement) % 0.4f + 1;
             audioSource.pitch = pitch;
-            audioSource.PlayOneShot(movePop);
+            audioSource.PlayOneShot(slide);
         }
 
-        public void PlayUndo()
+        public void PlayBubble()
         {
-            audioSource.PlayOneShot(undoPop);
+            audioSource.pitch = 1f;
+            audioSource.PlayOneShot(bubble);
         }
     }
 }
