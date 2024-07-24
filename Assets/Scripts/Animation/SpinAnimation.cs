@@ -11,7 +11,7 @@ namespace Animation
         public override LTSeq Tween()
         {
             var sequence = LeanTween.sequence();
-            var spin = LeanTween.rotateAroundLocal(gameObject, Vector3.back, 360, 1f).setEase(LeanTweenType.easeInOutBack);
+            var spin = LeanTween.rotateAroundLocal(gameObject, Vector3.forward, 360, 1f).setEase(LeanTweenType.easeInOutBack);
             sequence.append(spin);
             return sequence;
         }

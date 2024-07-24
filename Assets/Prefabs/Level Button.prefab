@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23a8904e2cba4cba847aaeb43e0ffa37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 11859330964859101}
+  text: {fileID: 0}
   image: {fileID: 391210052759909978}
   locked: {fileID: 21300000, guid: c8c66d4157129d442ae361d7c21e24d6, type: 3}
   open: {fileID: 21300000, guid: 215a24be4cb64e349ab849e5eb987ec6, type: 3}
@@ -277,21 +277,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 9033710335312620692, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8065960711032776177, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1033179355353260800}
   m_SourcePrefab: {fileID: 100100000, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
---- !u!114 &11859330964859101 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5261548686997602282, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
-  m_PrefabInstance: {fileID: 5273406582087292727}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &360351031926965091 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5489569097961624660, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
@@ -302,9 +295,70 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5495302081190682989, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
   m_PrefabInstance: {fileID: 5273406582087292727}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2800935300226396870}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2800935300226396870 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8065960711032776177, guid: 50ce9a32d629c474b97fa75320115b39, type: 3}
+  m_PrefabInstance: {fileID: 5273406582087292727}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1033179355353260800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2800935300226396870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 391210052759909978}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -3922134090318874922}
+        m_TargetAssemblyTypeName: Components.LevelButton, CommandGame
+        m_MethodName: Interact
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

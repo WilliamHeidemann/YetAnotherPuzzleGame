@@ -6,7 +6,6 @@ namespace GameState
 {
     public class MoveCounter
     {
-        private readonly TextMeshProUGUI text;
         private readonly Observable<int> moveCount;
         private readonly int max;
         public bool hasMovesLeft => moveCount.Value < max;
@@ -23,18 +22,12 @@ namespace GameState
             moveCount.Value--;
         }
 
-        public MoveCounter(int maxCount, TextMeshProUGUI countingText)
+        public MoveCounter(int maxCount)
         {
-            text = countingText;
             max = maxCount;
             moveCount = new Observable<int>();
-            moveCount.OnValueChanged += UpdateText;
-            UpdateText(0);
-        }
-
-        private void UpdateText(int used)
-        {
-            text.text = $"{used} / {max}";
+            MoveCounterComponent.Instance.SetCircles(maxCount);
+            moveCount.OnValueChanged += MoveCounterComponent.Instance.FillCircles;
         }
     }
 }

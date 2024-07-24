@@ -20,6 +20,7 @@ namespace Components
         {
             if (status == Status.Locked)
                 return;
+            SoundEffectSystem.Instance.PlayBubble();
             MainMenu.Instance.onLevelSelected?.Invoke();
             LevelManager.Instance.EnterLevelIndex(index);
         }

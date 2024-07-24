@@ -6,10 +6,12 @@ namespace Animation
     public class FrogAnimation : AnimationData
     {
         private readonly Vector3 targetPosition;
+        private readonly bool withSound;
 
-        public FrogAnimation(GameObject gameObject, Vector3 targetPosition) : base(gameObject)
+        public FrogAnimation(GameObject gameObject, Vector3 targetPosition, bool withSound) : base(gameObject)
         {
             this.targetPosition = targetPosition;
+            this.withSound = withSound;
         }
 
         public override LTSeq Tween()
@@ -17,7 +19,8 @@ namespace Animation
             var middle = (gameObject.transform.position + targetPosition) / 2 + Vector3.up;
 
             var sequence = LeanTween.sequence();
-            sequence.append(() => SoundEffectSystem.Instance.PlayMove());
+            if (withSound)
+                sequence.append(() => SoundEffectSystem.Instance.PlayMove());
             sequence.append(() =>
             {
                 LeanTween.moveX(gameObject, middle.x, Animator.MoveTime / 2).setEase(LeanTweenType.easeInQuad);

@@ -15,20 +15,19 @@ namespace Animation
     public static class Animator
     {
         private static readonly Dictionary<GameObject, Queue<AnimationData>> Animations = new();
-        private const float FadeTime = 2f;
         public const float MoveTime = 1f;
 
-        public static void Move(GameObject obj, Vector3 targetLocation, Type moveType)
+        public static void Move(GameObject obj, Vector3 targetLocation, Type moveType, bool withSound = false)
         {
             switch (moveType)
             {
                 case Type.Frog:
-                    QueueAnimation(new FrogAnimation(obj, targetLocation));
+                    QueueAnimation(new FrogAnimation(obj, targetLocation, withSound));
                     break;
                 case Type.Cardinal:
                 case Type.Diagonal:
                 default:
-                    QueueAnimation(new MoveAnimation(obj, targetLocation));
+                    QueueAnimation(new MoveAnimation(obj, targetLocation, withSound));
                     break;
             }
         }

@@ -13,7 +13,6 @@ namespace Systems
 {
     public class Controller : Singleton<Controller>
     {
-        [SerializeField] private TextMeshProUGUI moveCounterText;
         private Grid grid;
         private History history;
         private MoveCounter moveCounter;
@@ -29,7 +28,7 @@ namespace Systems
         {
             grid = new Grid(level.startingConfiguration, level.groundBlocks);
             history = new History();
-            moveCounter = new MoveCounter(level.maxMoves, moveCounterText);
+            moveCounter = new MoveCounter(level.maxMoves);
             isLevelComplete = false;
             Select(Spawner.Instance.getFirstBlock);
         }
@@ -115,7 +114,7 @@ namespace Systems
 
             blockToMove.model = blockToMove.model.WithLocation(move.next);
             var targetLocation = move.next.asVector3.With(y: -0.35f);
-            Animator.Move(blockToMove.gameObject, targetLocation, move.type);
+            Animator.Move(blockToMove.gameObject, targetLocation, move.type, true);
 
             Spawner.Instance.HideHighlights();
 
