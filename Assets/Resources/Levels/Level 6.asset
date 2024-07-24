@@ -15,33 +15,29 @@ MonoBehaviour:
   image: {fileID: 2800000, guid: deb5bc737a92e014e9dc300eafb26638, type: 3}
   startingConfiguration:
   - location:
+      x: 1
+      y: 1
+    type: 1
+  - location:
+      x: 1
+      y: 2
+    type: 1
+  - location:
       x: 0
-      y: 0
+      y: 1
     type: 1
   - location:
       x: 1
       y: 0
     type: 0
-  - location:
-      x: 0
-      y: 1
-    type: 1
-  - location:
-      x: 1
-      y: 1
-    type: 1
-  - location:
-      x: 1
-      y: 2
-    type: 1
-  - location:
-      x: 2
-      y: 2
-    type: 1
   targetConfiguration:
   - location:
-      x: 0
-      y: 0
+      x: 2
+      y: 1
+    type: 1
+  - location:
+      x: 1
+      y: 1
     type: 1
   - location:
       x: 0
@@ -51,37 +47,21 @@ MonoBehaviour:
       x: 1
       y: 0
     type: 1
-  - location:
-      x: 1
-      y: 1
-    type: 1
-  - location:
-      x: 2
-      y: 1
-    type: 1
-  - location:
-      x: 2
-      y: 2
-    type: 1
   groundBlocks:
-  - x: 0
-    y: 0
-  - x: 1
-    y: 0
   - x: 2
-    y: 0
-  - x: 0
     y: 1
   - x: 1
-    y: 1
-  - x: 2
     y: 1
   - x: 0
     y: 2
   - x: 1
+    y: 0
+  - x: 1
     y: 2
+  - x: 0
+    y: 1
   - x: 2
-    y: 2
+    y: 0
   maxMoves: 5
   hasInfiniteMoves: 0
   id: 364543668
