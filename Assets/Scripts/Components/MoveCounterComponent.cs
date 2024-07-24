@@ -3,25 +3,31 @@ using UnityEngine;
 using UnityUtils;
 using UtilityToolkit.Runtime;
 
-public class MoveCounterComponent : Singleton<MoveCounterComponent>
+namespace Components
 {
-    [SerializeField] private List<GameObject> circles;
-    [SerializeField] private List<GameObject> fillers;
-
-    public void SetCircles(int limit)
+    public class MoveCounterComponent : Singleton<MoveCounterComponent>
     {
-        For.Range(circles.Count, i =>
-        {
-            circles[i].SetActive(i < limit);
-            fillers[i].SetActive(false);
-        });
-    }
+        [SerializeField] private List<GameObject> circles;
+        [SerializeField] private List<GameObject> fillers;
 
-    public void FillCircles(int filled)
-    {
-        For.Range(fillers.Count, i =>
+        public void SetCircles(int limit)
         {
-            fillers[i].SetActive(i < filled);
-        });
+            For.Range(circles.Count, i =>
+            {
+                circles[i].SetActive(i < limit);
+                fillers[i].SetActive(false);
+
+                LeanTween.scale(circles[i], Vector3.one * 2, 0.5f).setEase(LeanTweenType.easeInQuad)
+                    .setOnComplete(() => LeanTween.scale(circles[i], Vector3.one, 0.5f).setEase(LeanTweenType.easeOutQuad));
+            });
+        }
+
+        public void FillCircles(int filled)
+        {
+            For.Range(fillers.Count, i =>
+            {
+                fillers[i].SetActive(i < filled);
+            });
+        }
     }
 }
