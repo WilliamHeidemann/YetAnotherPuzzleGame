@@ -1,16 +1,36 @@
 using UnityEngine;
+using UnityEngine.UI;
 
-public class MusicSystem : MonoBehaviour
+namespace Systems
 {
-    [SerializeField] private AudioSource music;
-    [SerializeField] private GameObject slash;
-    public void ToggleMusic()
+    public class MusicSystem : MonoBehaviour
     {
-        if (music.isPlaying) 
-            music.Pause();
-        else 
-            music.UnPause();
+        [SerializeField] private AudioSource music;
+        [SerializeField] private GameObject slash;
+        [SerializeField] private Slider slider;
+        private bool isSliderActive;
+
+        private void Start()
+        {
+            slider.onValueChanged.AddListener(AdjustMusicVolume);
+        }
+
+        public void ToggleSlider()
+        {
+            isSliderActive = !isSliderActive;
+            slider.gameObject.SetActive(isSliderActive);
+        }
         
-        slash.SetActive(!music.isPlaying);
+        public void HideSlider()
+        {
+            isSliderActive = false;
+            slider.gameObject.SetActive(false);
+        }
+
+        private void AdjustMusicVolume(float volume)
+        {
+            music.volume = volume;
+            slash.SetActive(volume == 0f);
+        }
     }
 }

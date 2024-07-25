@@ -14,6 +14,7 @@ namespace Components
         {
             Controller.Instance.Select(this);
             SoundEffectSystem.Instance.PlayWood();
+            Handheld.Vibrate();
         }
 
         private class UndoTimer
