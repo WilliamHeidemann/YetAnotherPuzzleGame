@@ -4794,7 +4794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 740f993b5138a42f78c8ce875c724f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slide: {fileID: 8300000, guid: 0415721711db0479387336739b60ebb3, type: 3}
+  slide: {fileID: 8300000, guid: deebfbc6abb2ada479afa59b9778ce02, type: 3}
   bubble: {fileID: 8300000, guid: eb8d27cc18a8b406998af52c59d4d99b, type: 3}
   wood: {fileID: 8300000, guid: c4af9fe4494ea4ac2bb4359e8a988010, type: 3}
   audioSource: {fileID: 797788695}
